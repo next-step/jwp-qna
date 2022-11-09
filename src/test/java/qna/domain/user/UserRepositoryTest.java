@@ -46,7 +46,7 @@ public class UserRepositoryTest {
     void get_user_by_id() {
         List<User> users = userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
 
-
+        // UserId로 저장했기 때문에 String으로 찾을 경우 에러
         User savedUser = userRepository.findByUserId(users.get(0).getUserId()).get();
 
         assertThat(users.get(0)).isEqualTo(savedUser);
@@ -71,11 +71,9 @@ public class UserRepositoryTest {
         User target = JAVAJIGI;
         target.changeEmail(Email.of("test@nextstep.com"));
 
-
         user.update(JAVAJIGI, target);
 
         User updatedUser = userRepository.findByUserId(user.getUserId()).get();
-
 
         assertAll(
                 () -> assertThat(updatedUser).isEqualTo(user),

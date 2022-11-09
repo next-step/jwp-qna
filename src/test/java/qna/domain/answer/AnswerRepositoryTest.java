@@ -1,12 +1,10 @@
-package qna.domain;
+package qna.domain.answer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.answer.Answer;
-import qna.domain.answer.AnswerRepository;
 import qna.domain.content.Contents;
 import qna.domain.content.Title;
 import qna.domain.question.Question;
@@ -20,9 +18,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
+import static qna.domain.answer.AnswerTest.A1;
+import static qna.domain.question.QuestionTest.Q1;
+import static qna.domain.question.QuestionTest.Q2;
 import static qna.domain.user.UserTest.JAVAJIGI;
 import static qna.domain.user.UserTest.SANJIGI;
 

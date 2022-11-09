@@ -1,8 +1,7 @@
-package qna.domain;
+package qna.domain.question;
 
 import qna.domain.content.Contents;
 import qna.domain.content.Title;
-import qna.domain.question.Question;
 import qna.domain.user.UserTest;
 
 public class QuestionTest {

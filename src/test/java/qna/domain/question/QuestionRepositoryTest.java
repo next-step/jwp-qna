@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.question;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,8 +9,6 @@ import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
 import qna.domain.content.Contents;
-import qna.domain.question.Question;
-import qna.domain.question.QuestionRepository;
 import qna.domain.user.UserRepository;
 import qna.domain.user.UserTest;
 
@@ -21,8 +19,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
+import static qna.domain.question.QuestionTest.Q1;
+import static qna.domain.question.QuestionTest.Q2;
 import static qna.domain.user.UserTest.JAVAJIGI;
 import static qna.domain.user.UserTest.SANJIGI;
 
