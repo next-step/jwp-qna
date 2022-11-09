@@ -15,7 +15,7 @@ import static qna.domain.deleteHistory.DeleteHistory.ofQuestionDeletedHistory;
 
 
 @Embeddable
-public class DeleteHistories implements Iterable<DeleteHistory> {
+public class DeleteHistories {
     @ManyToMany
     private List<DeleteHistory> deleteHistories = new ArrayList<>();
 
@@ -35,15 +35,9 @@ public class DeleteHistories implements Iterable<DeleteHistory> {
     }
 
 
-
     private void addDeletedAnswerHistories(List<Answer> answers) {
         for (Answer answer : answers) {
             deleteHistories.add(ofAnswerDeletedHistory(answer));
         }
-    }
-
-    @Override
-    public Iterator<DeleteHistory> iterator() {
-        return deleteHistories.iterator();
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_WITH_ANSWER;
 
 @Embeddable
-public class Answers implements Iterable<Answer> {
+public class Answers {
     // FK는 Answer의 question 필드
     @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Answer> answers = new ArrayList<>();
@@ -29,11 +29,6 @@ public class Answers implements Iterable<Answer> {
 
     public List<Answer> getAnswers() {
         return Collections.unmodifiableList(answers);
-    }
-
-    @Override
-    public Iterator<Answer> iterator() {
-        return answers.iterator();
     }
 
     public void validateDeleteAnswer(User loginUser) throws CannotDeleteException {
