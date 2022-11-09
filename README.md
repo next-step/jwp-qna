@@ -209,15 +209,15 @@ alter table question
 - [x] manyToOne FetchType타입 Lazy 설정
 - [x] question - answer 양방향 연관관계 설정
 - [x] question 조회시 연관된 answer oneToMany 조회
-- [ ] question 삭제
-  - [ ] question 작성자와 로그인 사용자 검증
-  - [ ] question 상태변경
-  - [ ] DeleteHistory 리턴
-- [ ] answers 삭제
-  - [ ] answer 작성자와 로그인 사용자 검증
-  - [ ] answer 상태 변경
-  - [ ] DeleteHistory 리턴
-- [ ] DeleteHistory를 저장한다.
+- [x] question 삭제
+  - [x] question 작성자와 로그인 사용자 검증
+  - [x] question 상태변경
+  - [x] DeleteHistory 리턴
+- [x] answers 삭제
+  - [x] answer 작성자와 로그인 사용자 검증
+  - [x] answer 상태 변경
+  - [x] DeleteHistory 리턴
+- [x] DeleteHistory를 저장한다.
 - [x] DeleteHistories 일글 컬랙션 생성
 - [x] Answers 일급 컬랙션 생성
 
