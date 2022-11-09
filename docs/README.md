@@ -69,3 +69,68 @@ alter table user
 - [x] Question 엔티티 클래스 작성
 - [x] User 엔티티 클래스 작성
 - [x] @DataJpaTest를 엔티티 및 레포지토리 테스트
+
+<br/>
+<hr/>
+
+## 2단계 - 연관 관계 매핑
+### 요구사항
+- 객체의 참조와 테이블의 외래 키를 매핑해서 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+**H2**
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+```
+
+**MySql**
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question (id)
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user (id)
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user (id)
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user (id)
+```
+
+### 구현 기능 목록
+- [x] 엔티티 클래스 연관 관계 매핑
+  - [x] Answer
+  - [x] Question
+  - [x] DeleteHistory
+- [x] 테스트 코드 통과 하도록 수정
+  - [x] AnswerTest
+  - [x] QuestionTest
+  - [x] DeleteHistoryTest
+- [x] 엔티티 클래스 setId 삭제
+- [x] User 엔티티 클래스 equals 추가
