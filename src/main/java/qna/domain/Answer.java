@@ -12,10 +12,10 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
     private String contents;
@@ -45,7 +45,7 @@ public class Answer extends BaseEntity {
         setQuestion(question);
     }
 
-    private void setQuestion(Question question){
+    private void setQuestion(Question question) {
         if (Objects.isNull(this.question)) {
             question.addAnswer(this);
         }
@@ -55,10 +55,6 @@ public class Answer extends BaseEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
     }
 
     public Long getId() {
@@ -81,10 +77,12 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public void delete() {
-        // Todo: DeleteHistory 추가
+    public DeleteHistory delete() {
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, this.writer);
+
     }
+
     @Override
     public String toString() {
         return "Answer{" +

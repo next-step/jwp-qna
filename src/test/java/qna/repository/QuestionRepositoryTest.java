@@ -1,6 +1,7 @@
 package qna.repository;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
+import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
@@ -24,6 +26,10 @@ public class QuestionRepositoryTest {
     UserRepository userRepository;
     @Autowired
     AnswerRepository answerRepository;
+    @Autowired
+    DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    EntityManager entityManager;
     public User writer;
     public Question saveQuestion;
 
@@ -60,24 +66,35 @@ public class QuestionRepositoryTest {
         Question updateQuestion = saveQuestion.writeBy(otherWriter);
         assertAll(
                 () -> assertEquals(updateQuestion.getWriter(), otherWriter),
-                () -> assertEquals(questionRepository.findById(updateQuestion.getId()).orElse(null).getWriter(), otherWriter)
+                () -> assertEquals(questionRepository.findById(updateQuestion.getId()).orElse(null).getWriter(),
+                        otherWriter)
         );
     }
 
     @DisplayName("질문삭제시 답변도 삭제 검증")
     @Test
     void deleted_test() {
-        answerRepository.save(new Answer(1L,writer, saveQuestion, "Answers test"));
-        //Todo : 관계 설명 문제로 인해 자식객체가 포함되는 경우 delete 에러 발생
-        questionRepository.delete(saveQuestion);
+        new Answer(writer, saveQuestion, "Answers test");
+        Question question = questionRepository.save(saveQuestion);
+        flush();
+
+        questionRepository.delete(question);
         assertThat(answerRepository.findById(1L)).isEmpty();
     }
 
     @Test
     @DisplayName("question 삭제 상태변경 검증")
     void question_set_delete() {
-        saveQuestion.delete();
+        DeleteHistory deleteHistory = saveQuestion.delete();
+        deleteHistoryRepository.save(deleteHistory);
+
         Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
+        Assertions.assertThat(deleteHistoryRepository.findByDeletedBy(writer)).isNotEmpty();
+    }
+
+    void flush() {
+        entityManager.flush();
+        entityManager.clear();
     }
 
 }

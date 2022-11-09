@@ -17,7 +17,7 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = { CascadeType.ALL})
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private final List<Answer> answers = new ArrayList<>();
     @Column(nullable = false)
     private boolean deleted = false;
@@ -48,7 +48,6 @@ public class Question extends BaseEntity {
         if (!answers.contains(answer)) {
             answers.add(answer);
         }
-        answer.toQuestion(this);
     }
 
     public Long getId() {
@@ -68,14 +67,14 @@ public class Question extends BaseEntity {
     }
 
     public void removeAnswer(Answer answer) {
-        if(answers.contains(answer)) {
+        if (answers.contains(answer)) {
             this.answers.remove(answer);
         }
     }
 
-    public void delete() {
-        // Todo: DeleteHistory 추가
+    public DeleteHistory delete() {
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, this.writer);
     }
 
     @Override
