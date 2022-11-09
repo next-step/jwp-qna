@@ -34,10 +34,6 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "question_id")
-//    private final List<Answer> answers = new ArrayList<>();
-
     @Embedded
     private Answers answers = new Answers();
 

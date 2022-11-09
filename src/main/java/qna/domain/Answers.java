@@ -20,7 +20,6 @@ public class Answers {
             cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
     }
@@ -37,7 +36,4 @@ public class Answers {
                 .collect(Collectors.toList());
     }
 
-    public void clear() {
-        answers.clear();
-    }
 }
