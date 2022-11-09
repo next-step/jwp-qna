@@ -89,7 +89,7 @@ class UserRepositoryTest {
     }
 
     private User getUser(Long id, String userId, String password, String name, String email) {
-        return new User(id, new UserId(userId), new Password(password), new Name(name), new Email(email));
+        return new User(id, new UserId(userId, users), new Password(password), new Name(name), new Email(email));
     }
 
     private void flushAndClear() {
