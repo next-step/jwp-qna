@@ -22,5 +22,5 @@
 * [x] 답변자와 질문자가 모두 같다면 Question 과  Answer 의 삭제 상태를 모두 true 로 변경
 * [x] Question 과 Answer 의 삭제 이력을 DeleteHistory 를 활용해 남김
 ### (수정사항)질문 삭제하기 리팩터링
-* [ ] QnaService 에서 User 엔티티 영속성 보장을 위해 userId를 받아 엔티티를 생성하도록 수정
+* [x] QnaService 에서 User 엔티티 영속성 보장을 위해 userId를 받아 엔티티를 생성하도록 수정
 * [ ] 포장객체 생성의 의도를 명확히 알 수 있도록 수정

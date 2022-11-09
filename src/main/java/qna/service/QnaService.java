@@ -1,5 +1,6 @@
 package qna.service;
 
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -7,22 +8,23 @@ import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.question.Question;
-import qna.domain.repository.AnswerRepository;
 import qna.domain.repository.QuestionRepository;
+import qna.domain.repository.UserRepository;
 import qna.domain.user.User;
+import qna.domain.user.userid.UserId;
 
 @Service
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
+    private UserRepository userRepository;
     private DeleteHistoryService deleteHistoryService;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository,
+    public QnaService(QuestionRepository questionRepository, UserRepository userRepository,
                       DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
+        this.userRepository = userRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
 
@@ -33,8 +35,9 @@ public class QnaService {
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+    public void deleteQuestion(String userId, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-        deleteHistoryService.saveAll(question.delete(loginUser));
+        Optional<User> findUser = userRepository.findByUserId(new UserId(userId));
+        deleteHistoryService.saveAll(question.delete(findUser.orElseThrow(NotFoundException::new)));
     }
 }
