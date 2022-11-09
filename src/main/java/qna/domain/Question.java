@@ -71,22 +71,6 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public User getWriter() {
-        return this.writer;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return this.answers;
-    }
-
     public DeleteHistories delete(User loginUser) {
         validateIsOwner(loginUser);
         this.deleted = true;
@@ -102,6 +86,22 @@ public class Question extends BaseEntity {
         if (isNotOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getWriter() {
+        return this.writer;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
     }
 
     @Override
