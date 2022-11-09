@@ -11,7 +11,7 @@ public class Question extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @Column(nullable = false, columnDefinition = "varchar(100)")
+    @Column(nullable = false, length = 100)
     private String title;
     @Lob
     private String contents;
