@@ -12,8 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.common.ErrorMessage;
 
 @Entity
 @Table
@@ -39,12 +41,14 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+        validWriteAnswer(writer, question);
+
+        this.writer = writer;
+        this.question = question;
+        this.contents = contents;
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
+    private static void validWriteAnswer(User writer, Question question) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -52,18 +56,30 @@ public class Answer extends BaseTimeEntity {
         if (Objects.isNull(question)) {
             throw new NotFoundException();
         }
-
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public DeleteHistory delete(User loginUser) {
+        validWriter(loginUser);
+        this.deleted = true;
+        return DeleteHistory.answerOf(this.id, loginUser);
     }
 
-    public void toQuestion(Question question) {
+    private void validWriter(User loginUser) {
+        if (writer.isNotWriter(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.WRITTEN_BY_SOMEONE_ELSE_ANSWER);
+        }
+    }
+
+    public void addQuestion(Question question) {
         this.question = question;
+    }
+
+    public void changeQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            question.removeAnswer(this);
+        }
+        this.question = question;
+        question.addAnswer(this);
     }
 
     public Long getId() {
@@ -82,8 +98,8 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
+    public boolean isNotDeleted() {
+        return !deleted;
     }
 
     @Override
@@ -98,7 +114,6 @@ public class Answer extends BaseTimeEntity {
         return deleted == answer.deleted
                 && Objects.equals(id, answer.id)
                 && Objects.equals(writer, answer.writer)
-                && Objects.equals(question, answer.question)
                 && Objects.equals(contents, answer.contents);
     }
 

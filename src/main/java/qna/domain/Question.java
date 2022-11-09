@@ -1,9 +1,9 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -13,8 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
+import qna.common.ErrorMessage;
 
 @Entity
 @Table
@@ -28,6 +29,9 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
+    @Embedded
+    private final Answers answers = new Answers();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
@@ -35,18 +39,10 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
-
     protected Question() {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
         this.title = title;
         this.contents = contents;
     }
@@ -56,13 +52,44 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public DeleteHistories delete(User loginUser) {
+        validDeleted();
+        validWriter(loginUser);
+        DeleteHistory questionDeleteHistory = deleteQuestion(loginUser);
+
+        if (answers.isEmpty()) {
+            return DeleteHistories.of(questionDeleteHistory);
+        }
+
+        DeleteHistories deleteHistories = answers.delete(loginUser);
+        deleteHistories.add(questionDeleteHistory);
+        return deleteHistories;
+    }
+
+    private void validDeleted() {
+        if (isDeleted()) {
+            throw new IllegalStateException(ErrorMessage.ALREADY_DELETED);
+        }
+    }
+
+    private void validWriter(User loginUser) {
+        if (writer.isNotWriter(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.NOT_PERMISSION_DELETE_QUESTION);
+        }
+    }
+
+    private DeleteHistory deleteQuestion(User loginUser) {
+        this.deleted = true;
+        return DeleteHistory.questionOf(this.getId(), loginUser);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-        answers.add(answer);
+        answers.addAnswer(answer);
+        answer.addQuestion(this);
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
     }
 
     public Long getId() {
@@ -73,16 +100,12 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
     public User getWriter() {
         return writer;
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.getAnswers();
     }
 
     @Override

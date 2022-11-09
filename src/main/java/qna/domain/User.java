@@ -2,12 +2,12 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import qna.UnAuthorizedException;
 
 @Entity
 @Table
@@ -17,11 +17,8 @@ public class User extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", unique = true, nullable = false, length = 20)
-    private String userId;
-
-    @Column(nullable = false, length = 20)
-    private String password;
+    @Embedded
+    private UserAuth userAuth;
 
     @Column(nullable = false, length = 20)
     private String name;
@@ -32,37 +29,17 @@ public class User extends BaseTimeEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(null, userId, password, name, email);
-    }
-
-    public User(Long id, String userId, String password, String name, String email) {
-        this.id = id;
-        this.userId = userId;
-        this.password = password;
+    public User(UserAuth userAuth, String name, String email) {
+        this.userAuth = userAuth;
         this.name = name;
         this.email = email;
     }
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
-        }
+    public void update(User login, User target) {
+        userAuth.validUpdate(login.userAuth, target.userAuth);
 
         this.name = target.name;
         this.email = target.email;
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -74,16 +51,16 @@ public class User extends BaseTimeEntity {
                 email.equals(target.email);
     }
 
+    public boolean isNotWriter(User loginUser) {
+        return !this.equals(loginUser);
+    }
+
     public boolean isGuestUser() {
         return false;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public String getUserId() {
-        return userId;
     }
 
     public String getName() {
@@ -100,26 +77,14 @@ public class User extends BaseTimeEntity {
         }
         User user = (User) o;
         return Objects.equals(id, user.id)
-                && Objects.equals(userId, user.userId)
-                && Objects.equals(password, user.password)
+                && Objects.equals(userAuth, user.userAuth)
                 && Objects.equals(name, user.name)
                 && Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return Objects.hash(id, userAuth, name, email);
     }
 
     private static class GuestUser extends User {

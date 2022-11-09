@@ -19,7 +19,8 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User deletedBy = new User("user", "password", "name", "email@email.com");
+        UserAuth userAuth = new UserAuth("user", "password");
+        User deletedBy = new User(userAuth, "name", "email@email.com");
         questionHistory = new DeleteHistory(ContentType.QUESTION, 1L, deletedBy);
         answerHistory = new DeleteHistory(ContentType.ANSWER, 1L, deletedBy);
     }
