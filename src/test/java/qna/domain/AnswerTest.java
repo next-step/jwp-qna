@@ -31,7 +31,6 @@ public class AnswerTest {
     @MethodSource("answerTestFixture")
     void save_테스트(Answer answer) {
         Answer saved = answers.save(answer);
-        assertThat(saved).isEqualTo(answer);
         assertThat(saved.getContents()).isEqualTo(answer.getContents());
         assertThat(saved.getCreatedAt()).isNotNull();
     }
