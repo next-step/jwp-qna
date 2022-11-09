@@ -64,7 +64,7 @@ public class AnswerTest {
             final List<Answer> foundAnswers =
                     answerRepository.findByQuestionIdAndDeletedFalse(savedQuestions.get(0).getId());
             assertAll(
-                    () -> assertThat(foundAnswers.size()).isEqualTo(1),
+                    () -> assertThat(foundAnswers).hasSize(1),
                     () -> assertThat(foundAnswers.stream().noneMatch(Answer::isDeleted)).isTrue()
             );
         }

@@ -54,8 +54,8 @@ public class QuestionTest {
         void findByDeletedFalse() {
             final List<Question> foundQuestions = questionRepository.findByDeletedFalse();
             assertAll(
-                    () -> assertThat(foundQuestions.size())
-                            .isEqualTo((int) savedQuestions.stream().filter(x -> !x.isDeleted()).count()),
+                    () -> assertThat(foundQuestions)
+                            .hasSize((int) savedQuestions.stream().filter(x -> !x.isDeleted()).count()),
                     () -> assertThat(foundQuestions.stream().noneMatch(Question::isDeleted)).isTrue()
             );
         }
