@@ -12,16 +12,16 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "question_id")
-    private Question question;
 
     protected Answer() {
     }
@@ -59,7 +59,7 @@ public class Answer extends BaseEntity {
     }
 
     public User getWriter() {
-        return this.writer;
+        return writer;
     }
 
     public Question getQuestion() {
@@ -74,7 +74,8 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 
