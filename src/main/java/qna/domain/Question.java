@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.NotFoundException;
+
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -41,6 +43,9 @@ public class Question extends TimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (deleted) {
+            throw new NotFoundException();
+        }
         answer.toQuestion(this);
     }
 

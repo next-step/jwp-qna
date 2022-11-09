@@ -1,11 +1,14 @@
 package qna.domain;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import qna.NotFoundException;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -67,6 +70,15 @@ public class QuestionTest {
         questions.delete(newQuestion);
         Optional<Question> questionsById = questions.findById(question.getId());
         assertThat(questionsById.isPresent()).isFalse();
+    }
+
+    @Test
+    void 삭제된_질문에_답변을_달수_없다() {
+        Question newQuestion = questions.save(Q1);
+        newQuestion.setDeleted(true);
+        Question question = questions.save(newQuestion);
+        Assertions.assertThatThrownBy(() -> question.addAnswer(A1))
+            .isInstanceOf(NotFoundException.class);
     }
 
     static Stream<Question> questionTestFixture() {
