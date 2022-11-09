@@ -1,10 +1,13 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
+
+import static qna.constant.ErrorMessage.NOT_QUESTION_DELETE_WRITE_OTHER_USER;
 
 @Entity
 public class Answer extends BaseTime {
@@ -36,17 +39,30 @@ public class Answer extends BaseTime {
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+        validationAuthorized(writer);
+        validationNotFounded(question);
 
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+    }
+
+    private void validationAuthorized(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    private void validationNotFounded(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    public void isSameOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_QUESTION_DELETE_WRITE_OTHER_USER);
+        }
     }
 
     public boolean isOwner(User writer) {
@@ -107,4 +123,5 @@ public class Answer extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

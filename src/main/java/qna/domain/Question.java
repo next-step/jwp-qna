@@ -51,28 +51,12 @@ public class Question extends BaseTime {
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
-        validationDeleteRequestUser(loginUser);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException(NOT_QUESTION_DELETE_WRITE_OTHER_USER);
-            }
-        }
+        validationDeleteQuestionRequestUser(loginUser);
+        validationDeleteAnswersRequestUser(loginUser);
+
         setDeleted(true);
 
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-
-        return deleteHistories;
-    }
-
-    private void validationDeleteRequestUser(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(NOT_QUESTION_DELETE_NO_PERMISSION);
-        }
+        return generateDeleteHistories();
     }
 
     public boolean isOwner(User writer) {
@@ -91,6 +75,28 @@ public class Question extends BaseTime {
             }
         }
         return true;
+    }
+
+    private void validationDeleteQuestionRequestUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_QUESTION_DELETE_NO_PERMISSION);
+        }
+    }
+
+    private void validationDeleteAnswersRequestUser(User loginUser) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            answer.isSameOwner(loginUser);
+        }
+    }
+
+    private DeleteHistories generateDeleteHistories() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        return deleteHistories;
     }
 
     public Long getId() {
