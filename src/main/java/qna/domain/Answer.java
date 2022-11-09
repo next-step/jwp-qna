@@ -4,13 +4,12 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class Answer {
+public class Answer extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -18,10 +17,6 @@ public class Answer {
     private Long questionId;
     @Lob
     private String contents;
-    @Column(nullable = false, columnDefinition = "datetime(6)")
-    private LocalDateTime createdAt = LocalDateTime.now();
-    @Column(columnDefinition = "datetime(6)")
-    private LocalDateTime updatedAt;
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
 

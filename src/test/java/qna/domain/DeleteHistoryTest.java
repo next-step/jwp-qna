@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@EnableJpaAuditing
 class DeleteHistoryTest {
 
     public static final DeleteHistory DH1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
@@ -22,8 +24,9 @@ class DeleteHistoryTest {
     @ParameterizedTest(name = "save_테스트")
     @MethodSource("saveTestFixture")
     void save_테스트(DeleteHistory deleteHistory) {
-        DeleteHistory history1 = deleteHistories.save(deleteHistory);
-        assertThat(history1).isEqualTo(deleteHistory);
+        DeleteHistory saved = deleteHistories.save(deleteHistory);
+        assertThat(saved).isEqualTo(deleteHistory);
+        assertThat(saved.getCreateDate()).isNotNull();
     }
 
     @ParameterizedTest(name = "save_후_findById_테스트")

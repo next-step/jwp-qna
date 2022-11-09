@@ -4,12 +4,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@EnableJpaAuditing
 public class QuestionTest {
     private static final String TITLE_1 = "title1";
     private static final String TITLE_2 = "title2";
@@ -30,6 +32,7 @@ public class QuestionTest {
         Question saved = questions.save(question);
         assertThat(saved).isEqualTo(question);
         assertThat(saved.getContents()).isEqualTo(question.getContents());
+        assertThat(saved.getCreatedAt()).isNotNull();
     }
 
     @ParameterizedTest(name = "save_후_findById_테스트")

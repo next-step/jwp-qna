@@ -2,12 +2,10 @@ package qna.domain;
 
 import javax.persistence.*;
 
-import java.time.LocalDateTime;
-
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class Question {
+public class Question extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -16,10 +14,6 @@ public class Question {
     @Lob
     private String contents;
     private Long writerId;
-    @Column(nullable = false, columnDefinition = "datetime(6)")
-    private LocalDateTime createdAt = LocalDateTime.now();
-    @Column(columnDefinition = "datetime(6)")
-    private LocalDateTime updatedAt;
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
 

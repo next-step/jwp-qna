@@ -9,7 +9,7 @@ import java.util.Objects;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class User {
+public class User extends TimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
@@ -23,10 +23,6 @@ public class User {
     private String name;
     @Column(columnDefinition = "varchar(50)")
     private String email;
-    @Column(nullable = false, columnDefinition = "datetime(6)")
-    private LocalDateTime createdAt = LocalDateTime.now();
-    @Column(columnDefinition = "datetime(6)")
-    private LocalDateTime updatedAt;
 
     protected User() {
     }
