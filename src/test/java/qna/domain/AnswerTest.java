@@ -12,7 +12,6 @@ public class AnswerTest {
     public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
-
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -23,6 +22,19 @@ public class AnswerTest {
         assertAll(
                 () -> assertThat(answer).isNotNull(),
                 () -> assertThat(answer.getId()).isNotNull()
+        );
+    }
+
+    @Test
+    void findById() {
+        Long expcted = UserTest.JAVAJIGI.getId();
+
+        answerRepository.save(A1);
+
+        Answer answer = answerRepository.findById(1L).get();
+
+        assertAll(
+                () -> assertThat(answer.getId()).isEqualTo(expcted)
         );
     }
 }
