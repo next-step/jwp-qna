@@ -69,8 +69,8 @@ alter table user
 - [x] Enable JPA Audit in Application 
 - [ ] Answer Entity
 - [ ] Answer Test (CRUD)
-- [ ] DeleteHistory Entity
-- [ ] DeleteHistory Test(CRUD)
+- [x] DeleteHistory Entity
+- [ ] ~~DeleteHistory Test(CRUD)~~
 - [x] Question Entity
 - [x] Question Test(CRUD)
 - [x] User Entity
