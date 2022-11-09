@@ -71,11 +71,11 @@ public class DeleteHistoryRepositoryTest {
         List<DeleteHistory> historiesByUser = user.getDeleteHistories();
 
         //then
-        assertThat(histories.size()).isEqualTo(3);
+        assertThat(histories).hasSize(3);
         assertThat(histories).containsExactly(
                 history1, history2, history3
         );
-        assertThat(historiesByUser.size()).isEqualTo(3);
+        assertThat(historiesByUser).hasSize(3);
         assertThat(histories).isEqualTo(historiesByUser);
     }
 }

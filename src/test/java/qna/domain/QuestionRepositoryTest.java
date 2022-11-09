@@ -78,7 +78,7 @@ public class QuestionRepositoryTest {
         List<Question> questionList = questionRepository.findByDeletedFalse();
 
         assertThat(questionList).isNotNull();
-        assertThat(questionList.size()).isEqualTo(3);
+        assertThat(questionList).hasSize(3);
     }
 
     @Test
