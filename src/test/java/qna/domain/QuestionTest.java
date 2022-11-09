@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,6 +58,15 @@ public class QuestionTest {
         newQuestion.addAnswer(answer);
         Answer linkAnswer = answers.save(answer);
         assertThat(linkAnswer.getQuestionId()).isEqualTo(newQuestion.getId());
+    }
+
+    @ParameterizedTest(name = "save_후_delete_테스트")
+    @MethodSource("questionTestFixture")
+    void save_후_delete_테스트(Question question) {
+        Question newQuestion = questions.save(question);
+        questions.delete(newQuestion);
+        Optional<Question> questionsById = questions.findById(question.getId());
+        assertThat(questionsById.isPresent()).isFalse();
     }
 
     static Stream<Question> questionTestFixture() {
