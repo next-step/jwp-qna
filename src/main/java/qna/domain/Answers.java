@@ -11,20 +11,20 @@ import javax.persistence.OneToMany;
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private final List<Answer> answerList = new ArrayList<>();
+    private final List<Answer> values = new ArrayList<>();
 
     public void add(final Answer answer) {
-        this.answerList.add(answer);
+        this.values.add(answer);
     }
 
     public List<DeleteHistory> deleteAll(final User user) {
-        return this.answerList.stream()
+        return this.values.stream()
                 .filter(answer -> !answer.isDeleted())
                 .map(answer -> answer.delete(user))
                 .collect(Collectors.toList());
     }
 
     public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(this.answerList);
+        return Collections.unmodifiableList(this.values);
     }
 }
