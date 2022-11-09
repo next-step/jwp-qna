@@ -107,4 +107,14 @@ class QuestionRepositoryTest {
         assertThat(actualAnswer.isDeleted()).isTrue();
         assertThat(deleteHistories).hasSize(2);
     }
+
+    @Test
+    void 질문_삭제() {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        question.delete(user);
+        testEntityManager.flush();
+        testEntityManager.clear();
+        Question actual = questionRepository.findById(question.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
+    }
 }
