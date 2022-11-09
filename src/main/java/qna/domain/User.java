@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import qna.exceptions.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,11 +29,11 @@ public class User extends BaseCreatedAndUpdatedAt {
     @Column(length = 20, nullable = false)
     private String userId;
     @OneToMany(targetEntity = Answer.class, mappedBy = "writer", fetch = FetchType.LAZY)
-    private List<Answer> answers;
+    private final List<Answer> answers = new ArrayList<>();
     @OneToMany(targetEntity = Question.class, mappedBy = "writer", fetch = FetchType.LAZY)
-    private List<Question> questions;
+    private final List<Question> questions = new ArrayList<>();
     @OneToMany(targetEntity = DeleteHistory.class, mappedBy = "deletedBy", fetch = FetchType.LAZY)
-    private List<DeleteHistory> deleteHistories;
+    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);

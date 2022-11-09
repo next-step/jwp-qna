@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,7 @@ public class Question extends BaseCreatedAndUpdatedAt {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers;
+    private final List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
