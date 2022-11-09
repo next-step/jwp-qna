@@ -80,6 +80,11 @@ public class Answer extends BaseEntity {
     public Question getQuestion() {
         return question;
     }
+
+    public void delete() {
+        // Todo: DeleteHistory 추가
+        this.deleted = true;
+    }
     @Override
     public String toString() {
         return "Answer{" +
@@ -109,4 +114,6 @@ public class Answer extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
     }
+
+
 }

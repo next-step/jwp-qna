@@ -76,6 +76,14 @@ public class AnswerRepositoryTest {
         assertThat(Hibernate.isInitialized(dbQuestion)).isFalse();
     }
 
+    @Test
+    @DisplayName("answer 삭제 상태변경 검증")
+    void answer_set_delete() {
+        Answer answerTest = answerRepository.save(answer);
+        answerTest.delete();
+        assertThat(answerTest.isDeleted()).isTrue();
+    }
+
     void flush(){
         entityManager.flush();
         entityManager.clear();

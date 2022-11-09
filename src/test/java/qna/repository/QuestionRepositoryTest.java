@@ -1,7 +1,6 @@
 package qna.repository;
 
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserTest;
 
@@ -26,15 +24,13 @@ public class QuestionRepositoryTest {
     UserRepository userRepository;
     @Autowired
     AnswerRepository answerRepository;
-    @Autowired
-    EntityManager entityManager;
     public User writer;
     public Question saveQuestion;
 
     @BeforeEach
     void setUp() {
         writer = userRepository.save(UserTest.TESTER);
-        Question question = QuestionTest.Q1.writeBy(writer);
+        Question question = new Question("title", "contents").writeBy(writer);
         saveQuestion = questionRepository.save(question);
     }
 
@@ -71,17 +67,17 @@ public class QuestionRepositoryTest {
     @DisplayName("질문삭제시 답변도 삭제 검증")
     @Test
     void deleted_test() {
-        User tester = userRepository.save(UserTest.TESTER);
-        Question question = questionRepository.save(QuestionTest.testerQuestion);
-        //answerRepository.save(new Answer(1L,tester, question, "Answers test"));
+        answerRepository.save(new Answer(1L,writer, saveQuestion, "Answers test"));
         //Todo : 관계 설명 문제로 인해 자식객체가 포함되는 경우 delete 에러 발생
-        questionRepository.delete(question);
+        questionRepository.delete(saveQuestion);
         assertThat(answerRepository.findById(1L)).isEmpty();
     }
 
-    void flush(){
-        entityManager.flush();
-        entityManager.clear();
+    @Test
+    @DisplayName("question 삭제 상태변경 검증")
+    void question_set_delete() {
+        saveQuestion.delete();
+        Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
     }
 
 }
