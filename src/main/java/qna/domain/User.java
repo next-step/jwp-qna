@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "user")
 public class User extends BaseTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -15,7 +14,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(unique = true, nullable = false, length = 20)
     private String userId;
 
     @Column(nullable = false, length = 20)

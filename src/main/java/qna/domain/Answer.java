@@ -9,7 +9,6 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answer")
 public class Answer extends BaseTimeEntity {
 
     @Id

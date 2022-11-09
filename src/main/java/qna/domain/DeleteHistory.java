@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "deleteHistory")
 public class DeleteHistory {
 
     @Id

@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "question")
 public class Question extends BaseTimeEntity {
 
     @Id
