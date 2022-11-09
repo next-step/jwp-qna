@@ -1,9 +1,12 @@
-package qna.domain;
+package qna.domain.answer;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.BaseEntity;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -18,12 +21,12 @@ public class Answer extends BaseEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
     @Column(name = "contents")
@@ -62,11 +65,12 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        if (Objects.nonNull(question)) {
-            question.getAnswers().remove(this);
-        }
         this.question = question;
-        question.getAnswers().add(this);
+
+        if (!question.isContainAnswer(this)) {
+            // question이 answer을 중복해서 가지지 않도록
+            question.addAnswer(this);
+        }
     }
 
     public Long getId() {
