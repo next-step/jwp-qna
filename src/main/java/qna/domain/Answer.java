@@ -3,13 +3,21 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class Answer {
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class Answer extends TimeEntity {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private Long writerId;
     private Long questionId;
+    @Lob
     private String contents;
+    @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
 
     public Answer(User writer, Question question, String contents) {
@@ -30,6 +38,10 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+    }
+
+    protected Answer() {
+
     }
 
     public boolean isOwner(User writer) {
@@ -78,6 +90,19 @@ public class Answer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

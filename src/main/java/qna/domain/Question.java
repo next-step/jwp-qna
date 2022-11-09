@@ -1,10 +1,22 @@
 package qna.domain;
 
-public class Question {
+import qna.NotFoundException;
+
+import javax.persistence.*;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class Question extends TimeEntity {
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Column(nullable = false, length = 100)
     private String title;
+    @Lob
     private String contents;
     private Long writerId;
+    @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
 
     public Question(String title, String contents) {
@@ -17,6 +29,10 @@ public class Question {
         this.contents = contents;
     }
 
+    protected Question() {
+
+    }
+
     public Question writeBy(User writer) {
         this.writerId = writer.getId();
         return this;
@@ -27,6 +43,9 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
+        if (deleted) {
+            throw new NotFoundException();
+        }
         answer.toQuestion(this);
     }
 
