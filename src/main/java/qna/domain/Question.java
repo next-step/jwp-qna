@@ -4,6 +4,8 @@ import qna.exception.CannotDeleteException;
 import qna.exception.type.QuestionExceptionType;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +25,9 @@ public class Question extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -88,10 +93,25 @@ public class Question extends BaseTimeEntity {
         return Objects.hash(id, title, contents, writer, deleted);
     }
 
-    public void delete(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         validCheckDeleteQuestion(loginUser);
-
         this.deleted = true;
+
+        return deleteHistories(this, loginUser);
+    }
+
+    private List<DeleteHistory> deleteHistories(Question question, User loginUser) {
+        DeleteHistory deleteHistory = DeleteHistory.of(ContentType.QUESTION, question);
+        List<DeleteHistory> deleteHistories = answers.delete(loginUser);
+
+        return makeCombineHistories(deleteHistories, deleteHistory);
+    }
+
+    private List<DeleteHistory> makeCombineHistories(List<DeleteHistory> deleteHistories, DeleteHistory deleteHistory) {
+        List<DeleteHistory> combineHistory = new ArrayList<>(deleteHistories);
+        combineHistory.add(deleteHistory);
+
+        return combineHistory;
     }
 
     private void validCheckDeleteQuestion(User loginUser) {

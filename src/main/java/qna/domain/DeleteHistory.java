@@ -28,11 +28,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
-        this.createDate = createDate;
+    }
+
+    public static DeleteHistory of(ContentType type, Question question) {
+        return new DeleteHistory(type, question.getId(), question.getWriter());
     }
 
     @Override
