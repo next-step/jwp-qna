@@ -2,7 +2,6 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,13 +27,13 @@ public class AnswerTest {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 
         assertThatThrownBy(() -> answer.delete(UserTest.SANJIGI))
-                .isInstanceOf(CannotDeleteException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("답변을 삭제할 권한이 없습니다.");
     }
 
     @Test
     @DisplayName("답변삭제하면 삭제여부 true로반환")
-    public void test_returns_true_when_delete() throws CannotDeleteException {
+    public void test_returns_true_when_delete() {
         Answer answer = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
 
         answer.delete(UserTest.JAVAJIGI);

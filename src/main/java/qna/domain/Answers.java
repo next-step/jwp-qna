@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -45,12 +43,12 @@ public class Answers {
         return deleteHistories;
     }
 
-    public void deleteAllAnswer(User writer) throws CannotDeleteException {
+    public void deleteAllAnswer(User writer) {
         boolean isAllSameWriter = answers
                 .stream()
                 .allMatch(answer -> answer.isOwner(writer));
         if (!isAllSameWriter) {
-            throw new CannotDeleteException(OTHER_WRITER_MESSAGE);
+            throw new RuntimeException(OTHER_WRITER_MESSAGE);
         }
         for (Answer answer : answers) {
             answer.delete(writer);

@@ -2,7 +2,6 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,7 +36,7 @@ public class AnswersTest {
         answers.addAnswer(new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents2"));
 
         assertThatThrownBy(() -> answers.deleteAllAnswer(UserTest.SANJIGI))
-                .isInstanceOf(CannotDeleteException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 

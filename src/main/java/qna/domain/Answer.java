@@ -1,6 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -46,9 +45,9 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    private void validateOwner(User writer) throws CannotDeleteException {
+    private void validateOwner(User writer) {
         if (!isOwner(writer)) {
-            throw new CannotDeleteException(NONE_AUTH_DELETE);
+            throw new RuntimeException(NONE_AUTH_DELETE);
         }
     }
 
@@ -76,13 +75,10 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        if (this.writer.equals(writer)) {
-            return true;
-        }
-        return false;
+        return this.writer.equals(writer);
     }
 
-    public void delete(User writer) throws CannotDeleteException {
+    public void delete(User writer) {
         validateOwner(writer);
         this.deleted = true;
     }

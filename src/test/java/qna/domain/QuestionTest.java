@@ -2,7 +2,6 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 
@@ -20,13 +19,13 @@ public class QuestionTest {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
         assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
-                .isInstanceOf(CannotDeleteException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 
     @Test
     @DisplayName("질문삭제하면 삭제필드에서 true를 반환")
-    public void test_returns_true_when_delete() throws CannotDeleteException {
+    public void test_returns_true_when_delete() {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
         question.delete(UserTest.JAVAJIGI);
@@ -36,17 +35,17 @@ public class QuestionTest {
 
     @Test
     @DisplayName("삭제안된 질문에서 삭제이력조회하면 예외발생")
-    public void test_throw_exception_when_gethistories() throws CannotDeleteException {
+    public void test_throw_exception_when_gethistories() {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
-        assertThatThrownBy(() -> question.getDeleteHistories())
+        assertThatThrownBy(question::getDeleteHistories)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("삭제된 질문만 허용합니다");
     }
 
     @Test
     @DisplayName("삭제된질문에서 삭제이력조회")
-    public void test_returns_history_when_delete() throws CannotDeleteException {
+    public void test_returns_history_when_delete() {
         Question question = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
 
         question.delete(UserTest.JAVAJIGI);

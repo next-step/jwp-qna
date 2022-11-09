@@ -1,7 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,15 +40,15 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void delete(User writer) throws CannotDeleteException {
+    public void delete(User writer) {
         validateOwner(writer);
         this.deleted = true;
         this.answers.deleteAllAnswer(writer);
     }
 
-    private void validateOwner(User writer) throws CannotDeleteException {
+    private void validateOwner(User writer) {
         if (!this.writer.equals(writer)) {
-            throw new CannotDeleteException(NONE_AUTH_DELETE);
+            throw new RuntimeException(NONE_AUTH_DELETE);
         }
     }
 
