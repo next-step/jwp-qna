@@ -17,7 +17,6 @@ import java.util.Objects;
 @Entity
 public class Question extends BaseDateEntity{
     private static final int TITLE_LENGTH = 100;
-    private static final String SPACE = "";
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,7 +35,7 @@ public class Question extends BaseDateEntity{
     }
 
     public Question(Long id, String title, String contents) {
-        if (Objects.isNull(title) || SPACE.equals(title)) {
+        if (Objects.isNull(title) || title.isEmpty()) {
             throw new ForbiddenException();
         }
 
