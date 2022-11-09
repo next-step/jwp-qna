@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -31,7 +29,7 @@ class DeleteHistoryRepositoryTests {
     @Test
     @DisplayName("삭제 히스토리를 저장한다.")
     void save() {
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
+        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, 1L, user);
         DeleteHistory deleteHistory = deleteHistoryRepository.save(expected);
 
         assertThat(deleteHistory).isEqualTo(expected);
