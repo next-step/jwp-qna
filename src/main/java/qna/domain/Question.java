@@ -66,10 +66,6 @@ public class Question extends BaseTimeEntity {
     }
 
 
-    public void clearAnswers() {
-        answers.clear();
-    }
-
     public Long getId() {
         return id;
     }
@@ -120,13 +116,13 @@ public class Question extends BaseTimeEntity {
         deleteHistoryList.add(DeleteHistory.ofQuestion(id, writer));
     }
 
-    private void deleteAnswers(List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
+    private void deleteAnswers(List<DeleteHistory> deleteHistoryList) {
         deleteHistoryList.addAll(answers.delete());
     }
 
     @Override
     public String toString() {
-        return "=======> Question{" +
+        return "Question{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
                 ", title='" + title + '\'' +

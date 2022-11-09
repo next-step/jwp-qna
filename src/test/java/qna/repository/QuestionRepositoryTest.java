@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DisplayName("질문 테스트")
@@ -26,104 +27,75 @@ class QuestionRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-//    @PersistenceContext
-//    private EntityManager entityManager;
+    @Test
+    @DisplayName("질문 저장 확인")
+    void save() {
+        User questionWriter = save_user_1();
+        Question question = save_question_1(questionWriter);
+        Question savedQuestion = questionRepository.save(question);
 
-//    private User questionWriter;
-//    private User answerWriter;
-//    private Question question;
+        assertAll(
+                () -> assertThat(savedQuestion.getId()).isNotNull(),
+                () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
+                () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(savedQuestion).isEqualTo(question)
+        );
+        System.out.println(savedQuestion);
+    }
 
-//    private Answer answer;
+    @Test
+    @DisplayName("저장한 질문과 해당 질문이 같은지 확인")
+    void read() {
+        User questionWriter = save_user_1();
+        Question savedQuestion = save_question_1(questionWriter);
 
-//    @BeforeEach
-//    void init() {
-//        User user = new User(null, "userId", "password", "name", "email");
-//        questionWriter = userRepository.save(user);
-//        question = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
-//        answer = answerRepository.save(new Answer(questionWriter, question, "contents1"));
-//    }
+        Optional<Question> question = questionRepository.findById(savedQuestion.getId());
 
-//    @BeforeEach
-//    void clear() {
-//        answerRepository.deleteAllInBatch();
-//        questionRepository.deleteAllInBatch();
-//        userRepository.deleteAllInBatch();
-//    }
+        assertThat(savedQuestion).isEqualTo(question.get());
+        System.out.println(savedQuestion);
+    }
 
-    //    @Test
-//    @DisplayName("01_질문 저장 확인")
-//    void save() {
-//        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-//        Question question = QuestionTest.Q1.writeBy(questionWriter);
-//        Question savedQuestion = questionRepository.save(question);
-//
-//        assertAll(
-//                () -> assertThat(savedQuestion.getId()).isNotNull(),
-//                () -> assertThat(savedQuestion.getContents()).isEqualTo(question.getContents()),
-//                () -> assertThat(savedQuestion.getTitle()).isEqualTo(question.getTitle()),
-//                () -> assertThat(savedQuestion.getQuestionWriter()).isEqualTo(question.getQuestionWriter())
-//        );
-//        System.out.println(savedQuestion);
-//    }
-//
-//    @Test
-//    @DisplayName("02_저장한 질문과 해당 질문이 같은지 확인")
-//    void read() {
-//        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-//        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
-//
-//        Optional<Question> question = questionRepository.findById(savedQuestion.getId());
-//
-//        assertThat(savedQuestion).isEqualTo(question.get());
-//        System.out.println(savedQuestion);
-//    }
-//
-//    @Test
-//    @DisplayName("03_저장한 질문 내용 변경 시 내용 일치 여부 확인")
-//    void update() {
-//        System.out.println("------------------------>");
-//        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-//        System.out.println("------------------------>");
-//        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
-//        System.out.println("------------------------>");
-//        savedQuestion.setContents(QuestionTest.Q2.getContents());
-//        System.out.println("------------------------>");
-//
-//        Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
-//
-//        assertThat(savedQuestion.getContents()).isEqualTo(findQuestion.get().getContents());
-//        System.out.println(savedQuestion);
-//    }
-//
-//    @Test
-//    @DisplayName("저장한 질문 삭제 확인")
-//    void delete() {
-//        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-//        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
-//
-//        questionRepository.delete(savedQuestion);
-//
-//        Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
-//
-//        assertThat(findQuestion).isEmpty();
-//        assertThat(findQuestion).isNotPresent();
-//    }
-//
-//    @Test
-//    @DisplayName("질문 삭제 불가 확인")
-//    void question_cannot_deleted() {
-//        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-//        Question savedQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
-//        User user = userRepository.save(UserTest.SANJIGI);
-//
-//        assertThatThrownBy(() -> savedQuestion.delete(user))
-//                .isInstanceOf(CannotDeleteException.class);
-//
-//        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
-//
-//        assertThat(savedQuestion).isEqualTo(findQuestion.get());
-//    }
-//
+    @Test
+    @DisplayName("저장한 질문 내용 변경 시 내용 일치 여부 확인")
+    void update() {
+        User questionWriter = save_user_1();
+        Question savedQuestion = save_question_1(questionWriter);
+        savedQuestion.setContents("new Contents");
+
+        Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
+
+        assertThat(savedQuestion.getContents()).isEqualTo(findQuestion.get().getContents());
+    }
+
+    @Test
+    @DisplayName("저장한 질문 삭제 확인")
+    void delete() {
+        User questionWriter = save_user_1();
+        Question savedQuestion = save_question_1(questionWriter);
+
+        questionRepository.delete(savedQuestion);
+
+        Optional<Question> findQuestion = questionRepository.findById(savedQuestion.getId());
+
+        assertThat(findQuestion).isEmpty();
+        assertThat(findQuestion).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("질문 삭제 불가 확인")
+    void question_cannot_deleted() {
+        User questionWriter = save_user_1();
+        Question savedQuestion = save_question_1(questionWriter);
+        User user = save_user_2();
+
+        assertThatThrownBy(() -> savedQuestion.delete(user))
+                .isInstanceOf(CannotDeleteException.class);
+
+        Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId());
+
+        assertThat(savedQuestion).isEqualTo(findQuestion.get());
+    }
+
     @Test
     @DisplayName("질문 삭제 확인")
     void question_can_deleted() throws CannotDeleteException {
@@ -160,38 +132,24 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 생성 후 1개만 삭제 시 남은 질문 개수 확인")
     void remain_question_delete_count() throws CannotDeleteException {
-//        User user1 = userRepository.save(UserTest.JAVAJIGI);
-        User user1 = userRepository.save(UserTest.JAVAJIGI);
-//        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1.writeBy(user1));
+        User user1 = save_user_1();
         Question savedQuestion1 = save_question_1(user1);
-        System.out.println("&&&" + savedQuestion1);
-//        Question savedQuestion1 = QuestionTest.Q1.writeBy(UserTest.JAVAJIGI);
 
-//        User user2 = userRepository.save(UserTest.SANJIGI);
-        User user2 = userRepository.save(UserTest.SANJIGI);
+        User user2 = save_user_2();
         Question savedQuestion2 = save_question_2(user2);
-        System.out.println("&&&" + savedQuestion2);
-//        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2.writeBy(user2));
-//        Question savedQuestion2 = QuestionTest.Q2.writeBy(UserTest.SANJIGI);
         savedQuestion2.delete(user2);
 
-//        entityManager.flush();
-//        entityManager.clear();
-
         List<Question> findQuestions = questionRepository.findByDeletedFalse();
-        System.out.println("(((" + findQuestions);
-        System.out.println("(((" + savedQuestion1);
 
         assertThat(findQuestions).containsExactlyInAnyOrder(savedQuestion1);
         assertThat(findQuestions).hasSize(1);
     }
 
-
     @Test
     @DisplayName("질문자가 답변과 질문이 같은 경우 삭제 확인")
     public void question_answer_same_writer_delete_confirm() throws CannotDeleteException {
         User questionWriter = save_user_1();
-        Question question = new Question(1L, "title1", "contents1").writeBy(questionWriter);
+        Question question = save_question_1(questionWriter);
         Answer answer = new Answer(1L, questionWriter, question, "Answers Contents1");
         question.addAnswer(answer);
 
