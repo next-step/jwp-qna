@@ -7,6 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.content.Contents;
+import qna.domain.content.Title;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.A1;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.domain.user.UserTest.JAVAJIGI;
+import static qna.domain.user.UserTest.SANJIGI;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -55,7 +62,7 @@ public class AnswerRepositoryTest {
     @Test
     void modifyQuestion() {
         final Answer answer = new Answer(UserTest.SANJIGI, Q1, "test");
-        Question question = new Question(1L, "test title", "test contents");
+        Question question = new Question(1L, new Title("test title"), Contents.of("test contents"));
         answer.toQuestion(question);
         final Answer saved = answerRepository.save(answer);
         assertThat(saved.getQuestion()).isEqualTo(question);
@@ -64,11 +71,11 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
     void findByQuestionIdAndDeleted() {
-        User questionWriter = userRepository.findByUserId(JAVAJIGI.getUserId()).get();
+        User questionWriter = userRepository.findByUserId(JAVAJIGI.getStrUserId()).get();
         Question savedQuestion = questionRepository.findByIdAndDeletedFalse(Q1.getId()).get();
         savedQuestion.writeBy(questionWriter);
 
-        User answerWriter = userRepository.findByUserId(SANJIGI.getUserId()).get();
+        User answerWriter = userRepository.findByUserId(SANJIGI.getStrUserId()).get();
         Answer savedAnswer1 = answerRepository.save(new Answer(answerWriter, savedQuestion, "answerContents1"));
         Answer savedAnswer2 = answerRepository.save(new Answer(answerWriter, savedQuestion, "answerContents2"));
 

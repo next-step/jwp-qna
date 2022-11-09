@@ -1,9 +1,8 @@
 package qna.domain.deleteHistory;
 
-import qna.domain.Question;
+import qna.domain.question.Question;
 import qna.domain.answer.Answer;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToMany;
 import java.util.ArrayList;

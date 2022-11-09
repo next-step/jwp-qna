@@ -8,6 +8,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
+import qna.domain.content.Contents;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
+import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +23,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.domain.user.UserTest.JAVAJIGI;
+import static qna.domain.user.UserTest.SANJIGI;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -75,7 +80,7 @@ public class QuestionRepositoryTest {
         List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
 
         Question question1 = savedQuestions.get(0);
-        question1.updateContents("다른 내용");
+        question1.updateContents(Contents.of("다른 내용"));
 
         Question updatedQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
 

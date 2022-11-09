@@ -10,7 +10,12 @@ import qna.CannotDeleteException;
 import qna.domain.*;
 import qna.domain.answer.Answer;
 import qna.domain.answer.AnswerRepository;
+import qna.domain.content.Contents;
 import qna.domain.deleteHistory.DeleteHistory;
+import qna.domain.content.Title;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
+import qna.domain.user.UserTest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -41,7 +46,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        question = new Question(1L, new Title("title1"), Contents.of("contents1")).writeBy(UserTest.JAVAJIGI);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }

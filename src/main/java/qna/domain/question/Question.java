@@ -1,10 +1,14 @@
-package qna.domain;
+package qna.domain.question;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
+import qna.domain.BaseEntity;
+import qna.domain.user.User;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
+import qna.domain.content.Contents;
+import qna.domain.content.Title;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,10 +24,14 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(name = "title", nullable = false, length = 100)
-    private String title;
-    @Lob
-    private String contents;
+//    @Column(name = "title", nullable = false, length = 100)
+//    private String title;
+    @Embedded
+    private Title title;
+    @Embedded
+    private Contents contents;
+//    @Lob
+//    private String contents;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -37,11 +45,11 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -64,11 +72,11 @@ public class Question extends BaseEntity {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
@@ -90,7 +98,7 @@ public class Question extends BaseEntity {
         return writer.getId();
     }
 
-    public void updateContents(String contents) {
+    public void updateContents(Contents contents) {
         this.contents = contents;
     }
 

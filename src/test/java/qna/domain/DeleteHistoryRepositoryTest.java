@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.deleteHistory.DeleteHistory;
 import qna.domain.deleteHistory.DeleteHistoryRepository;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.user.UserTest.JAVAJIGI;
 
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {

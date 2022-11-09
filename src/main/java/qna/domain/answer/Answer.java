@@ -5,8 +5,8 @@ import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseEntity;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.util.Objects;

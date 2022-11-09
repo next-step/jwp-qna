@@ -3,8 +3,8 @@ package qna.domain.deleteHistory;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
 import qna.domain.ContentType;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.question.Question;
+import qna.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
