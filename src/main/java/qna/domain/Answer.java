@@ -3,8 +3,8 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exceptions.NotFoundException;
+import qna.exceptions.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
