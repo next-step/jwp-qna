@@ -1,15 +1,20 @@
 package qna.repository;
 
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.QuestionTest;
+import qna.domain.User;
+import qna.domain.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,45 +25,47 @@ public class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    private User user;
+    private Question question;
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(new User("iamsojung", "password", "sojung", "email@gmail.com"));
+        question = questionRepository.save(new Question("title", "contents").writeBy(user));
+
+    }
 
     @Test
     @DisplayName("save 검증 테스트")
     void saveTest() {
-        Question question = QuestionTest.Q1;
-        Question savedQuestion = questionRepository.save(question);
-
         assertAll(
-            () -> assertNotNull(savedQuestion.getId()),
-            () -> assertEquals(savedQuestion.getTitle(), question.getTitle()),
-            () -> assertEquals(savedQuestion.getContents(), question.getContents()),
-            () -> assertEquals(savedQuestion.getWriterId(), question.getWriterId())
+            () -> assertThat(question.getId()).isNotNull(),
+            () -> assertThat(question.getContents()).isEqualTo(question.getContents()),
+            () -> assertThat(question.isOwner(user)).isTrue(),
+            () -> assertThat(question.getTitle()).isEqualTo(question.getTitle())
         );
     }
 
     @Test
     @DisplayName("저장한 question 와 조회한 question 이 같은지 동등성 테스트")
     void read() {
-        Question savedQuestion = questionRepository.save(QuestionTest.Q1);
-        Optional<Question> question = questionRepository.findById(savedQuestion.getId());
-
-        assertAll(
-            () -> assertThat(question).isPresent(),
-            () -> assertThat(savedQuestion).isSameAs(question.get())
-        );
+        Optional<Question> savedQuestion = questionRepository.findById(question.getId());
+        assertThat(question == savedQuestion.get()).isTrue();
     }
 
 
     @Test
     @DisplayName("findByDeletedFalse 테스트")
     void findByDeletedFalseTest() {
-        questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
-
-        List<Question> questions = questionRepository.findByDeletedFalse();
+        List<Question> result = questionRepository.findByDeletedFalse();
 
         assertAll(
-            () -> assertThat(questions).hasSize(2),
-            () -> assertTrue(questions.stream().noneMatch(Question::isDeleted))
+            () -> assertThat(result).hasSize(1),
+            () -> assertThat(result).contains(question),
+            () -> assertThat(result.get(0)).isEqualTo(question)
         );
     }
 
@@ -66,9 +73,7 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("findByIdAndDeletedFalse 테스트")
     void findByIdAndDeletedFalse() {
-        Question questionSaved = questionRepository.save(QuestionTest.Q1);
-        Question questionFound = questionRepository.findByIdAndDeletedFalse(questionSaved.getId()).get();
-
-        assertFalse(questionFound.isDeleted());
+        Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(question.getId());
+        assertThat(actual).isPresent();
     }
 }
