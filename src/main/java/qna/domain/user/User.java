@@ -84,10 +84,6 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public String getStrUserId() {
-        return userId.toString();
-    }
-
     public Password getPassword() {
         return password;
     }

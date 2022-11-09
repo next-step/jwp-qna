@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.user.UserTest.JAVAJIGI;
 import static qna.domain.user.UserTest.SANJIGI;
 
@@ -46,7 +46,8 @@ public class UserRepositoryTest {
     void get_user_by_id() {
         List<User> users = userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
 
-        User savedUser = userRepository.findByUserId(users.get(0).getStrUserId()).get();
+
+        User savedUser = userRepository.findByUserId(users.get(0).getUserId()).get();
 
         assertThat(users.get(0)).isEqualTo(savedUser);
     }
@@ -73,7 +74,7 @@ public class UserRepositoryTest {
 
         user.update(JAVAJIGI, target);
 
-        User updatedUser = userRepository.findByUserId(user.getStrUserId()).get();
+        User updatedUser = userRepository.findByUserId(user.getUserId()).get();
 
 
         assertAll(

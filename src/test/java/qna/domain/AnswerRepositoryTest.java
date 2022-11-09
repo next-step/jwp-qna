@@ -71,11 +71,11 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("삭제 상태가 아닌 결과를 리턴한다.")
     void findByQuestionIdAndDeleted() {
-        User questionWriter = userRepository.findByUserId(JAVAJIGI.getStrUserId()).get();
+        User questionWriter = userRepository.findByUserId(JAVAJIGI.getUserId()).get();
         Question savedQuestion = questionRepository.findByIdAndDeletedFalse(Q1.getId()).get();
         savedQuestion.writeBy(questionWriter);
 
-        User answerWriter = userRepository.findByUserId(SANJIGI.getStrUserId()).get();
+        User answerWriter = userRepository.findByUserId(SANJIGI.getUserId()).get();
         Answer savedAnswer1 = answerRepository.save(new Answer(answerWriter, savedQuestion, "answerContents1"));
         Answer savedAnswer2 = answerRepository.save(new Answer(answerWriter, savedQuestion, "answerContents2"));
 

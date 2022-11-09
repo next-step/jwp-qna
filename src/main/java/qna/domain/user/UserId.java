@@ -33,6 +33,10 @@ public class UserId {
         return new UserId(userId);
     }
 
+    public String getUserId() {
+        return this.userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,4 +49,6 @@ public class UserId {
     public int hashCode() {
         return Objects.hash(userId);
     }
+
+
 }
