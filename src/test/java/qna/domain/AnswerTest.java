@@ -23,7 +23,7 @@ public class AnswerTest {
     AnswerRepository answers;
 
     @ParameterizedTest(name = "save_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("answerTestFixture")
     void save_테스트(Answer answer) {
         Answer saved = answers.save(answer);
         assertThat(saved).isEqualTo(answer);
@@ -32,7 +32,7 @@ public class AnswerTest {
     }
 
     @ParameterizedTest(name = "save_후_findById_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("answerTestFixture")
     void save_후_findById_테스트(Answer answer) {
         Answer answer1 = answers.save(answer);
         Answer answer2 = answers.findById(answer1.getId()).get();
@@ -40,7 +40,7 @@ public class AnswerTest {
         assertThat(answer1.getContents()).isEqualTo(answer2.getContents());
     }
 
-    static Stream<Answer> saveTestFixture() {
+    static Stream<Answer> answerTestFixture() {
         return Stream.of(A1, A2);
     }
 }
