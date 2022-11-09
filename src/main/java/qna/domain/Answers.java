@@ -16,6 +16,10 @@ public class Answers {
     protected Answers() {
     }
 
+    public Answers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     public void add(Answer answer) {
         this.answers.add(answer);
     }
