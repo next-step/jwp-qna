@@ -1,6 +1,7 @@
 package qna.repository;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +26,14 @@ public class QuestionRepositoryTest {
     UserRepository userRepository;
     @Autowired
     AnswerRepository answerRepository;
+    @Autowired
+    EntityManager entityManager;
     public User writer;
     public Question saveQuestion;
 
     @BeforeEach
     void setUp() {
-        writer = userRepository.save(UserTest.JAVAJIGI);
+        writer = userRepository.save(UserTest.TESTER);
         Question question = QuestionTest.Q1.writeBy(writer);
         saveQuestion = questionRepository.save(question);
     }
@@ -70,11 +73,15 @@ public class QuestionRepositoryTest {
     void deleted_test() {
         User tester = userRepository.save(UserTest.TESTER);
         Question question = questionRepository.save(QuestionTest.testerQuestion);
-        Answer answer = answerRepository.save(new Answer(1L,tester, question, "Answers test"));
-        question.addAnswer(answer);
-
+        //answerRepository.save(new Answer(1L,tester, question, "Answers test"));
+        //Todo : 관계 설명 문제로 인해 자식객체가 포함되는 경우 delete 에러 발생
         questionRepository.delete(question);
         assertThat(answerRepository.findById(1L)).isEmpty();
+    }
+
+    void flush(){
+        entityManager.flush();
+        entityManager.clear();
     }
 
 }

@@ -41,8 +41,16 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        setQuestion(question);
+    }
+
+    private void setQuestion(Question question){
+        if (Objects.isNull(this.question)) {
+            question.addAnswer(this);
+        }
+        this.question = question;
+
     }
 
     public boolean isOwner(User writer) {
