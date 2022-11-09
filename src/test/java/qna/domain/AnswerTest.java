@@ -6,11 +6,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import qna.NotFoundException;
+import qna.UnAuthorizedException;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -61,6 +64,19 @@ public class AnswerTest {
         answers.delete(saved);
         Optional<Answer> answersById = answers.findById(answer.getId());
         assertThat(answersById.isPresent()).isFalse();
+    }
+
+    @Test
+    void 작성자가_없이_답변을_남길_수_없다() {
+        assertThatThrownBy(() -> new Answer(null, new Question("Hello", "MyNameIs"), "Jun"))
+            .isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @Test
+    void 질문없이_답변을_남길_수_없다() {
+        assertThatThrownBy(() ->
+            new Answer(new User("victor-jo", "password", "victor", "mail"), null, "Jun"))
+            .isInstanceOf(NotFoundException.class);
     }
 
     static Stream<Answer> answerTestFixture() {
