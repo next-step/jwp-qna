@@ -22,3 +22,42 @@
 
 ### 1단계 피드백
 - [x] @Embeddable 타입을 @MappedSuperclass로 정의
+
+## 2단계 - 연관 관계 매핑
+> 1단계에서 매핑된 객체들은 뭔가 이상(?)하다. 객체지향적인 설계라면, 객체의 `참조`를 사용해 객체 그래프를 `탐색`해야 하지만,  
+> DBMS의 설계대로 `외래 키`를 가지고 있다.  
+>   
+> 각 객체의 역할에 맞게 객체 사이의 연관 관계를 매핑해야 한다.
+> ```java
+> // 테이블 설계대로 맞추었을 경우 객체 탐색
+> Question question = findQuestionById(questionId);
+> List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
+> 
+> // 객체지향답게 설계했을 경우 객체의 참조를 사용해 탐색
+> Question question = findQuestionById(questionId);
+> List<Answer> answers = question.getAnswers();
+> ```
+```sql
+-- DDL 힌트
+alter table answer
+  add constraint fk_answer_to_question
+    foreign key (question_id)
+      references question
+
+alter table answer
+  add constraint fk_answer_writer
+    foreign key (writer_id)
+      references user
+
+alter table delete_history
+  add constraint fk_delete_history_to_user
+    foreign key (deleted_by_id)
+      references user
+
+alter table question
+  add constraint fk_question_writer
+    foreign key (writer_id)
+      references user
+```
+![](src/main/resources/연관관계매핑.png)
+- [ ] DDL을 보고 연관관계 매핑
