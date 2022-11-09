@@ -3,17 +3,21 @@ package qna.domain.user.email;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import qna.domain.validate.string.LengthValidator;
 
 @Embeddable
 public class Email {
 
-    @Column(length = 50)
+    private static final int LIMIT_LENGTH = 50;
+
+    @Column(length = LIMIT_LENGTH)
     private String email;
 
     protected Email() {
     }
 
     public Email(String email) {
+        LengthValidator.getInstance().validate(email, LIMIT_LENGTH);
         this.email = email;
     }
 

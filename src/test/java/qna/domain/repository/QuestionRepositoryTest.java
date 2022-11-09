@@ -10,11 +10,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.answer.Answer;
 import qna.domain.question.Question;
-import qna.domain.question.factory.QuestionFactory;
-import qna.domain.question.factory.QuestionFactoryImpl;
+import qna.domain.question.title.Title;
 import qna.domain.user.User;
-import qna.domain.user.factory.UserFactory;
-import qna.domain.user.factory.UserFactoryImpl;
+import qna.domain.user.email.Email;
+import qna.domain.user.name.Name;
+import qna.domain.user.password.Password;
+import qna.domain.user.userid.UserId;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -98,13 +99,11 @@ class QuestionRepositoryTest {
     }
 
     private User getUser(Long id, String userId, String password, String name, String email) {
-        UserFactory factory = new UserFactoryImpl(users);
-        return factory.create(id, userId, password, name, email);
+        return new User(id, new UserId(userId), new Password(password), new Name(name), new Email(email));
     }
 
     private Question getQuestion(String title, String content) {
-        QuestionFactory factory = new QuestionFactoryImpl();
-        return factory.create(title, content);
+        return new Question(new Title(title), content);
     }
 
     void flushAndClear() {

@@ -11,8 +11,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.user.User;
-import qna.domain.user.factory.UserFactory;
-import qna.domain.user.factory.UserFactoryImpl;
+import qna.domain.user.email.Email;
+import qna.domain.user.name.Name;
+import qna.domain.user.password.Password;
+import qna.domain.user.userid.UserId;
 
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
@@ -69,8 +71,7 @@ class DeleteHistoryRepositoryTest {
     }
 
     private User getUser(Long id, String userId, String password, String name, String email) {
-        UserFactory factory = new UserFactoryImpl(users);
-        return factory.create(id, userId, password, name, email);
+        return new User(id, new UserId(userId), new Password(password), new Name(name), new Email(email));
     }
 
     private void flushAndClear() {

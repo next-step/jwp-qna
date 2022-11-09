@@ -7,8 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
-import qna.domain.question.factory.QuestionFactory;
-import qna.domain.question.factory.QuestionFactoryImpl;
 import qna.domain.question.title.Title;
 import qna.domain.user.User;
 import qna.domain.user.UserTest;
@@ -45,8 +43,7 @@ public class QuestionTest {
     }
 
     private Question getQuestion(String title, String content) {
-        QuestionFactory factory = new QuestionFactoryImpl();
-        return factory.create(title, content)
+        return new Question(new Title(title), content)
                 .writeBy(getUser(1L, "writer", "1111", "작성자", "writer@naver.com"));
     }
 }

@@ -1,15 +1,17 @@
 package qna.domain.validate.string;
 
-public class LengthValidator implements StringValidator {
+public class LengthValidator {
 
-    private final int limitLength;
+    private static final LengthValidator INSTANCE = new LengthValidator();
 
-    public LengthValidator(int limitLength) {
-        this.limitLength = limitLength;
+    private LengthValidator() {
     }
 
-    @Override
-    public void validate(String target) {
+    public static LengthValidator getInstance() {
+        return INSTANCE;
+    }
+
+    public void validate(String target, int limitLength) {
         if (target.length() > limitLength) {
             throw new IllegalArgumentException();
         }

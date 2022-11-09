@@ -10,7 +10,7 @@ class NullAndEmptyValidatorTest {
     @ParameterizedTest
     @NullAndEmptySource
     void empty_null(String target) {
-        StringValidator validator = new NullAndEmptyValidator();
+        NullAndEmptyValidator validator = NullAndEmptyValidator.getInstance();
         assertThatIllegalArgumentException().isThrownBy(() -> validator.validate(target));
     }
 

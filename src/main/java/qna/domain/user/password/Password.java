@@ -3,17 +3,23 @@ package qna.domain.user.password;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import qna.domain.validate.string.LengthValidator;
+import qna.domain.validate.string.NullAndEmptyValidator;
 
 @Embeddable
 public class Password {
 
-    @Column(length = 20, nullable = false)
+    private static final int LIMIT_LENGTH = 20;
+
+    @Column(length = LIMIT_LENGTH, nullable = false)
     private String password;
 
     protected Password() {
     }
 
     public Password(String password) {
+        NullAndEmptyValidator.getInstance().validate(password);
+        LengthValidator.getInstance().validate(password, LIMIT_LENGTH);
         this.password = password;
     }
 
