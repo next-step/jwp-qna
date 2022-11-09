@@ -22,7 +22,7 @@ public class Question extends BaseEntity {
     private User writer;
     private boolean deleted = false;
     @Embedded
-    private Answers answers;
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -35,7 +35,6 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {

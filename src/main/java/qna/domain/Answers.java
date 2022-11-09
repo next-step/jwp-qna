@@ -15,7 +15,7 @@ public class Answers {
     private static final String OTHER_WRITER_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
-    private final List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
     public Answers(List<Answer> answers) {
         validateNull(answers);
@@ -23,7 +23,6 @@ public class Answers {
     }
 
     public Answers() {
-        answers = new ArrayList<>();
     }
 
     private void validateNull(List<Answer> answers) {
@@ -47,7 +46,9 @@ public class Answers {
     }
 
     public void deleteAllAnswer(User writer) throws CannotDeleteException {
-        boolean isAllSameWriter = answers.stream().allMatch(answer -> answer.isOwner(writer));
+        boolean isAllSameWriter = answers
+                .stream()
+                .allMatch(answer -> answer.isOwner(writer));
         if (!isAllSameWriter) {
             throw new CannotDeleteException(OTHER_WRITER_MESSAGE);
         }
