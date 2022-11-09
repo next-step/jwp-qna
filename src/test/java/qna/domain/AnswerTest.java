@@ -40,6 +40,18 @@ public class AnswerTest {
         assertThat(answer1.getContents()).isEqualTo(answer2.getContents());
     }
 
+    @ParameterizedTest(name = "save_후_update_테스트")
+    @MethodSource("answerTestFixture")
+    void save_후_update_테스트(Answer answer) {
+        Answer answer1 = answers.save(answer);
+        String original = answer1.getContents();
+        answer1.setContents("허억!!");
+        Answer answer2 = answers.findById(answer1.getId()).get();
+        assertThat(answer1).isEqualTo(answer2);
+        assertThat(original).isNotEqualTo(answer2.getContents());
+        answers.flush();
+    }
+
     static Stream<Answer> answerTestFixture() {
         return Stream.of(A1, A2);
     }
