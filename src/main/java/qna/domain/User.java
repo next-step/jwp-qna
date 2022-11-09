@@ -17,6 +17,8 @@ create table user
         user_id    varchar(20) not null,
         primary key (id)
         )
+        alter table user
+    add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 */
 @Entity
 @Table(name = "user")
@@ -26,7 +28,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "user_id", length = 20)
+    @Column(name = "user_id", unique = true, length = 20)
     private String userId;
     @Column(nullable = false, length = 20)
     private String password;
