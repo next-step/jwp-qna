@@ -216,3 +216,28 @@ public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteE
 * 3개 이상의 인스턴스 변수를 가진 클래스를 쓰지 않는다.
 
 </details>
+
+***
+
+## 구현 기능
+<details open>
+<summary> </summary>
+
+- [X] ~~원시값 래핑~~
+- [X] ~~일급콜렉션 처리~~
+- [X] ~~테스트 케의스 작성~~
+</details>
+
+***
+
+### 추가적으로 공부할 내용
+<details open>
+<summary> </summary>
+
+- FETCH
+- 참고
+  - @DataJpaTest 어노테이션 묶음
+  - @Transactional 원리
+    - dirty check
+    - 영속성 콘텍스트(캐시)
+</details>
