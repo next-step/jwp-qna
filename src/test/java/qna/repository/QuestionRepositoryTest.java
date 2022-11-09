@@ -99,8 +99,8 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 삭제 확인")
     void question_can_deleted() throws CannotDeleteException {
-        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-        Question saveQuestion = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
+        User questionWriter = save_user_1();
+        Question saveQuestion = save_question_1(questionWriter);
 
         saveQuestion.delete(questionWriter);
 
@@ -112,18 +112,13 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("질문 생성 후 모두 삭제 시 남은 개수 확인")
     void find_question_not_deleted_count() throws CannotDeleteException {
-        User questionWriter = userRepository.save(UserTest.JAVAJIGI);
-        Question savedQuestion1 = questionRepository.save(QuestionTest.Q1.writeBy(questionWriter));
-        Question savedQuestion2 = questionRepository.save(QuestionTest.Q2.writeBy(questionWriter));
-        System.out.println("---***" + savedQuestion1);
-        System.out.println("---***" + savedQuestion2);
+        User questionWriter = save_user_1();
+        Question savedQuestion1 = save_question_1(questionWriter);
+        Question savedQuestion2 = save_question_2(questionWriter);
 
         savedQuestion1.delete(questionWriter);
         savedQuestion2.delete(questionWriter);
         List<Question> findQuestions = questionRepository.findByDeletedTrue();
-        System.out.println("***" + findQuestions);
-        System.out.println("***" + savedQuestion1);
-        System.out.println("***" + savedQuestion2);
 
         assertThat(findQuestions).contains(savedQuestion1, savedQuestion2);
         assertThat(findQuestions).hasSize(2);
@@ -205,4 +200,11 @@ class QuestionRepositoryTest {
         Question Q2 = new Question("title2", "contents2").writeBy(user);
         return questionRepository.save(Q2);
     }
+
+    private Answer save_answer_1(User user, Question question) {
+        Answer A1 = new Answer(user, question, "content");
+        return answerRepository.save(A1);
+
+    }
+
 }

@@ -6,8 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.exception.CannotDeleteException;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import qna.domain.*;
+import qna.exception.CannotDeleteException;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class QnaServiceTest {
     @Mock
     private QuestionRepository questionRepository;
@@ -96,4 +99,5 @@ class QnaServiceTest {
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
+
 }
