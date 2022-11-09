@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static qna.constant.Message.NOT_VALID_EMAIL;
+import static qna.constant.Message.NOT_VALID_EMPTY;
 
 @Embeddable
 public class Email {
@@ -26,6 +27,10 @@ public class Email {
     }
 
     private void validateEmail(String email) {
+        if(email.isEmpty()) {
+            throw new IllegalArgumentException(NOT_VALID_EMPTY + "[이메일]");
+        }
+
         String emailRegex = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
 
         if(!Pattern.matches(emailRegex,email)) {
