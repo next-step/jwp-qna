@@ -38,6 +38,10 @@ public class User extends BaseDateEntity{
     private String userId;
     @OneToMany(mappedBy = "user")
     private List<Answer> answers = new ArrayList<Answer>();
+    @OneToMany(mappedBy = "user")
+    private List<Question> questions = new ArrayList<Question>();
+    @OneToMany(mappedBy = "user")
+    private List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
 
 
     protected User() {}

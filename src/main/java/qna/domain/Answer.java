@@ -52,15 +52,14 @@ public class Answer extends BaseDateEntity{
         }
 
         this.contents = contents;
+        this.user = writer;
+        this.question = question;
     }
 
     public boolean isOwner(User loginUser) {
         return this.user.equals(loginUser);
     }
 
-    public Long getWriterId() {
-        return question.getWriterId();
-    }
 
     public Long getId() {
         return id;

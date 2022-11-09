@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -29,14 +31,20 @@ public class Question extends BaseDateEntity{
     private boolean deleted = false;
     @Column(nullable = false, length = TITLE_LENGTH)
     private String title;
-    private Long writerId;
     @OneToMany(mappedBy = "question")
     List<Answer> answers = new ArrayList<Answer>();
+    @ManyToOne
+    @JoinColumn(name = "WRITER_ID")
+    private User user;
 
     protected Question() {}
 
     public Question(String title, String contents) {
         this(null, title, contents);
+    }
+
+    public Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
     }
 
     public Question(Long id, String title, String contents) {
@@ -49,9 +57,15 @@ public class Question extends BaseDateEntity{
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
+    public Question(Long id, String title, String contents, User writer) {
+        if (Objects.isNull(title) || title.isEmpty()) {
+            throw new ForbiddenException();
+        }
+
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
+        this.user = writer;
     }
 
     public List<Answer> getAnswers() {
@@ -63,7 +77,7 @@ public class Question extends BaseDateEntity{
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.user.getId().equals(writer.getId());
     }
 
     public Long getId() {
@@ -90,12 +104,12 @@ public class Question extends BaseDateEntity{
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isDeleted() {
@@ -112,7 +126,7 @@ public class Question extends BaseDateEntity{
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
