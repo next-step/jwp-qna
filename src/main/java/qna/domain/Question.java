@@ -63,6 +63,10 @@ public class Question extends BaseEntity {
         return this.writer.equals(writer);
     }
 
+    public boolean isNotOwner(User writer) {
+        return !isOwner(writer);
+    }
+
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
@@ -95,7 +99,7 @@ public class Question extends BaseEntity {
     }
 
     private void validateIsOwner(User loginUser) {
-        if (!isOwner(loginUser)) {
+        if (isNotOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
