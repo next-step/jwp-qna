@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_WITH_ANSWER;
@@ -31,7 +30,7 @@ public class Answers {
         return Collections.unmodifiableList(answers);
     }
 
-    public void validateDeleteAnswer(User loginUser) throws CannotDeleteException {
+    public void validateDeleteAnswer(User loginUser) {
         // for보다는 stream
         answers.stream().forEach(answer -> {
             try {
