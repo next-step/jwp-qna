@@ -1,12 +1,11 @@
 package qna.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,25 +14,25 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
-    @OneToMany(mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 100, nullable = false)
 
+    @Column(length = 100, nullable = false)
     private String title;
 
     @Lob
     private String contents;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
@@ -71,6 +70,14 @@ public class Question extends BaseEntity {
         answer.toQuestion(this);
     }
 
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
+    public boolean notContainsAnswer(Answer answer) {
+        return this.answers.notContains(answer);
+    }
+
     public DeleteHistories delete(User loginUser) {
         validateIsOwner(loginUser);
         this.deleted = true;
@@ -78,8 +85,7 @@ public class Question extends BaseEntity {
         DeleteHistories deleteHistories = new DeleteHistories(Collections.singletonList(
             new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now())
         ));
-        Answers answers = new Answers(this.answers);
-        return deleteHistories.concat(answers.delete(loginUser));
+        return deleteHistories.concat(this.answers.delete(loginUser));
     }
 
     private void validateIsOwner(User loginUser) {
@@ -100,7 +106,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 

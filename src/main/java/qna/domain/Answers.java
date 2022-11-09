@@ -3,11 +3,15 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Answers {
-    private final List<Answer> answers;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 
-    public Answers(List<Answer> answers) {
-        this.answers = answers;
+@Embeddable
+public class Answers {
+    @OneToMany(mappedBy = "question")
+    private final List<Answer> answers = new ArrayList<>();
+
+    protected Answers() {
     }
 
     public DeleteHistories delete(User loginUser) {
@@ -16,5 +20,21 @@ public class Answers {
             list.add(answer.delete(loginUser));
         }
         return new DeleteHistories(list);
+    }
+
+    public boolean notContains(Answer answer) {
+        return !this.contains(answer);
+    }
+
+    public boolean contains(Answer answer) {
+        return this.answers.contains(answer);
+    }
+
+    public void add(Answer answer) {
+        this.answers.add(answer);
+    }
+
+    public void remove(Answer answer) {
+        this.answers.remove(answer);
     }
 }

@@ -48,8 +48,8 @@ public class AnswerTest {
         assertAll(
             () -> assertThat(a1.getQuestion()).isNotEqualTo(q1),
             () -> assertThat(a1.getQuestion()).isEqualTo(q2),
-            () -> assertThat(q1.getAnswers()).doesNotContain(a1),
-            () -> assertThat(q2.getAnswers()).contains(a1)
+            () -> assertThat(q1.getAnswers().notContains(a1)).isTrue(),
+            () -> assertThat(q2.getAnswers().contains(a1)).isTrue()
         );
     }
 

@@ -33,7 +33,7 @@ public class QuestionTest {
         q1.addAnswer(answer);
 
         assertAll(
-            () -> assertThat(q1.getAnswers()).contains(answer),
+            () -> assertThat(q1.getAnswers().contains(answer)).isTrue(),
             () -> assertThat(answer.getQuestion()).isEqualTo(q1)
         );
     }
@@ -50,7 +50,7 @@ public class QuestionTest {
     void 질문_삭제() throws CannotDeleteException {
         User loginUser = JAVAJIGI();
         Question question = QUESTION1(loginUser);
-        
+
         DeleteHistories deleteHistories = question.delete(loginUser);
         assertAll(
             () -> assertThat(question.isDeleted()).isTrue(),

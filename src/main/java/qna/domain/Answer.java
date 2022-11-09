@@ -40,6 +40,10 @@ public class Answer extends BaseEntity {
     protected Answer() {
     }
 
+    public Answer(Long id) {
+        this.id = id;
+    }
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -66,10 +70,12 @@ public class Answer extends BaseEntity {
 
     public void toQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
-            this.question.getAnswers().remove(this);
+            this.question.removeAnswer(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        if (question.notContainsAnswer(this)) {
+            question.getAnswers().add(this);
+        }
     }
 
     public Long getId() {
