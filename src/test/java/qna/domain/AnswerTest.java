@@ -2,8 +2,10 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AnswerTest {
@@ -29,6 +31,31 @@ public class AnswerTest {
                 () -> assertThat(question.getAnswers().contains(answer)).isTrue(),
                 () -> assertThat(answer.getQuestion()).isSameAs(question)
         );
+    }
+
+    @Test
+    @DisplayName("글쓴이와 답변자가 다른 경우 삭제 에러")
+    void delete_error() {
+        //given
+        User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
+        User other = new User(2L, "coco", "password", "coco", "coco@slipp.net");
+        Question question = new Question("title1", "contents1").writeBy(writer);
+        Answer answer = new Answer(writer, question, "Answers Contents");
+
+        //except
+        assertThatThrownBy(()-> answer.delete(other)).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("글쓴이와 답변자가 같은 경우 삭제 가능")
+    void delete_success() throws CannotDeleteException {
+        //given
+        User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question("title1", "contents1").writeBy(writer);
+        Answer answer = new Answer(writer, question, "Answers Contents");
+
+        //except
+        answer.delete(writer);
     }
 
 }

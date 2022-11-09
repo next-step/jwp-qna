@@ -147,10 +147,9 @@ alter table question
 ### 구현 기능 목록
 - [x] `List<Answer>`를 일급 컬렉션 `Answers`로 만든다
 - [x] `Question`에 `List<Answer>`를 `Answers`로 대체
-- [ ] `Question`에 글 삭제 메소드 추가
-- [ ] `Answer`에 글 삭제 메소드 추가
-- [ ] 글 삭제 시 로그인 유저와 글쓴이는 동일한지 확인
-- [ ] 글 삭제 시 로그인 유저와 글쓴이가 다르면 에러 발생
-- [ ] 글 삭제는 Deleted의 값이 = true 이다
+- [ ] `Question`, `Answer`에 글 삭제 메소드 추가
+  - [x] 글 삭제 시 로그인 유저와 글쓴이는 동일한지 확인
+  - [x] 글 삭제 시 로그인 유저와 글쓴이가 다르면 에러 발생
+  - [ ] 글 삭제의 반환 값은 `List<DeleteHistory>`
 - [ ] `Question`을 받아 `DeleteHistory` 생성하는 메소드 추가
 - [ ] `Answer`을 받아 `DeleteHistory` 생성하는 메소드 추가

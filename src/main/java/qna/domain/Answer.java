@@ -1,9 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -50,7 +52,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -61,6 +63,18 @@ public class Answer extends BaseEntity {
             question.addAnswer(this);
         }
         this.question = question;
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        validateDelete(user);
+        this.deleted = true;
+        return null;
+    }
+
+    private void validateDelete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     public Long getId() {
