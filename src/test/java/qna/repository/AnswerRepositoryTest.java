@@ -31,8 +31,7 @@ class AnswerRepositoryTest {
         Answer answer = answerRepository.save((A1));
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
-                () -> assertThat(answer.getContents()).isEqualTo(A1.getContents()),
-                () -> assertThat(answer.getQuestionId()).isEqualTo(A1.getQuestionId())
+                () -> assertThat(answer.getContents()).isEqualTo(A1.getContents())
         );
     }
 

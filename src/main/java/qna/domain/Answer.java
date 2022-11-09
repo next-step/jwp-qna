@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,10 +25,12 @@ public class Answer extends BaseDateEntity{
     private Long id;
     @Lob
     private String contents;
-    private Long questionId;
     @Column(nullable = false)
     private boolean deleted = false;
     private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "QUESTION_ID")
+    private Question question;
 
     protected Answer() {}
 
@@ -46,16 +50,11 @@ public class Answer extends BaseDateEntity{
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
     }
 
     public Long getId() {
@@ -72,14 +71,6 @@ public class Answer extends BaseDateEntity{
 
     public void setWriterId(Long writerId) {
         this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
@@ -103,7 +94,6 @@ public class Answer extends BaseDateEntity{
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

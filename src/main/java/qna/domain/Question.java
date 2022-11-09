@@ -9,8 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -27,6 +30,8 @@ public class Question extends BaseDateEntity{
     @Column(nullable = false, length = TITLE_LENGTH)
     private String title;
     private Long writerId;
+    @OneToMany(mappedBy = "question")
+    List<Answer> answers = new ArrayList<Answer>();
 
     protected Question() {}
 
@@ -51,10 +56,6 @@ public class Question extends BaseDateEntity{
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
     }
 
     public Long getId() {
