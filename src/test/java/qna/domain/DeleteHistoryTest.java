@@ -14,9 +14,9 @@ public class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 
-    public static final DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L,
+    public static final DeleteHistory deleteHistory1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI,
             LocalDateTime.now());
-    public static final DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.QUESTION, 2L, 1L,
+    public static final DeleteHistory deleteHistory2 = new DeleteHistory(ContentType.QUESTION, 2L, UserTest.JAVAJIGI,
             LocalDateTime.now());
 
     @Test

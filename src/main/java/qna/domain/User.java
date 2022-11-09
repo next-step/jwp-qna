@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import qna.exceptions.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +27,12 @@ public class User extends BaseCreatedAndUpdatedAt {
     private String password;
     @Column(length = 20, nullable = false)
     private String userId;
+    @OneToMany(targetEntity = Answer.class, mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<Answer> answers;
+    @OneToMany(targetEntity = Question.class, mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<Question> questions;
+    @OneToMany(targetEntity = DeleteHistory.class, mappedBy = "deletedBy", fetch = FetchType.LAZY)
+    private List<DeleteHistory> deleteHistories;
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -81,6 +88,9 @@ public class User extends BaseCreatedAndUpdatedAt {
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", userId='" + userId + '\'' +
+                ", answers=" + answers +
+                ", questions=" + questions +
+                ", deleteHistories=" + deleteHistories +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

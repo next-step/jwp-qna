@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -20,7 +21,11 @@ public class Question extends BaseCreatedAndUpdatedAt {
     private boolean deleted = false;
     @Column(length = 100, nullable = false)
     private String title;
-    private Long writerId;
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private List<Answer> answers;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -33,16 +38,17 @@ public class Question extends BaseCreatedAndUpdatedAt {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public boolean isDeleted() {
@@ -61,7 +67,8 @@ public class Question extends BaseCreatedAndUpdatedAt {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 ", title='" + title + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
+                ", answers=" + answers +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
