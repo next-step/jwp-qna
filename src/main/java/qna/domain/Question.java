@@ -34,8 +34,13 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+//    @OneToMany(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "question_id")
+//    private final List<Answer> answers = new ArrayList<>();
+
     @Embedded
     private Answers answers = new Answers();
+
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -58,8 +63,8 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answers.addAnswer(answer);
-        answer.toQuestion(this);
     }
+
 
     public void clearAnswers() {
         answers.clear();
@@ -89,52 +94,45 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+        validateQuestionOwner(writer);
+        validateAnswersOwner(writer);
+
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-        deleteQuestion(writer, deleteHistoryList);
-        deleteAnswerList(writer, deleteHistoryList);
-
-
-        // TODO: 질문과 관련된 답변 찾은 후 답변도 삭제(상태 변경)
-
-        // TODO: 질문 삭제(상태 변경)
+        deleteQuestion(deleteHistoryList);
+        deleteAnswers(deleteHistoryList);
         return deleteHistoryList;
     }
 
-    private void deleteQuestion(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
-        validateOwner(writer);
-        deleted();
-        deleteHistoryList.add(DeleteHistory.ofQuestion(id, writer));
-    }
 
-    private void validateOwner(User writer) throws CannotDeleteException {
+    private void validateQuestionOwner(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
         }
     }
 
-    private void deleteAnswerList(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
-        // TODO: 답변자 삭제(작성자와 다를 경우 삭제 불가 리턴)
-        deleteHistoryList.addAll(answers.deleteAnswers(writer));
+    private void validateAnswersOwner(User writer) throws CannotDeleteException {
+        answers.validateAnswersWriter(writer);
     }
 
-    private void deleted() {
+    private void deleteQuestion(List<DeleteHistory> deleteHistoryList) {
         deleted = true;
+        deleteHistoryList.add(DeleteHistory.ofQuestion(id, writer));
+    }
+
+    private void deleteAnswers(List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
+        deleteHistoryList.addAll(answers.delete());
     }
 
     @Override
     public String toString() {
-        return "Question{" +
+        return "=======> Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
+                ", title='" + title + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 '}';
     }
-
 }
