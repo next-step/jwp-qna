@@ -13,7 +13,7 @@ public class Question {
     private Long id;
     @Column(nullable = false, columnDefinition = "varchar(100)")
     private String title;
-    @Column(columnDefinition = "longtext")
+    @Lob
     private String contents;
     private Long writerId;
     @Column(nullable = false, columnDefinition = "datetime(6)")

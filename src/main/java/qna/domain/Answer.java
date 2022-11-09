@@ -16,7 +16,7 @@ public class Answer {
     private Long id;
     private Long writerId;
     private Long questionId;
-    @Column(columnDefinition = "longtext")
+    @Lob
     private String contents;
     @Column(nullable = false, columnDefinition = "datetime(6)")
     private LocalDateTime createdAt = LocalDateTime.now();
