@@ -49,44 +49,32 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
-    public Long getId() {
-        return id;
+    public void delete() {
+        this.deleted = true;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
         return writer;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
