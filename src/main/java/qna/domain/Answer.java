@@ -63,13 +63,6 @@ public class Answer extends BaseEntity {
         return writer;
     }
 
-    public DeleteHistory getDeleteHistory() {
-        if (!this.deleted) {
-            throw new IllegalStateException(ONLY_DELETED_STATE);
-        }
-        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -78,9 +71,10 @@ public class Answer extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void delete(User writer) {
+    public DeleteHistory delete(User writer) {
         validateOwner(writer);
         this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     public Question getQuestion() {

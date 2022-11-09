@@ -35,15 +35,8 @@ public class Answers {
         return this.answers.size();
     }
 
-    public List<DeleteHistory> getDeleteHistories() {
+    public List<DeleteHistory> deleteAllAnswer(User writer) {
         List<DeleteHistory> deleteHistories = new ArrayList();
-        for (Answer answer : answers) {
-            deleteHistories.add(answer.getDeleteHistory());
-        }
-        return deleteHistories;
-    }
-
-    public void deleteAllAnswer(User writer) {
         boolean isAllSameWriter = answers
                 .stream()
                 .allMatch(answer -> answer.isOwner(writer));
@@ -51,8 +44,9 @@ public class Answers {
             throw new RuntimeException(OTHER_WRITER_MESSAGE);
         }
         for (Answer answer : answers) {
-            answer.delete(writer);
+            deleteHistories.add(answer.delete(writer));
         }
+        return deleteHistories;
     }
 
 }

@@ -40,30 +40,19 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public void delete(User writer) {
+    public List<DeleteHistory> delete(User writer) {
         validateOwner(writer);
         this.deleted = true;
-        this.answers.deleteAllAnswer(writer);
+        List<DeleteHistory> deleteHistories = new ArrayList();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(this.answers.deleteAllAnswer(writer));
+        return deleteHistories;
     }
 
     private void validateOwner(User writer) {
         if (!this.writer.equals(writer)) {
             throw new RuntimeException(NONE_AUTH_DELETE);
         }
-    }
-
-    private DeleteHistory getDeleteHistory() {
-        if (!this.deleted) {
-            throw new IllegalStateException(ONLY_DELETED_STATE);
-        }
-        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
-    }
-
-    public List<DeleteHistory> getDeleteHistories() {
-        List<DeleteHistory> deleteHistories = new ArrayList();
-        deleteHistories.add(getDeleteHistory());
-        deleteHistories.addAll(answers.getDeleteHistories());
-        return deleteHistories;
     }
 
     public void addAnswer(Answer answer) {
