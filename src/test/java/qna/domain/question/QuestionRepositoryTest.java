@@ -28,7 +28,7 @@ public class QuestionRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    @DisplayName("질문이 등록되있는지 테스트 한다")
+    @DisplayName("질문이 등록되있는지 테스트한다")
     void saveQuestionTest() {
         User writeUser = userRepository.save(UserTest.createUser("user1"));
         Question question = QuestionTest.createQuestion(writeUser);
@@ -59,7 +59,7 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("id로 삭제되지 않은 질문 한 건 조회를 테스트한다")
+    @DisplayName("id로 삭제되지 않은 질문 1건 조회를 테스트한다")
     void findByIdAndDeletedFalse() {
         User writeUser = userRepository.save(UserTest.createUser("user1"));
         Question question = QuestionTest.createQuestion(writeUser);

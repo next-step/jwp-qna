@@ -31,7 +31,7 @@ public class AnswerRepositoryTest {
     private QuestionRepository questionRepository;
 
     @Test
-    @DisplayName("답변이 정상적으로 등록되있는지 테스트 한다")
+    @DisplayName("답변이 등록되있는지 테스트")
     void saveAnswerTest() {
         User writerUser = userRepository.save(UserTest.createUser("user1"));
         Question question = questionRepository.save(QuestionTest.createQuestion(writerUser));
