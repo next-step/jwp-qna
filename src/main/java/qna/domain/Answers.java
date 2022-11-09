@@ -3,8 +3,6 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import qna.CannotDeleteException;
-
 public class Answers {
     private final List<Answer> answers;
 
@@ -12,7 +10,7 @@ public class Answers {
         this.answers = answers;
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) {
         List<DeleteHistory> list = new ArrayList<>();
         for (Answer answer : answers) {
             list.add(answer.delete(loginUser));
