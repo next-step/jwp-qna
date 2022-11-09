@@ -1,7 +1,8 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -40,6 +41,7 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
@@ -61,7 +63,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -72,16 +74,8 @@ public class Answer extends BaseTimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public User getWriter() {
         return this.writer;
-    }
-
-    public void setWriterId(User writerId) {
-        this.writer = writerId;
     }
 
     public Question getQuestion() {
@@ -92,20 +86,18 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+
+    public DeleteHistory deleteAnswer() {
+        deleted = true;
+        return DeleteHistory.ofAnswer(id, writer);
     }
 
     @Override
@@ -118,5 +110,4 @@ public class Answer extends BaseTimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
-
 }
