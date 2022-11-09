@@ -15,7 +15,6 @@ public class Answer extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
-    private Long writerId;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -59,8 +58,8 @@ public class Answer extends BaseEntity {
         return id;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return this.writer;
     }
 
     public Question getQuestion() {
