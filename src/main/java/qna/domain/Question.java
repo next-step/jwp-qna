@@ -98,9 +98,13 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    private void deleted() {
+        this.deleted = true;
+    }
+
     public DeleteHistories delete(User user) {
         vaildateOwner(user);
-        this.setDeleted(true);
+        this.deleted();
 
         DeleteHistories deleteHistories = DeleteHistories.ofQuestion(this);
         deleteHistories.addAll(answers.delete(user));

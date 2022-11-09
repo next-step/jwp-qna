@@ -104,9 +104,13 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    private void deleted() {
+        this.deleted = true;
+    }
+
     public DeleteHistory delete(User user) {
         validateOwner(user);
-        this.setDeleted(true);
+        this.deleted();
         return new DeleteHistory(ContentType.ANSWER, id, user, LocalDateTime.now());
     }
 
