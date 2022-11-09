@@ -1,11 +1,13 @@
 package qna.domain;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +52,15 @@ public class AnswerTest {
         assertThat(answer1).isEqualTo(answer2);
         assertThat(original).isNotEqualTo(answer2.getContents());
         answers.flush();
+    }
+
+    @ParameterizedTest(name = "save_후_delete_테스트")
+    @MethodSource("answerTestFixture")
+    void save_후_delete_테스트(Answer answer) {
+        Answer saved = answers.save(answer);
+        answers.delete(saved);
+        Optional<Answer> answersById = answers.findById(answer.getId());
+        assertThat(answersById.isPresent()).isFalse();
     }
 
     static Stream<Answer> answerTestFixture() {
