@@ -39,6 +39,7 @@ public class QuestionTest {
 
         final Question actual = questions.findById(saved.getId()).get();
         assertThat(actual.isOwner(UserTest.JAVAJIGI)).isTrue();
+        assertThat(actual).isSameAs(updated);
     }
 
     @ParameterizedTest

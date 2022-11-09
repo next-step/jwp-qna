@@ -67,8 +67,8 @@ alter table user
 ### TODO
 - [x] JPA Auditing Entity
 - [x] Enable JPA Audit in Application 
-- [ ] Answer Entity
-- [ ] Answer Test (CRUD)
+- [x] Answer Entity
+- [x] Answer Test (CRUD)
 - [x] DeleteHistory Entity
 - [ ] ~~DeleteHistory Test(CRUD)~~
 - [x] Question Entity
