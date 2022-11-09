@@ -15,13 +15,13 @@ public class User extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false, columnDefinition = "varchar(20)")
+    @Column(unique = true, nullable = false, length = 20)
     private String userId;
-    @Column(nullable = false, columnDefinition = "varchar(20)")
+    @Column(nullable = false, length = 20)
     private String password;
-    @Column(nullable = false, columnDefinition = "varchar(20)")
+    @Column(nullable = false, length = 20)
     private String name;
-    @Column(columnDefinition = "varchar(50)")
+    @Column(length = 50)
     private String email;
 
     protected User() {
