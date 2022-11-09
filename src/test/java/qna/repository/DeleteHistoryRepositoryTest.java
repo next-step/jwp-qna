@@ -16,11 +16,13 @@ import qna.domain.DeleteHistoryRepository;
 import qna.domain.User;
 import qna.domain.UserRepository;
 
+
 @DataJpaTest
 public class DeleteHistoryRepositoryTest {
 
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
+
     @Autowired
     private UserRepository userRepository;
 

@@ -26,6 +26,9 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
+    protected Question() {
+    }
+
     public Question(String title, String contents) {
         this(null, title, contents);
     }

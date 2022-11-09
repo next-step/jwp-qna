@@ -16,6 +16,7 @@ import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserRepository;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,7 @@ public class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -38,6 +40,7 @@ public class QuestionRepositoryTest {
 
     }
 
+
     @Test
     @DisplayName("save 검증 테스트")
     void saveTest() {
@@ -46,6 +49,7 @@ public class QuestionRepositoryTest {
             () -> assertThat(question.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(question.isOwner(user)).isTrue(),
             () -> assertThat(question.getTitle()).isEqualTo(question.getTitle())
+
         );
     }
 
