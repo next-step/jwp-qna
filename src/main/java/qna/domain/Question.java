@@ -50,7 +50,10 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
+        if (answer.getQuestion() != this) {
+            answer.toQuestion(this);
+        }
     }
 
     public Long getId() {

@@ -57,8 +57,10 @@ public class Answer extends BaseEntity {
         if (this.question != null) {
             this.question.getAnswers().remove(this);
         }
+        if (!question.getAnswers().contains(this)) {
+            question.addAnswer(this);
+        }
         this.question = question;
-        question.getAnswers().add(this);
     }
 
     public Long getId() {
