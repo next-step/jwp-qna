@@ -16,10 +16,14 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private TestEntityManager entityManager;
 
     @Test
     void saveAndFind() {
+        userRepository.save(UserTest.JAVAJIGI);
+        userRepository.save(UserTest.SANJIGI);
         questionRepository.save(Q1);
         questionRepository.save(Q2);
         flushAndClear();

@@ -60,4 +60,7 @@ alter table question
       references user
 ```
 ![](src/main/resources/연관관계매핑.png)
-- [ ] DDL을 보고 연관관계 매핑
+- [x] User : Question = 1 : *
+- [x] User : Answer = 1 : *
+- [x] User : DeleteHistory = 1 : 1
+- [x] Question : Answer = 1 : *
