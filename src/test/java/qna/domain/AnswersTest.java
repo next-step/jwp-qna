@@ -28,4 +28,17 @@ class AnswersTest {
 
         Assertions.assertThat(answers.isEmpty()).isTrue();
     }
+
+    @DisplayName("Answers의 delete를 수행하면 DeleteHistories를 반환한다.")
+    @Test
+    void delete() {
+        Answers answers = new Answers();
+        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "contents");
+        answers.add(answer);
+
+        DeleteHistories deleteHistories = answers.delete(UserTest.JAVAJIGI);
+
+        Assertions.assertThat(deleteHistories.getUnmodifiableDeleteHistories())
+                .containsExactly(DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.JAVAJIGI));
+    }
 }
