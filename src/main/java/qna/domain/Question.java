@@ -3,6 +3,7 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -11,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -27,8 +28,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -53,6 +54,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -94,6 +96,26 @@ public class Question extends BaseEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    private void deleted() {
+        this.deleted = true;
+    }
+
+    public DeleteHistories delete(User user) {
+        vaildateOwner(user);
+        this.deleted();
+
+        DeleteHistories deleteHistories = DeleteHistories.ofQuestion(this);
+        deleteHistories.addAll(answers.delete(user));
+
+        return deleteHistories;
+    }
+
+    private void vaildateOwner(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
