@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    List<Answer> findByQuestionIdAndDeletedFalse(Long questionId);
+    List<Answer> findByQuestionAndDeletedFalse(Question question);
 
     Optional<Answer> findByIdAndDeletedFalse(Long id);
 }

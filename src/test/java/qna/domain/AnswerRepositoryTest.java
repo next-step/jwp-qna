@@ -24,7 +24,7 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionTest.getId());
+        final List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(questionTest);
         assertAll(
                 () -> assertThat(answers).isNotEmpty(),
                 () -> assertThat(answers.get(0).getQuestionId()).isEqualTo(questionTest.getId()),
