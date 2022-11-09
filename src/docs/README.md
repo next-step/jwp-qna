@@ -10,3 +10,10 @@
   - [X] user entity, repository 클래스 작성
     - [X] user entity의 user_id 컬럼 UniqueConstraint 지정
 - H2 데이터베이스 사용
+
+## 2단계 요구사항
+- [X] 엔티티간 연관관계 매핑
+  - [X] Answer - ManyToOne - Question 연관관계 매핑
+  - [X] Answer - ManyToOne - User 연관관계 매핑
+  - [X] DeleteHistory - ManyToOne - User 연관관계 매핑
+  - [X] Question - ManyToOne - User 연관관계 매핑

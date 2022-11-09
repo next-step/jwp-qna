@@ -1,11 +1,8 @@
 package qna.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
 
 @Entity
 public class Question extends DateEntity {
@@ -21,8 +18,12 @@ public class Question extends DateEntity {
     @Column(nullable = true)
     private String contents;
 
-    @Column(nullable = true)
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final List<Answer> answers = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -48,16 +49,16 @@ public class Question extends DateEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.add(answer);
     }
 
     public String getTitle() {
@@ -68,8 +69,12 @@ public class Question extends DateEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getWriter() {
+        return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public boolean isDeleted() {
@@ -86,7 +91,7 @@ public class Question extends DateEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getUserId() +
                 ", deleted=" + deleted +
                 '}';
     }
