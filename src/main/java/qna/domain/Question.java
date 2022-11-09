@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.ForbiddenException;
+
 import javax.persistence.*;
 
 @Entity
@@ -49,12 +51,23 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
+    public void deleteByWriter(User writer) {
+        this.validateWriter(writer);
+        this.delete();
+    }
+
     public void delete() {
         this.deleted = true;
     }
 
     public void changeTitle(String title) {
         this.title = title;
+    }
+
+    private void validateWriter(User writer) {
+        if (!this.writer.isEquals(writer)) {
+            throw new ForbiddenException();
+        }
     }
 
     public Long getId() {

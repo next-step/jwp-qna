@@ -71,16 +71,16 @@ public class User extends BaseTimeEntity {
                 email.equals(target.email);
     }
 
+    public boolean isEquals(User user) {
+        return this.equals(user);
+    }
+
     public boolean isGuestUser() {
         return false;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUserId() {
