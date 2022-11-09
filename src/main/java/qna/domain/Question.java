@@ -3,6 +3,7 @@ package qna.domain;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -24,6 +25,9 @@ public class Question extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     protected Question() {
     }
@@ -48,11 +52,13 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
     public void deleteByWriter(User writer) {
         this.validateWriter(writer);
+        this.validateAnswer();
         this.delete();
     }
 
@@ -65,8 +71,14 @@ public class Question extends BaseTimeEntity {
     }
 
     private void validateWriter(User writer) {
-        if (!this.writer.isEquals(writer)) {
+        if (this.writer.isNotEquals(writer)) {
             throw new ForbiddenException();
+        }
+    }
+
+    private void validateAnswer() {
+        if (this.answers.isNotEmpty()) {
+            throw new IllegalStateException();
         }
     }
 
@@ -88,6 +100,10 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers.values();
     }
 
     @Override
