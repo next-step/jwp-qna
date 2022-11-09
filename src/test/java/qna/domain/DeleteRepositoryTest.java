@@ -13,13 +13,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class DeleteRepositoryTest {
+    private static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     private static final DeleteHistory deleteHistoryTest = new DeleteHistory(QUESTION, 1L, JAVAJIGI, LocalDateTime.now());
-
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void init() {
+        userRepository.save(JAVAJIGI);
         deleteHistoryRepository.save(deleteHistoryTest);
     }
 

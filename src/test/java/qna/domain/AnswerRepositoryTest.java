@@ -16,9 +16,15 @@ public class AnswerRepositoryTest {
     private static final Answer answerTest = new Answer(userTest, questionTest, "contents test");
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @BeforeEach
     void init() {
+        userRepository.save(userTest);
+        questionRepository.save(questionTest);
         answerRepository.save(answerTest);
     }
 

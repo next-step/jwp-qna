@@ -11,13 +11,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
-    private static final Question questionTest = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    private static final User userTest = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+    private static final Question questionTest = new Question(1L, "title1", "contents1").writeBy(userTest);
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void init() {
+        userRepository.save(userTest);
         questionRepository.save(questionTest);
     }
 
