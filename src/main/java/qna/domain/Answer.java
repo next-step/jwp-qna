@@ -8,15 +8,18 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long writerId;
-    private Long questionId;
     @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     protected Answer() {
     }
@@ -37,7 +40,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -46,39 +49,23 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getWriterId() {
         return writerId;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public Question getQuestion() {
+        return question;
     }
 
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -94,7 +81,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
             "id=" + id +
             ", writerId=" + writerId +
-            ", questionId=" + questionId +
+            ", questionId=" + question.getId() +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
