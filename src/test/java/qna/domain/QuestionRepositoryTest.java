@@ -92,31 +92,19 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void 내가_작성한_질문이_아닌경우_질문을_삭제할_수_없다() {
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
-        User anotherUser = userRepository.save(new User("another", "pw", "name", "email"));
-        assertThatThrownBy(() -> question.delete(anotherUser))
-                .isInstanceOf(CannotDeleteException.class);
-    }
-
-    @Test
-    void 질문_삭제시_삭제_이력을_반환한다() throws CannotDeleteException {
-        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
-        DeleteHistory history = question.delete(user);
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(history.getDeleteByUser()).isEqualTo(user);
-        assertThat(history.getContentId()).isEqualTo(question.getId());
-    }
-
-    @Test
     void 질문과_답변을_함께_삭제() throws CannotDeleteException {
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
         Answer answer = answerRepository.save(new Answer(user, question, "answer"));
         question.addAnswer(answer);
-
         List<DeleteHistory> deleteHistories = question.deleteWithAnswers(user);
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.isDeleted()).isTrue();
+
+        testEntityManager.flush();
+        testEntityManager.clear();
+
+        Question actualQuestion = questionRepository.findById(question.getId()).get();
+        Answer actualAnswer = answerRepository.findById(answer.getId()).get();
+        assertThat(actualQuestion.isDeleted()).isTrue();
+        assertThat(actualAnswer.isDeleted()).isTrue();
         assertThat(deleteHistories).hasSize(2);
     }
 }
