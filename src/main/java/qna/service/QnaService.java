@@ -23,6 +23,8 @@ public class QnaService {
     private AnswerRepository answerRepository;
     private DeleteHistoryService deleteHistoryService;
 
+    private DeleteHistories deleteHistories = new DeleteHistories();
+
     public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
@@ -39,8 +41,8 @@ public class QnaService {
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
         question.deleteByLoginUser(loginUser);
+        List<DeleteHistory> histories = deleteHistories.addDeleteQuestionHistory(question);
 
-        List<DeleteHistory> deleteHistories = new DeleteHistories().addDeleteQuestionHistory(question);
-        deleteHistoryService.saveAll(deleteHistories);
+        deleteHistoryService.saveAll(histories);
     }
 }

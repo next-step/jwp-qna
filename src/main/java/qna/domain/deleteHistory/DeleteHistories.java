@@ -27,8 +27,14 @@ public class DeleteHistories implements Iterable<DeleteHistory> {
         deleteHistories.add(ofQuestionDeletedHistory(question));
         addDeletedAnswerHistories(question.getAnswers());
 
-        return deleteHistories;
+        return getDeleteHistories();
     }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return Collections.unmodifiableList(deleteHistories);
+    }
+
+
 
     private void addDeletedAnswerHistories(List<Answer> answers) {
         for (Answer answer : answers) {
