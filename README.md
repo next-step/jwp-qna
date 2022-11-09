@@ -132,7 +132,7 @@ alter table question
 * Domain
   * JPA 디버깅이 용이한 properties 확인
   * 조인이 필요한 테이블 @JoinColumn 사용하기
-    * 객체를 참조함                        
+    * 객체를 참조함
   * @ManyToOne, @OneToMany 중 적절한 것 사용하기
     * User -> Question [(1:N), Question이 주테이블]
     * Question -> Answer [(1:N), Answer이 주테이블]

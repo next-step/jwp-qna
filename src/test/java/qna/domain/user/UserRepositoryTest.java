@@ -1,4 +1,4 @@
-package qna.domain;
+package qna.domain.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -6,16 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import qna.UnAuthorizedException;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.user.UserTest.JAVAJIGI;
+import static qna.domain.user.UserTest.SANJIGI;
 
 @DataJpaTest
 public class UserRepositoryTest {
@@ -47,6 +46,7 @@ public class UserRepositoryTest {
     void get_user_by_id() {
         List<User> users = userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
 
+        // UserId로 저장했기 때문에 String으로 찾을 경우 에러
         User savedUser = userRepository.findByUserId(users.get(0).getUserId()).get();
 
         assertThat(users.get(0)).isEqualTo(savedUser);
@@ -68,11 +68,12 @@ public class UserRepositoryTest {
     void update_user_by_id() {
         User user = userRepository.save(JAVAJIGI);
 
-        JAVAJIGI.updateEmail("heollo@test.com");
-        user.update(user, JAVAJIGI);
+        User target = JAVAJIGI;
+        target.changeEmail(Email.of("test@nextstep.com"));
+
+        user.update(JAVAJIGI, target);
 
         User updatedUser = userRepository.findByUserId(user.getUserId()).get();
-
 
         assertAll(
                 () -> assertThat(updatedUser).isEqualTo(user),
@@ -86,7 +87,7 @@ public class UserRepositoryTest {
         userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
 
         assertThatThrownBy(() ->
-                userRepository.save(new User(3L, "javajigi", "password3", "name3", "javajigi3@slipp.net"))
+                userRepository.save(new User(3L, UserId.of("javajigi"), Password.of("password3"), Name.of("name3"), Email.of("javajigi3@slipp.net")))
         ).isInstanceOf(DataIntegrityViolationException.class);
     }
 }

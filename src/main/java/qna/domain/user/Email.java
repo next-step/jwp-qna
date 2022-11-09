@@ -34,7 +34,7 @@ public class Email {
         String emailRegex = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
 
         if(!Pattern.matches(emailRegex,email)) {
-         throw new IllegalArgumentException(NOT_VALID_EMAIL);
+            throw new IllegalArgumentException(NOT_VALID_EMAIL);
         }
     }
 
