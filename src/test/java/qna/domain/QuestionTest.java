@@ -22,11 +22,12 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-
     @Test
     void save() {
+        final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
         assertAll(
                 () -> assertDoesNotThrow(() -> questionRepository.save(Q1)),
                 () -> assertDoesNotThrow(() -> questionRepository.save(Q2))
