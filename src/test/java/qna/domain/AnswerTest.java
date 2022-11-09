@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -47,4 +49,39 @@ public class AnswerTest {
 
         assertThat(answer.getQuestion()).isEqualTo(QuestionTest.Q2);
     }
+
+    @DisplayName("Answer의 Question를 변경하면 연과관계 Qustion의 answers에도 변경 반영된다.")
+    @Test
+    void mapping_question() {
+        Question question1 = new Question("title1", "contents2");
+        Question question2 = new Question("title2", "contents2");
+        Answer answer = new Answer(UserTest.JAVAJIGI, question1, "answer");
+
+        answer.toQuestion(question2);
+
+        Assertions.assertAll(
+                () -> assertThat(answer.getQuestion()).isEqualTo(question2),
+                () -> assertThat(question1.getAnswers().isEmpty()).isTrue(),
+                () -> assertThat(question2.getAnswers().contains(answer)).isTrue()
+        );
+    }
+
+    @DisplayName("Answer을 delete를 수행하면 삭제 상태가 true로 변경된다.")
+    @Test
+    void delete() {
+        Answer answer = new Answer(1L, UserTest.SANJIGI, QuestionTest.Q1, "content");
+
+        answer.delete(UserTest.SANJIGI);
+
+        assertThat(answer.isDeleted()).isTrue();
+    }
+
+    @DisplayName("Answer의 작성자와 동일하지 않은 사용자가 삭제를 시도하면 CannotDeleteException이 발생한다.")
+    @Test
+    void delete_exception() {
+        Answer answer = new Answer(1L, UserTest.SANJIGI, QuestionTest.Q1, "content");
+
+        assertThatThrownBy(() -> answer.delete(UserTest.JAVAJIGI)).isInstanceOf(CannotDeleteException.class);
+    }
+
 }
