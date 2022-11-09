@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import qna.CannotDeleteException;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -111,21 +110,12 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    void 다른_사람이_작성한_답변은_삭제할_수_없다() {
+    void 답변_삭제() {
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
-        User anotherUser = userRepository.save(new User("another", "pw", "name", "email"));
-        assertThatThrownBy(() -> answer.delete(anotherUser))
-                .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("답변을 삭제할 권한이 없습니다.");
-    }
-
-    @Test
-    void 답변_삭제시_삭제_이력을_반환한다() throws CannotDeleteException {
-        Answer answer = answerRepository.save(new Answer(user, question, "contents"));
-        DeleteHistory history = answer.delete(user);
-        assertThat(answer.isDeleted()).isTrue();
-        assertThat(history.getDeleteByUser()).isEqualTo(user);
-        assertThat(history.getContentId()).isEqualTo(answer.getId());
+        answer.delete(user);
+        flushAndClear();
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
     }
 
     private void flushAndClear() {
