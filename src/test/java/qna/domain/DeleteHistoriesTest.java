@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,7 @@ class DeleteHistoriesTest {
 
     @DisplayName("getUnmodifiableDeleteHistories()한 List를 수정하면 UnsupportedOperationException이 발생한다.")
     @Test
-    void UnmodifiableD() {
+    void unmodifiable_list_delete() {
         DeleteHistories deleteHistories = new DeleteHistories();
         DeleteHistory deleteHistory = DeleteHistory.of(ContentType.ANSWER, 1L, UserTest.SANJIGI);
 
