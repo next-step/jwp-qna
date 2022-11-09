@@ -67,14 +67,18 @@ alter table user
 ### TODO
 - [x] JPA Auditing Entity
 - [x] Enable JPA Audit in Application 
-- [x] Answer Entity / ~~Repo~~
-- [x] Answer Test (CRUD)
+- [ ] Answer Entity
+- [ ] Answer Test (CRUD)
 - [ ] DeleteHistory Entity
 - [ ] DeleteHistory Test(CRUD)
 - [ ] Question Entity
 - [ ] Question Test(CRUD)
-- [ ] User Entity
-- [ ] User Entity(CRUD)
+- [x] User Entity
+	- [x] 스키마에 맞게 어노테이션 추가
+	- [x] 불필요한 setter 삭제
+	- [x] equals / hashCode 추가
+		- [x] core fields = id, userId
+- [x] User Entity Test (CRUD)
 
 ### Hints
 
@@ -154,4 +158,13 @@ spring.jpa.show-sql=true
 ##### Q : JPA Buddy plug in으로 무엇이 가능한지?
 - Refer : https://www.jpa-buddy.com/?utm_source=baeldung&utm_medium=display&utm_campaign=npi
 
-Q : 	BaseTimeEntity를 상속한 엔티티클래스에서, Super 생성자를 부르지 않는데,  어떻게 컴파일이 되는건지? @MappedSuperclass 동작 확인
+##### Q : 	BaseTimeEntity를 상속한 엔티티클래스에서, Super 생성자를 부르지 않는데,  어떻게 컴파일이 되는건지? @MappedSuperclass 동작 확인
+
+##### Q : Entity의 ID 필드를 논리 동치성(동등성) 계산시 포함해야 하나?
+- 만약 포함한다면, DB보존 전후로, equals()를 통한 동등성 계산에 실패하게 된다.
+	- 개체 생성시 ID가 존재 하지 않는 개체는 , JPA통해 save후에는 ID가 존재하게 되므로.
+	- 이게 맞나?
+	- 굳이 지금 요구사항을 모르는데, 섣부르게 동등성 판단을 하려고 하는게 아닌가?
+	- Step1에서는 동등성 계산 보류.
+
+Q : save전후로 참조 요소가 달라지는건, ID속성이 NULL일때만 아니었나? 
