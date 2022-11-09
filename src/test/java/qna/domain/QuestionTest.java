@@ -3,18 +3,26 @@ package qna.domain;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static qna.domain.UserTest.MINGVEL;
 
+@DataJpaTest
 @DisplayName("question 엔티티 테스트")
-public class QuestionTest extends TestBase {
+public class QuestionTest {
     public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
     public static final Question Q3 = new Question(3L, "title3", "contents3").writeBy(MINGVEL);
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @DisplayName("save 성공")
     @Test

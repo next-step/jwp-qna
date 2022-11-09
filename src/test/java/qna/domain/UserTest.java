@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
@@ -13,17 +16,22 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.ParameterizedTest.DEFAULT_DISPLAY_NAME;
-import static qna.domain.QuestionTest.Q1;
 
+@DataJpaTest
 @DisplayName("user 엔티티 테스트")
-public class UserTest extends TestBase {
+public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
     public static final User MINGVEL = new User(3L, "mingvel", "password", "name", "dlsqo2005@naver.com");
     public static final User DELETE_SOON_USER = new User(4L, "delete", "password", "deleteSoon", "asdf@naver.com");
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    TestEntityManager testEntityManager;
 
     @DisplayName("생성 성공")
     @Test
@@ -94,20 +102,6 @@ public class UserTest extends TestBase {
         userRepository.delete(user);
         User deleted = userRepository.findById(user.getId()).orElse(null);
         assertThat(deleted).isNull();
-    }
-
-    @DisplayName("Question 등록 테스트")
-    @Test
-    void addQuestion_user_success() {
-        //given:
-        final User user = userRepository.save(provideUser());
-        final Question question = questionRepository.save(Q1.writeBy(user));
-        //whenL
-        user.addQuestion(question);
-        final User resultUser = userRepository.save(user);
-        flushAndClear();
-        //then:
-        assertThat(resultUser.getQuestionList()).containsExactly(question);
     }
 
     static User provideUser() {

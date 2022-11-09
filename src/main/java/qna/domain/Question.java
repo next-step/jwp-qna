@@ -8,10 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,9 +28,6 @@ public class Question extends BaseDateTimeEntity {
     private User writer;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answerList;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -59,18 +54,12 @@ public class Question extends BaseDateTimeEntity {
         return this;
     }
 
-    public void toWriter(User user) {
-    }
-
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        if (!answerList.contains(answer)) {
-            answerList.add(answer);
-            answer.toQuestion(this);
-        }
+        answer.toQuestion(this);
     }
 
     public Long getId() {
@@ -111,10 +100,6 @@ public class Question extends BaseDateTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswerList() {
-        return answerList;
     }
 
     @Override

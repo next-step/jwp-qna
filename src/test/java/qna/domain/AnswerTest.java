@@ -2,14 +2,25 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static qna.domain.QuestionTest.Q3;
 import static qna.domain.UserTest.provideUser;
 
+@DataJpaTest
 @DisplayName("answer 엔티티 테스트")
-class AnswerTest extends TestBase {
+class AnswerTest {
+
+    @Autowired
+    AnswerRepository answerRepository;
+
+    @Autowired
+    QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @DisplayName("save 성공")
     @Test
@@ -81,7 +92,6 @@ class AnswerTest extends TestBase {
         //given:
         final User user = userRepository.save(provideUser());
         final User changedUser = userRepository.save(UserTest.SANJIGI);
-        flushAndClear();
         final Question question = questionRepository.save(Q3.writeBy(user));
         final Answer answer = answerRepository.save(provideAnswer(user, question));
         //when:
