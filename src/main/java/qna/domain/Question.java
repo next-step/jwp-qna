@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -25,7 +26,8 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @OneToOne
+    private User writer;
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();
@@ -47,12 +49,12 @@ public class Question extends BaseTimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -72,7 +74,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
     public List<Answer> getAnswers() {
@@ -93,7 +95,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer +
                 ", answers=" + answers +
                 ", deleted=" + deleted +
                 '}';
