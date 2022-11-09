@@ -1,6 +1,7 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -17,17 +18,25 @@ public class Question extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    private List<Answer> answers;
+
     protected Question() {
     }
 
     public Question(String title, String contents) {
-        this(null, title, contents);
+        this(title, contents, null);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(String title, String contents, List<Answer> answers) {
+        this(null, title, contents, answers);
+    }
+
+    public Question(Long id, String title, String contents, List<Answer> answers) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = answers;
     }
 
     public Question writeBy(User writer) {
@@ -40,7 +49,8 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.addQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -65,6 +75,10 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     @Override

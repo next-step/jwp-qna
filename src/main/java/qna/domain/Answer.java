@@ -56,7 +56,7 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
+    public void addQuestion(Question question) {
         this.question = question;
     }
 
