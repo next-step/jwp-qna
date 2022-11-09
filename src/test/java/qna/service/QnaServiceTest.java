@@ -8,8 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.constant.ContentType;
-import qna.domain.*;
-import qna.repository.AnswerRepository;
+import qna.domain.Answer;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.UserTest;
 import qna.repository.QuestionRepository;
 
 import java.time.LocalDateTime;
@@ -29,9 +31,6 @@ class QnaServiceTest {
 
     @Mock
     private QuestionRepository questionRepository;
-
-    @Mock
-    private AnswerRepository answerRepository;
 
     @Mock
     private DeleteHistoryService deleteHistoryService;

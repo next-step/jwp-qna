@@ -51,9 +51,7 @@ public class Question extends BaseTime {
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(NOT_QUESTION_DELETE_NO_PERMISSION);
-        }
+        validationDeleteRequestUser(loginUser);
         for (Answer answer : answers) {
             if (!answer.isOwner(loginUser)) {
                 throw new CannotDeleteException(NOT_QUESTION_DELETE_WRITE_OTHER_USER);
@@ -71,6 +69,12 @@ public class Question extends BaseTime {
         return deleteHistories;
     }
 
+    private void validationDeleteRequestUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NOT_QUESTION_DELETE_NO_PERMISSION);
+        }
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
@@ -78,6 +82,15 @@ public class Question extends BaseTime {
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         this.answers.add(answer);
+    }
+
+    public boolean isDeletedStatusAnswers() {
+        for (Answer answer : answers) {
+            if (!answer.isDeleted()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Long getId() {
