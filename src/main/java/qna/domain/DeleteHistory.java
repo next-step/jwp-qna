@@ -17,7 +17,7 @@ public class DeleteHistory {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Enumerated(STRING)
-    @Column(columnDefinition = "varchar(255)")
+    @Column
     private ContentType contentType;
     private Long contentId;
     private Long deletedById;
