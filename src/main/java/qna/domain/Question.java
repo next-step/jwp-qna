@@ -55,7 +55,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -108,9 +108,9 @@ public class Question extends BaseTimeEntity {
     }
 
     private List<DeleteHistory> makeCombineHistories(List<DeleteHistory> deleteHistories, DeleteHistory deleteHistory) {
-        List<DeleteHistory> combineHistory = new ArrayList<>(deleteHistories);
+        List<DeleteHistory> combineHistory = new ArrayList<>();
         combineHistory.add(deleteHistory);
-
+        combineHistory.addAll(deleteHistories);
         return combineHistory;
     }
 
@@ -119,7 +119,7 @@ public class Question extends BaseTimeEntity {
             throw new CannotDeleteException(QuestionExceptionType.NOT_OWNER_LOGIN_USER.getMessage());
         }
 
-        if (!deleted) {
+        if (isDeleted()) {
             throw new CannotDeleteException(QuestionExceptionType.ALREADY_DELETE_QUESTION.getMessage());
         }
     }

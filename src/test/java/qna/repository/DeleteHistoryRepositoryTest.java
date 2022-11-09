@@ -28,7 +28,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory save() 테스트를 진행한다")
     void saveHistory() {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        DeleteHistory history = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
+        DeleteHistory history = new DeleteHistory(ContentType.QUESTION, 1L, user);
 
         DeleteHistory result = deleteHistoryRepository.save(history);
 
@@ -40,7 +40,7 @@ class DeleteHistoryRepositoryTest {
     void saveHistoryAndFind() {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         DeleteHistory history = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now()));
+                new DeleteHistory(ContentType.QUESTION, 1L, user));
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(history.getId());
 
