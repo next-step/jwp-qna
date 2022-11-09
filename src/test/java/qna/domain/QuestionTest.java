@@ -22,7 +22,7 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("addAnswer은 Answer의 question과 연관 관계 편의 메소드이다.")
+    @DisplayName("질문에 답변 추가")
     void addAnswer() {
         //given
         User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");

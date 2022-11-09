@@ -11,7 +11,7 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    @DisplayName("toQuestion은 question의 answers와 연관 관계 편의 메소드이다.")
+    @DisplayName("답변에 질문 연결")
     void toQuestion() {
         //given
         User writer = new User(null, "sangjae", "password", "name", "javajigi@slipp.net");
