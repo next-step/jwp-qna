@@ -151,5 +151,5 @@ alter table question
   - [x] 글 삭제 시 로그인 유저와 글쓴이는 동일한지 확인
   - [x] 글 삭제 시 로그인 유저와 글쓴이가 다르면 에러 발생
   - [ ] 글 삭제의 반환 값은 `List<DeleteHistory>`
-- [ ] `Question`을 받아 `DeleteHistory` 생성하는 메소드 추가
-- [ ] `Answer`을 받아 `DeleteHistory` 생성하는 메소드 추가
+- [x] `Question`을 받아 `DeleteHistory` 생성하는 메소드 추가
+- [x] `Answer`을 받아 `DeleteHistory` 생성하는 메소드 추가
