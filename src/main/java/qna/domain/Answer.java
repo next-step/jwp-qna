@@ -27,10 +27,12 @@ public class Answer extends BaseDateEntity{
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    private Long writerId;
     @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
     private Question question;
+    @ManyToOne
+    @JoinColumn(name = "WRITER_ID")
+    private User user;
 
     protected Answer() {}
 
@@ -49,12 +51,15 @@ public class Answer extends BaseDateEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+    public boolean isOwner(User loginUser) {
+        return this.user.equals(loginUser);
+    }
+
+    public Long getWriterId() {
+        return question.getWriterId();
     }
 
     public Long getId() {
@@ -63,14 +68,6 @@ public class Answer extends BaseDateEntity{
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
     }
 
     public String getContents() {
@@ -89,11 +86,28 @@ public class Answer extends BaseDateEntity{
         this.deleted = deleted;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getUserId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

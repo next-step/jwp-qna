@@ -54,6 +54,14 @@ public class Question extends BaseDateEntity{
         return this;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
     }

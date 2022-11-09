@@ -8,11 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,6 +36,8 @@ public class User extends BaseDateEntity{
     private String password;
     @Column(nullable = false, length = USER_ID_LENGTH, unique = true)
     private String userId;
+    @OneToMany(mappedBy = "user")
+    private List<Answer> answers = new ArrayList<Answer>();
 
 
     protected User() {}
@@ -131,6 +136,14 @@ public class User extends BaseDateEntity{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     @Override
