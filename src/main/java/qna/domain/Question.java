@@ -1,7 +1,6 @@
 package qna.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,8 +21,8 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     private boolean deleted = false;
 
@@ -50,7 +49,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        this.answers.add(answer);
+        this.answers.addAnswer(answer);
         if (answer.getQuestion() != this) {
             answer.toQuestion(this);
         }
@@ -84,7 +83,7 @@ public class Question extends BaseEntity {
         this.writer = writer;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 

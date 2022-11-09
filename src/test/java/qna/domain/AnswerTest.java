@@ -25,8 +25,8 @@ public class AnswerTest {
 
         //then
         assertAll(
-                () -> assertThat(question.getAnswers()).hasSize(1),
-                () -> assertThat(question.getAnswers().get(0)).isSameAs(answer),
+                () -> assertThat(question.getAnswers().size()).isEqualTo(1),
+                () -> assertThat(question.getAnswers().contains(answer)).isTrue(),
                 () -> assertThat(answer.getQuestion()).isSameAs(question)
         );
     }

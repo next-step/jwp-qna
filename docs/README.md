@@ -145,7 +145,8 @@ alter table question
 - 리팩터링을 완료한 후에도 `src/test/java` 디렉터리의 `qna.service.QnaServiceTest`의 모든 테스트가 통과해야 한다.
 
 ### 구현 기능 목록
-- [ ] `List<Answer>`를 일급 컬렉션 `Answers`로 만든다
+- [x] `List<Answer>`를 일급 컬렉션 `Answers`로 만든다
+- [x] `Question`에 `List<Answer>`를 `Answers`로 대체
 - [ ] `Question`에 글 삭제 메소드 추가
 - [ ] `Answer`에 글 삭제 메소드 추가
 - [ ] 글 삭제 시 로그인 유저와 글쓴이는 동일한지 확인
