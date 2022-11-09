@@ -3,6 +3,8 @@ package qna.domain;
 import javax.persistence.*;
 import java.util.List;
 
+import static java.util.stream.Collectors.*;
+
 @Entity
 public class Question extends BaseTimeEntity {
     @Id
@@ -77,8 +79,10 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    public List<Answer> getNotDeletedAnswers() {
+        return answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .collect(toList());
     }
 
     @Override

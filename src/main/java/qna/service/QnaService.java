@@ -36,7 +36,7 @@ public class QnaService {
         if (!question.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        List<Answer> answers = question.getAnswers();
+        List<Answer> answers = question.getNotDeletedAnswers();
 
         boolean hasAnswer = answers.stream()
                 .anyMatch(answer -> !answer.isOwner(loginUser));
