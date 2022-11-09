@@ -21,7 +21,7 @@
 - [X] DeleteHistory 연관관계 맵핑에 따른 테스트 코드 수정
 - [X] Question 연관관계 맵핑에 따른 테스트 코드 수정
 ### 질문삭제하기 리팩토링
-- [ ] Question 상태를 삭제 상태(deleted - boolean type)로 변경
+- [X] Question 상태를 삭제 상태(deleted - boolean type)로 변경
 - [ ] 로그인 사용자와 질문한 사람이 같은 경우에만 삭제가 가능
 - [ ] 답변이 없는 경우 삭제가 가능
 - [ ] 질문자와 답변 글의 모든 답변자 같은 경우 삭제가 가능

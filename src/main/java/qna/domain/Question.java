@@ -1,5 +1,8 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
+import qna.exception.type.QuestionExceptionType;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -42,7 +45,7 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -83,5 +86,21 @@ public class Question extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, contents, writer, deleted);
+    }
+
+    public void delete(User loginUser) {
+        validCheckDeleteQuestion(loginUser);
+
+        this.deleted = true;
+    }
+
+    private void validCheckDeleteQuestion(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(QuestionExceptionType.NOT_OWNER_LOGIN_USER.getMessage());
+        }
+
+        if (!deleted) {
+            throw new CannotDeleteException(QuestionExceptionType.ALREADY_DELETE_QUESTION.getMessage());
+        }
     }
 }
