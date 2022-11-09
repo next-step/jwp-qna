@@ -70,6 +70,10 @@ public class Answer extends BaseTimeEntity {
         }
     }
 
+    public void addQuestion(Question question) {
+        this.question = question;
+    }
+
     public void changeQuestion(Question question) {
         if (Objects.nonNull(this.question)) {
             question.removeAnswer(this);
@@ -110,7 +114,6 @@ public class Answer extends BaseTimeEntity {
         return deleted == answer.deleted
                 && Objects.equals(id, answer.id)
                 && Objects.equals(writer, answer.writer)
-                && Objects.equals(question, answer.question)
                 && Objects.equals(contents, answer.contents);
     }
 

@@ -85,6 +85,7 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answers.addAnswer(answer);
+        answer.addQuestion(this);
     }
 
     public void removeAnswer(Answer answer) {
@@ -97,10 +98,6 @@ public class Question extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public boolean isNotDeleted() {
-        return !deleted;
     }
 
     public User getWriter() {

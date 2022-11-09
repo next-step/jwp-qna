@@ -1,11 +1,5 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -14,6 +8,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @TestMethodOrder(OrderAnnotation.class)
@@ -26,6 +25,9 @@ class QuestionRepositoryTest {
 
     @Autowired
     AnswerRepository answerRepository;
+
+    @Autowired
+    DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
     TestEntityManager em;
@@ -97,13 +99,49 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("질문에 답변을 추가")
+    @DisplayName("질문에 답변을 추가(cascade 사용)")
     void add_answer() {
         Question saveQuestion = questionRepository.save(question);
         Answer expected = new Answer(saveQuestion.getWriter(), saveQuestion, "contents");
+        Answer expected2 = new Answer(saveQuestion.getWriter(), saveQuestion, "contents2");
         saveQuestion.addAnswer(expected);
+        saveQuestion.addAnswer(expected2);
+
+        em.flush();
+        em.clear();
 
         Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
-        findQuestion.ifPresent(actual -> assertThat(actual.getAnswers()).contains(expected));
+        findQuestion.ifPresent(actual -> {
+            assertAll(
+                    () -> assertThat(actual.getAnswers()).contains(expected),
+                    () -> assertThat(actual.getAnswers()).contains(expected2),
+                    () -> assertThat(actual.getAnswers()).hasSize(2)
+            );
+        });
+    }
+
+    @Test
+    @DisplayName("질문 삭제시 답변도 같이 삭제 (cascade 사용X)")
+    void delete_question_and_delete_all_answer() {
+        Question saveQuestion = questionRepository.save(question);
+        Answer expected = answerRepository.save(new Answer(saveQuestion.getWriter(), saveQuestion, "contents"));
+        saveQuestion.addAnswer(expected);
+
+        em.flush();
+        em.clear();
+
+        Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
+        findQuestion.ifPresent(q -> q.delete(saveQuestion.getWriter()));
+
+        em.flush();
+        em.clear();
+
+        Optional<Question> deleteQuestion = questionRepository.findById(saveQuestion.getId());
+        deleteQuestion.ifPresent(dq -> {
+            assertAll(
+                    () -> assertTrue(dq.isDeleted()),
+                    () -> assertTrue(dq.getAnswers().get(0).isDeleted())
+            );
+        });
     }
 }
