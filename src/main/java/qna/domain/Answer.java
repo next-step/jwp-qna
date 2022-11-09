@@ -50,7 +50,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
