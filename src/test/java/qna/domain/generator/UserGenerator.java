@@ -11,7 +11,7 @@ public class UserGenerator {
 		this.userRepository = userRepository;
 	}
 
-	public static User authorizedUser() {
+	public static User anotherUser() {
 		return user("login-user", "password", "인증된 사용자", "login-user@email.com");
 	}
 
