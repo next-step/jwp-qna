@@ -19,3 +19,6 @@
   - [x] AnswerRepository 저장 및 find
 - DeleteHistory
   - [x] DeleteHistory 엔티티 매핑
+
+### 1단계 피드백
+- [ ] @Embeddable 타입을 @MappedSuperclass로 정의
