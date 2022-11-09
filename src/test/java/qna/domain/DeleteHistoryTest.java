@@ -22,7 +22,7 @@ class DeleteHistoryTest {
     DeleteHistoryRepository deleteHistories;
 
     @ParameterizedTest(name = "save_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("deleteHistoryTestFixture")
     void save_테스트(DeleteHistory deleteHistory) {
         DeleteHistory saved = deleteHistories.save(deleteHistory);
         assertThat(saved).isEqualTo(deleteHistory);
@@ -30,14 +30,14 @@ class DeleteHistoryTest {
     }
 
     @ParameterizedTest(name = "save_후_findById_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("deleteHistoryTestFixture")
     void save_후_findById_테스트(DeleteHistory deleteHistory) {
         DeleteHistory history1 = deleteHistories.save(deleteHistory);
         DeleteHistory history2 = deleteHistories.findById(history1.getId()).get();
         assertThat(history1).isEqualTo(history2);
     }
 
-    static Stream<DeleteHistory> saveTestFixture() {
+    static Stream<DeleteHistory> deleteHistoryTestFixture() {
         return Stream.of(DH1, DH2);
     }
 }

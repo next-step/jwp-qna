@@ -31,7 +31,7 @@ public class UserTest {
     }
 
     @ParameterizedTest(name = "save_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("userTestFixture")
     void save_테스트(User user) {
         User saved = users.save(user);
         assertThat(saved).isEqualTo(user);
@@ -39,14 +39,14 @@ public class UserTest {
     }
 
     @ParameterizedTest(name = "save_후_findById_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("userTestFixture")
     void save_후_findById_테스트(User user) {
         User user1 = users.save(user);
         User user2 = users.findById(user1.getId()).get();
         assertThat(user1).isEqualTo(user2);
     }
 
-    static Stream<User> saveTestFixture() {
+    static Stream<User> userTestFixture() {
         return Stream.of(JAVAJIGI, SANJIGI);
     }
 }

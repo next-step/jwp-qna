@@ -27,7 +27,7 @@ public class QuestionTest {
     QuestionRepository questions;
 
     @ParameterizedTest(name = "save_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("questionTestFixture")
     void save_테스트(Question question) {
         Question saved = questions.save(question);
         assertThat(saved).isEqualTo(question);
@@ -36,7 +36,7 @@ public class QuestionTest {
     }
 
     @ParameterizedTest(name = "save_후_findById_테스트")
-    @MethodSource("saveTestFixture")
+    @MethodSource("questionTestFixture")
     void save_후_findById_테스트(Question question) {
         Question question1 = questions.save(question);
         Question question2 = questions.findById(question1.getId()).get();
@@ -44,7 +44,7 @@ public class QuestionTest {
         assertThat(question1.getContents()).isEqualTo(question2.getContents());
     }
 
-    static Stream<Question> saveTestFixture() {
+    static Stream<Question> questionTestFixture() {
         return Stream.of(Q1, Q2);
     }
 }
