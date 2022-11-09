@@ -28,7 +28,6 @@ public class Answers implements Iterable<Answer> {
     }
 
     public List<Answer> getAnswers() {
-//        return answers;
         return Collections.unmodifiableList(answers);
     }
 

@@ -24,14 +24,10 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-//    @Column(name = "title", nullable = false, length = 100)
-//    private String title;
     @Embedded
     private Title title;
     @Embedded
     private Contents contents;
-//    @Lob
-//    private String contents;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 

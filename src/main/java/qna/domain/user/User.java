@@ -100,9 +100,6 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public void changeName(Name name) {
-        this.name = name;
-    }
 
     @Override
     public String toString() {
