@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +15,13 @@ public class UserTest {
     public static final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-    private static User user;
-
     @Autowired
     private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        user = new User("eunhye", "password", "name", "eunhye@slipp.net");
-    }
 
     @Test
     @DisplayName("User 객체를 저장하면 Id가 자동생성 되어 Not Null 이다.")
     void save() {
+        User user = generateUser();
         assertThat(user.getId()).isNull();
 
         User actual = userRepository.save(user);
@@ -46,7 +39,10 @@ public class UserTest {
 
         assertAll(
                 () -> assertThat(userRepository.findByUserId(SANJIGI.getUserId()))
-                        .isPresent().get().extracting(User::getName).isEqualTo(actual.getName()),
+                        .isPresent()
+                        .get()
+                        .extracting(User::getName)
+                        .isEqualTo(actual.getName()),
                 () -> assertThat(userRepository.findByUserId("eunhye")).isEmpty()
         );
     }
@@ -64,6 +60,10 @@ public class UserTest {
                 () -> assertThat(updated.getUpdatedAt()).isNotNull(),
                 () -> assertThat(updated.getUserId()).isEqualTo(id)
         );
+    }
+
+    private User generateUser() {
+        return new User("eunhye", "password", "name", "eunhye@slipp.net");
     }
 
 }
