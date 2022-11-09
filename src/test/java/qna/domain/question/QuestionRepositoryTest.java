@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
-import qna.domain.content.Contents;
+import qna.domain.content.Content;
 import qna.domain.user.UserRepository;
 import qna.domain.user.UserTest;
 
@@ -78,7 +78,7 @@ public class QuestionRepositoryTest {
         List<Question> savedQuestions = questionRepository.saveAll(Arrays.asList(Q1, Q2));
 
         Question question1 = savedQuestions.get(0);
-        question1.updateContents(Contents.of("다른 내용"));
+        question1.updateContents(Content.of("다른 내용"));
 
         Question updatedQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
 

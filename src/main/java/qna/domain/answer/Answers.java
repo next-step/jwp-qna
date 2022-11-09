@@ -32,9 +32,14 @@ public class Answers {
     }
 
     public void validateDeleteAnswer(User loginUser) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            checkAnswerWriter(answer, loginUser);
-        }
+        // for보다는 stream
+        answers.stream().forEach(answer -> {
+            try {
+                checkAnswerWriter(answer,loginUser);
+            } catch (CannotDeleteException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void checkAnswerWriter(Answer answer, User loginUser) throws CannotDeleteException {

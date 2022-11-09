@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.content.Contents;
+import qna.domain.content.Content;
 import qna.domain.content.Title;
 import qna.domain.question.Question;
 import qna.domain.question.QuestionRepository;
@@ -60,7 +60,7 @@ public class AnswerRepositoryTest {
     @Test
     void modifyQuestion() {
         final Answer answer = new Answer(UserTest.SANJIGI, Q1, "test");
-        Question question = new Question(1L, new Title("test title"), Contents.of("test contents"));
+        Question question = new Question(1L, new Title("test title"), Content.of("test contents"));
         answer.toQuestion(question);
         final Answer saved = answerRepository.save(answer);
         assertThat(saved.getQuestion()).isEqualTo(question);

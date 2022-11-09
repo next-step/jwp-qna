@@ -6,11 +6,13 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static qna.constant.Message.NOT_VALID_EMAIL;
-import static qna.constant.Message.NOT_VALID_EMPTY;
+import static qna.constant.Message.*;
 
 @Embeddable
 public class Email {
+    // pattern compile 선언
+    private final static Pattern emailRegex = Pattern.compile("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$");
+
     @Column(name = "email", length = 50)
     private String email;
 
@@ -31,9 +33,7 @@ public class Email {
             throw new IllegalArgumentException(NOT_VALID_EMPTY + "[이메일]");
         }
 
-        String emailRegex = "^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$";
-
-        if(!Pattern.matches(emailRegex,email)) {
+        if(!emailRegex.matcher(email).matches()) {
             throw new IllegalArgumentException(NOT_VALID_EMAIL);
         }
     }

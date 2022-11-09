@@ -5,26 +5,26 @@ import javax.persistence.Lob;
 import java.util.Objects;
 
 @Embeddable
-public class Contents {
+public class Content {
     @Lob
     private String contents;
 
-    public Contents(String contents) {
+    public Content(String contents) {
         this.contents = contents;
     }
 
-    public Contents() {
+    public Content() {
     }
 
-    public static Contents of(String contents) {
-        return new Contents(contents);
+    public static Content of(String contents) {
+        return new Content(contents);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Contents email1 = (Contents) o;
+        Content email1 = (Content) o;
         return Objects.equals(contents, email1.contents);
     }
 

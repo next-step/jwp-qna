@@ -50,17 +50,6 @@ public class DeleteHistory {
         return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 
-    public static List<DeleteHistory> addDeleteQuestionHistory(Question question) {
-        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-        deleteHistoryList.add(new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
-
-        Answers answers = new Answers(question.getAnswers());
-        for(Answer answer : answers) {
-            deleteHistoryList.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
-        return deleteHistoryList;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

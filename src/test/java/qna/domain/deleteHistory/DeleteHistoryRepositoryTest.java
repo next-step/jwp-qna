@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.ContentType;
 import qna.domain.answer.Answer;
-import qna.domain.content.Contents;
+import qna.domain.content.Content;
 import qna.domain.content.Title;
 import qna.domain.question.Question;
 import qna.domain.user.User;
@@ -54,13 +54,13 @@ public class DeleteHistoryRepositoryTest {
     @DisplayName("Question deleteHistories 저장")
     void save_question_delete_histories() {
         userRepository.saveAll(Arrays.asList(JAVAJIGI, SANJIGI));
-        question = new Question(1L, new Title("title1"), Contents.of("contents1")).writeBy(UserTest.JAVAJIGI);
+        question = new Question(1L, new Title("title1"), Content.of("contents1")).writeBy(UserTest.JAVAJIGI);
         new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
         new Answer(2L, UserTest.SANJIGI, question, "Answers Contents2");
 
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.addDeleteQuestionHistory(question);
-        deleteHistoryRepository.saveAll(deleteHistories);
+        deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistories());
 
         List<DeleteHistory> savedHistories = deleteHistoryRepository.findAll();
 

@@ -4,10 +4,10 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.BaseEntity;
+import qna.domain.content.Content;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
-import qna.domain.content.Contents;
 import qna.domain.content.Title;
 
 import javax.persistence.*;
@@ -27,7 +27,7 @@ public class Question extends BaseEntity {
     @Embedded
     private Title title;
     @Embedded
-    private Contents contents;
+    private Content content;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
@@ -41,14 +41,14 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(Title title, Contents contents) {
-        this(null, title, contents);
+    public Question(Title title, Content content) {
+        this(null, title, content);
     }
 
-    public Question(Long id, Title title, Contents contents) {
+    public Question(Long id, Title title, Content content) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
+        this.content = content;
     }
 
     public Question writeBy(User writer) {
@@ -72,8 +72,8 @@ public class Question extends BaseEntity {
         return title;
     }
 
-    public Contents getContents() {
-        return contents;
+    public Content getContents() {
+        return content;
     }
 
     public User getWriter() {
@@ -94,8 +94,8 @@ public class Question extends BaseEntity {
         return writer.getId();
     }
 
-    public void updateContents(Contents contents) {
-        this.contents = contents;
+    public void updateContents(Content content) {
+        this.content = content;
     }
 
     @Override
@@ -103,7 +103,7 @@ public class Question extends BaseEntity {
         return "Question{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
+                ", contents='" + content + '\'' +
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
