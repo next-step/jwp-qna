@@ -38,7 +38,7 @@ public class QuestionTest {
 
 	@Test
 	@DisplayName("질문 작성자와 로그인 사용자가 다르면 예외 발생")
-	void isOwnerTest() {
+	void deleteQuestionByOtherUser () {
 		// given
 		final User questionWriter = questionWriter();
 		final Question question = QuestionGenerator.question(questionWriter);
@@ -57,7 +57,7 @@ public class QuestionTest {
 
 	@Test
 	@DisplayName("질문 작성자와 답변 작성자가 다른 경우 예외 발생")
-	void isOwnerTest2() {
+	void deleteQuestionByAnotherAnswerWriter() {
 		// given
 		final User questionWriter = questionWriter();
 		final Question question = QuestionGenerator.question(questionWriter);

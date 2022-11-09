@@ -26,6 +26,7 @@ import qna.domain.user.User;
 @Entity
 public class Question extends BaseEntity {
 
+	private static final String QUESTION_DELETE_UNAUTHORIZED_EXCEPTION_MESSAGE = "질문을 삭제할 권한이 없습니다.";
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -117,8 +118,8 @@ public class Question extends BaseEntity {
 	}
 
 	private void validateAuthentication(User loginUser) {
-		if (!writer.equals(loginUser)) {
-			throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException(QUESTION_DELETE_UNAUTHORIZED_EXCEPTION_MESSAGE);
 		}
 	}
 
