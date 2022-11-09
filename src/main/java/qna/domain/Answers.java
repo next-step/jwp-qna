@@ -21,18 +21,20 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public void delete(User user) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         try {
             for (Answer answer : answers) {
-                answer.delete(user);
+                deleteHistories.add(answer.delete(user));
             }
         } catch (CannotDeleteException e) {
-            restoreDelete();
+            resetDelete();
             throw new CannotDeleteException(e.getMessage());
         }
+        return deleteHistories;
     }
 
-    private void restoreDelete() {
+    private void resetDelete() {
         for (Answer answer : answers) {
             answer.setDeleted(false);
         }

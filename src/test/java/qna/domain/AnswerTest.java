@@ -47,7 +47,7 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("글쓴이와 답변자가 같은 경우 삭제 가능")
+    @DisplayName("글쓴이와 답변자가 같은 경우 삭제 가능하며 DeleteHistory 반환")
     void delete_success() throws CannotDeleteException {
         //given
         User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
@@ -55,7 +55,7 @@ public class AnswerTest {
         Answer answer = new Answer(writer, question, "Answers Contents");
 
         //except
-        answer.delete(writer);
+        assertThat(answer.delete(writer)).isInstanceOf(DeleteHistory.class);
     }
 
 }

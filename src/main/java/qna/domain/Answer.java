@@ -5,7 +5,6 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -65,10 +64,10 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+    public DeleteHistory delete(User user) throws CannotDeleteException {
         validateDelete(user);
         this.deleted = true;
-        return null;
+        return DeleteHistory.from(this);
     }
 
     private void validateDelete(User user) throws CannotDeleteException {

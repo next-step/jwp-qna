@@ -52,6 +52,40 @@ public class QuestionTest {
 
         //except
         assertThatThrownBy(()-> question.delete(other)).isInstanceOf(CannotDeleteException.class);
+    }
 
+    @Test
+    @DisplayName("글쓴이와 질문자가 같은 경우 삭제 가능")
+    void delete_success() throws CannotDeleteException {
+        //given
+        User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question(1L,"title1", "contents1").writeBy(writer);
+
+        //except
+        assertThat(question.delete(writer)).isNotNull();
+    }
+
+    @Test
+    @DisplayName("질문 삭제 성공 시 답변이 없으면 반환 DeleteHistory 리스트 size는 1개이다")
+    void delete_success_답변_없음() throws CannotDeleteException {
+        //given
+        User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question(1L,"title1", "contents1").writeBy(writer);
+
+        //except
+        assertThat(question.delete(writer)).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("질문 삭제 성공 시 답변이 2개 있으면 반환 DeleteHistory 리스트 size는 3개이다")
+    void delete_success_답변_2개() throws CannotDeleteException {
+        //given
+        User writer = new User(1L, "sangjae", "password", "name", "javajigi@slipp.net");
+        Question question = new Question(99L,"title1", "contents1").writeBy(writer);
+        question.addAnswer(new Answer(10L,writer, question, "Answers Contents"));
+        question.addAnswer(new Answer(11L,writer, question, "Answers Contents"));
+
+        //except
+        assertThat(question.delete(writer)).hasSize(3);
     }
 }
