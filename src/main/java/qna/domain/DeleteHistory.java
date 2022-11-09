@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "delete_history")
 public class DeleteHistory {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

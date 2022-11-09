@@ -15,7 +15,6 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "question")
 public class Question extends BaseDateEntity{
     private static final int TITLE_LENGTH = 100;
     private static final String SPACE = "";

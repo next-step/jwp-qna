@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answer")
 public class Answer extends BaseDateEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
