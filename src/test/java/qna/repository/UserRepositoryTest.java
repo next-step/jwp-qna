@@ -1,7 +1,10 @@
 package qna.repository;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +19,27 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User user;
+
+    @BeforeEach
+    void setup() {
+        user = userRepository.save(new User("iamsojung", "password", "sojung", "email@gmail.com"));
+    }
+
     @Test
     @DisplayName("save 테스트")
     void saveTest() {
-        User user = UserTest.JAVAJIGI;
-        User userSaved = userRepository.save(user);
-
-        assertAll(
-            () -> assertNotNull(userSaved.getId()),
-            () -> assertEquals(userSaved.getUserId(), user.getUserId()),
-            () -> assertEquals(userSaved.getPassword(), user.getPassword()),
-            () -> assertEquals(userSaved.getName(), user.getName()),
-            () -> assertEquals(userSaved.getEmail(), user.getEmail())
-        );
+        Optional<User> result = userRepository.findById(user.getId());
+        assertThat(result).get().isEqualTo(user);
     }
 
     @Test
     @DisplayName("findByUserId 테스트")
     void findByUserIdTest() {
-        User userSaved = userRepository.save(UserTest.JAVAJIGI);
-        User userFound = userRepository.findByUserId(userSaved.getUserId()).get();
-
-        assertEquals(userSaved, userFound);
+        User userFound = userRepository.findByUserId(user.getUserId()).get();
+        assertAll(
+            () -> assertThat(userFound.getId()).isNotNull(),
+            () -> assertThat(user.equalsNameAndEmail(userFound)).isTrue()
+        );
     }
 }

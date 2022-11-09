@@ -34,7 +34,8 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("DeleteHistory save 테스트")
     void saveTest() {
-        DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, user, LocalDateTime.now());
+        DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, user,
+            LocalDateTime.now());
         DeleteHistory actual = deleteHistoryRepository.save(history);
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
@@ -48,7 +49,8 @@ public class DeleteHistoryRepositoryTest {
     @Test
     @DisplayName("DeleteHistory 조회 테스트")
     void findTest() {
-        DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, user, LocalDateTime.now());
+        DeleteHistory history = new DeleteHistory(ContentType.ANSWER, 1L, user,
+            LocalDateTime.now());
         deleteHistoryRepository.save(history);
         DeleteHistory actual = deleteHistoryRepository.findById(history.getId()).get();
         assertAll(

@@ -58,7 +58,8 @@ public class AnswerRepositoryTest {
     @Test
     @DisplayName("findByQuestionIdAndDeletedFalse 검증 테스트")
     void findByQuestionIdAndDeletedFalseTest() {
-        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(answer.getQuestion().getId());
+        List<Answer> result = answerRepository.findByQuestionIdAndDeletedFalse(
+            answer.getQuestion().getId());
 
         assertAll(
             () -> assertThat(result).hasSize(1),
