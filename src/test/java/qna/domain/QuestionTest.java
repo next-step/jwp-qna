@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -25,6 +28,9 @@ public class QuestionTest {
 
     @Autowired
     QuestionRepository questions;
+
+    @Autowired
+    AnswerRepository answers;
 
     @ParameterizedTest(name = "save_테스트")
     @MethodSource("questionTestFixture")
@@ -44,7 +50,27 @@ public class QuestionTest {
         assertThat(question1.getContents()).isEqualTo(question2.getContents());
     }
 
+    @ParameterizedTest(name = "save_후_update_테스트")
+    @MethodSource("questionAndAnswerTestFixture")
+    void save_후_update_테스트(Question question, Answer answer) {
+        Question newQuestion = questions.save(question);
+        newQuestion.addAnswer(answer);
+        Answer linkAnswer = answers.save(answer);
+        assertThat(linkAnswer.getQuestionId()).isEqualTo(newQuestion.getId());
+    }
+
     static Stream<Question> questionTestFixture() {
         return Stream.of(Q1, Q2);
+    }
+
+    static Stream<Arguments> questionAndAnswerTestFixture() {
+        return Stream.of(
+            Arguments.of(
+                Q1, A1
+            ),
+            Arguments.of(
+                Q2, A2
+            )
+        );
     }
 }
