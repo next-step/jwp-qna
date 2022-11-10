@@ -10,7 +10,8 @@ import qna.domain.DeleteHistory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.DeleteHistoryTest.*;
+import static qna.domain.DeleteHistoryTest.DELETE_HISTORY_ANSWER;
+import static qna.domain.DeleteHistoryTest.DELETE_HISTORY_QUESTION;
 
 @DisplayName("삭제 내역 Repository")
 @DataJpaTest
