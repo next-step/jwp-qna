@@ -38,5 +38,4 @@
     - [x] findByUserId 조회 테스트
 
 - [ ] 메서드, 변수 순서 유지
-- [ ] inline
 - [ ] not null 체크

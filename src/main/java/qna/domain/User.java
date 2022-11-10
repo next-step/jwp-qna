@@ -3,6 +3,7 @@ package qna.domain;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,11 +13,15 @@ import java.util.Objects;
 public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String name;
     private String email;
+    @Column(nullable = false)
     private String userId;
 
     protected User() {

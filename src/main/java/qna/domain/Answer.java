@@ -14,6 +14,7 @@ public class Answer extends BaseEntity{
     private Long id;
     @Lob
     private String contents;
+    @Column(nullable = false)
     private boolean deleted = false;
     private Long questionId;
     private Long writerId;
