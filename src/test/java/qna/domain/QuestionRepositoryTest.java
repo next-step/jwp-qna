@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -19,6 +20,8 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
     @Autowired
     private TestEntityManager testEntityManager;
     private User user;
@@ -86,5 +89,32 @@ class QuestionRepositoryTest {
         testEntityManager.clear();
         Question actual = questionRepository.findById(question.getId()).get();
         assertThat(actual.getWriter() instanceof HibernateProxy).isTrue();
+    }
+
+    @Test
+    void 질문과_답변을_함께_삭제() throws CannotDeleteException {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        Answer answer = answerRepository.save(new Answer(user, question, "answer"));
+        question.addAnswer(answer);
+        List<DeleteHistory> deleteHistories = question.deleteWithAnswers(user);
+
+        testEntityManager.flush();
+        testEntityManager.clear();
+
+        Question actualQuestion = questionRepository.findById(question.getId()).get();
+        Answer actualAnswer = answerRepository.findById(answer.getId()).get();
+        assertThat(actualQuestion.isDeleted()).isTrue();
+        assertThat(actualAnswer.isDeleted()).isTrue();
+        assertThat(deleteHistories).hasSize(2);
+    }
+
+    @Test
+    void 질문_삭제() {
+        Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
+        question.delete(user);
+        testEntityManager.flush();
+        testEntityManager.clear();
+        Question actual = questionRepository.findById(question.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
     }
 }

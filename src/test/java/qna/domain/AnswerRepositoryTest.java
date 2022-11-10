@@ -112,7 +112,7 @@ class AnswerRepositoryTest {
     @Test
     void 답변_삭제() {
         Answer answer = answerRepository.save(new Answer(user, question, "contents"));
-        answer.delete();
+        answer.delete(user);
         flushAndClear();
         Answer actual = answerRepository.findById(answer.getId()).get();
         assertThat(actual.isDeleted()).isTrue();
