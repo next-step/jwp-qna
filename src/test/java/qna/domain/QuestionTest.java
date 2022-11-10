@@ -40,7 +40,6 @@ public class QuestionTest extends TruncateConfig {
     @MethodSource("questionTestFixture")
     void save_테스트(Question question) {
         Question saved = questions.save(question);
-        assertThat(saved).isEqualTo(question);
         assertThat(saved.getContents()).isEqualTo(question.getContents());
         assertThat(saved.getCreatedAt()).isNotNull();
     }

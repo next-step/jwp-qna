@@ -1,13 +1,17 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class Question extends TimeEntity {
+public class  Question extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -18,6 +22,8 @@ public class Question extends TimeEntity {
     private Long writerId;
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -47,6 +53,7 @@ public class Question extends TimeEntity {
             throw new NotFoundException();
         }
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -98,5 +105,9 @@ public class Question extends TimeEntity {
                 ", writerId=" + writerId +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers;
     }
 }

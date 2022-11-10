@@ -16,7 +16,9 @@ public class Answer extends TimeEntity {
     @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false, columnDefinition = "bit")
@@ -38,7 +40,7 @@ public class Answer extends TimeEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -51,7 +53,7 @@ public class Answer extends TimeEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -70,11 +72,10 @@ public class Answer extends TimeEntity {
     }
 
     public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+        if (Objects.isNull(question)) {
+            return null;
+        }
+        return question.getId();
     }
 
     public String getContents() {
@@ -111,7 +112,7 @@ public class Answer extends TimeEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer.toString() +
-                ", questionId=" + questionId +
+                ", question=" + question.toString() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
