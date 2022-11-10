@@ -43,5 +43,4 @@
     - [x] user 삭제 테스트
     - [x] findByUserId 조회 테스트
 
-- 테스트 클래스 DIsplayName체크
 - 불필요 import체크
