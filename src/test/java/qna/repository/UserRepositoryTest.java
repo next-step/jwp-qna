@@ -30,6 +30,13 @@ class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("unique 값 저장시 예외 테스트")
+    public void uniqueTest() {
+        userRepository.save(createUser("DEVELOPYO"));
+        assertThatThrownBy(() -> userRepository.save(createUser("DEVELOPYO"))).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
     @DisplayName("존재하지 않는 데이터 조회시 빈값 리턴 테스트")
     public void findByUserIdTestNotExists() {
         User user = createUser("DEVELOPYO");
