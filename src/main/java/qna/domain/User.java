@@ -86,7 +86,7 @@ public class User extends BaseEntity {
         return userId;
     }
 
-    public void changeName(String name) {
+    public void rename(String name) {
         this.name.change(name);
     }
 

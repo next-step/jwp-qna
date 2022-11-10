@@ -10,6 +10,7 @@ import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.Contents;
+import qna.domain.DateTimeStrategy;
 import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
@@ -39,6 +40,9 @@ class QnaServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private DateTimeStrategy dateTimeStrategy;
+
     @InjectMocks
     private QnaService qnaService;
 
@@ -50,6 +54,7 @@ class QnaServiceTest {
         question = new Question(1L, new Title("title1"), new Contents("contents1")).writeBy(UserTest.JAVAJIGI);
         answer = new Answer(1L, UserTest.JAVAJIGI, question, new Contents("Answers Contents1"));
         question.addAnswer(answer);
+        dateTimeStrategy = () -> LocalDateTime.now();
     }
 
     @Test
@@ -98,8 +103,8 @@ class QnaServiceTest {
     private void verifyDeleteHistories() {
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriteBy(), LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriteBy(), LocalDateTime.now())
+            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriteBy(), dateTimeStrategy.getNowDateTime()),
+            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriteBy(), dateTimeStrategy.getNowDateTime())
         ));
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

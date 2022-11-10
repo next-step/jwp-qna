@@ -58,7 +58,7 @@ class UserRepositoryTest {
         User javajigi = new User(new UserId("test"), new Password("password"), new Name("name"), new Email("javajigi@slipp.net"));
         User savedUser = userRepository.save(javajigi);
 
-        javajigi.changeName("넥스트스텝");
+        javajigi.rename("넥스트스텝");
         savedUser.update(savedUser, javajigi);
         User findUser = userRepository.findById(savedUser.getId()).get();
 

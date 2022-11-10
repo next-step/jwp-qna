@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
@@ -91,12 +92,12 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) throws CannotDeleteException {
         valid(loginUser);
         this.deleted = true;
-        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(this, loginUser);
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(this.getId(), loginUser, localDateTime);
         DeleteHistories deleteHistories = new DeleteHistories(deleteHistory);
-        deleteHistories.add(answers.removeAll(loginUser));
+        deleteHistories.add(answers.removeAll(loginUser, localDateTime));
         return deleteHistories;
     }
 
@@ -112,7 +113,7 @@ public class Question extends BaseEntity {
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + writeBy.getId() +
+            ", writer=" + writeBy +
             ", deleted=" + deleted +
             '}';
     }
