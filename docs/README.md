@@ -30,7 +30,7 @@
     - [x] findByIdAndDeletedFalse 조회 테스트
 
 ## User
-- [ ] user 테이블의 엔티티 클래스를 작성한다.
+- [x] user 테이블의 엔티티 클래스를 작성한다.
 - [ ] user 테이블의 레파지토리 클래스를 작성한다.
     - [ ] user 저장 테스트
     - [ ] user 수정 테스트

@@ -9,15 +9,15 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id @GeneratedValue
     private Long id;
-    private String userId;
     private String password;
     private String name;
     private String email;
+    private String userId;
 
     protected User() {
     }
