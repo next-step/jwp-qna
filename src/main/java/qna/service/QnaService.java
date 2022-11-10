@@ -4,9 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.domain.*;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.domain.Answer;
+import qna.repository.AnswerRepository;
+import qna.domain.ContentType;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.repository.QuestionRepository;
+import qna.domain.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
