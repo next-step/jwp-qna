@@ -55,4 +55,13 @@ class AnswersTest {
         Answers answers = new Answers(Arrays.asList(answer1, answer2));
         assertTrue(answers.isNotEmpty());
     }
+
+    @Test
+    @DisplayName("Answers를 모두 삭제 상태로 변경한다.")
+    void answers_deleteAll() {
+        Answers answers = new Answers(Arrays.asList(answer1, answer2));
+        answers.deleteAll();
+        assertTrue(answer1.isDeleted());
+        assertTrue(answer2.isDeleted());
+    }
 }
