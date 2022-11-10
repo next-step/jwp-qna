@@ -1,19 +1,24 @@
 package qna.domain;
 
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import qna.UnAuthorizedException;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id
     private Long id;
     private String userId;
     private String password;
     private String name;
     private String email;
 
-    private User() {
+    protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
