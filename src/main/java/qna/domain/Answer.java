@@ -13,7 +13,7 @@ public class Answer extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "writer_id")
     private User writer;
     private Long questionId;
