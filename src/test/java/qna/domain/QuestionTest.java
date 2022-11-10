@@ -46,10 +46,23 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("질문에 답변이 있는 경우 질문 삭제를 시도하면 예외가 발생한다.")
-    void delete_답변이_있는_경우() {
-        Answer answer = new Answer(writer, question, "Answers Contents1");
-        question.addAnswer(answer);
+    @DisplayName("질문자와 답변자가 다른 경우 - 질문에 답변이 존재하는 경우 삭제를 시도하면 예외가 발생한다.")
+    void delete_질문자와_답변자가_다른_경우() {
+        Answer answer1 = new Answer(writer, question, "Answers Contents1");
+        Answer answer2 = new Answer(otherUser, question, "Answers Contents2");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
         assertThrows(IllegalStateException.class, () -> question.deleteByWriter(writer));
+    }
+
+    @Test
+    @DisplayName("질문자와 답변자가 같은 경우 - 질문자와 모든 답변자가 같은 경우 삭제가 가능하다.")
+    void delete_질문자와_답변자가_같은_경우() {
+        Answer answer1 = new Answer(writer, question, "Answers Contents1");
+        Answer answer2 = new Answer(writer, question, "Answers Contents2");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        question.deleteByWriter(writer);
+        assertTrue(question.isDeleted());
     }
 }

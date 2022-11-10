@@ -56,12 +56,6 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
-    public void deleteByWriter(User writer) {
-        this.validateWriter(writer);
-        this.validateAnswer();
-        this.delete();
-    }
-
     public void delete() {
         this.deleted = true;
     }
@@ -70,13 +64,30 @@ public class Question extends BaseTimeEntity {
         this.title = title;
     }
 
+    public void deleteByWriter(User writer) {
+        this.validateWriter(writer);
+        this.validateAnswer(writer);
+        this.delete();
+    }
+
     private void validateWriter(User writer) {
         if (this.writer.isNotEquals(writer)) {
             throw new ForbiddenException();
         }
     }
 
-    private void validateAnswer() {
+    private void validateAnswer(User writer) {
+        if (isNotSameOwner(writer)) {
+            validateAnswerIsEmpty();
+        }
+    }
+
+    private boolean isNotSameOwner(User writer) {
+        return this.answers.values().stream()
+                .anyMatch(answer -> !answer.isOwner(writer));
+    }
+
+    private void validateAnswerIsEmpty() {
         if (this.answers.isNotEmpty()) {
             throw new IllegalStateException();
         }
