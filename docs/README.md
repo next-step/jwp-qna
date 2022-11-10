@@ -153,3 +153,4 @@ alter table question
   - [x] 글 삭제의 반환 값은 `List<DeleteHistory>`
 - [x] `Question`을 받아 `DeleteHistory` 생성하는 메소드 추가
 - [x] `Answer`을 받아 `DeleteHistory` 생성하는 메소드 추가
+- [x] `QnaService` 리팩터링 
