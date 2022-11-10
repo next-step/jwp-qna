@@ -104,13 +104,22 @@ public class Question extends BaseEntity {
 
 	public List<DeleteHistory> delete(User loginUser) {
 		validateAuthentication(loginUser);
-		List<DeleteHistory> deleteHistories = new ArrayList<>();
-		if (!answers.isEmpty()) {
-			deleteHistories = answers.deleteAll(loginUser);
-		}
-		deleteHistories.add(DeleteHistory.ofQuestion(this));
+		List<DeleteHistory> deleteHistories = deleteHistories(loginUser);
 		delete();
 		return deleteHistories;
+	}
+
+	private List<DeleteHistory> deleteHistories(User loginUser) {
+		List<DeleteHistory> deleteHistories = deleteHistoriesOfAnswers(loginUser);
+		deleteHistories.add(DeleteHistory.ofQuestion(this));
+		return deleteHistories;
+	}
+
+	private List<DeleteHistory> deleteHistoriesOfAnswers(User loginUser) {
+		if (answers.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return answers.deleteAll(loginUser);
 	}
 
 	private void delete() {
