@@ -23,21 +23,10 @@ public class Answers {
 
     public List<DeleteHistory> delete(User user) throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        try {
-            for (Answer answer : answers) {
-                deleteHistories.add(answer.delete(user));
-            }
-        } catch (CannotDeleteException e) {
-            resetDelete();
-            throw new CannotDeleteException(e.getMessage());
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(user));
         }
         return deleteHistories;
-    }
-
-    private void resetDelete() {
-        for (Answer answer : answers) {
-            answer.setDeleted(false);
-        }
     }
 
     public boolean contains(Answer answer) {
