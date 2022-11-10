@@ -7,7 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import qna.UnAuthorizedException;
+import qna.common.base.BaseTimeEntity;
+import qna.common.exception.UnAuthorizedException;
 
 @Entity
 @Table

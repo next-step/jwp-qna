@@ -5,13 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.CannotDeleteException;
-import qna.NotFoundException;
+import qna.common.exception.CannotDeleteException;
+import qna.common.exception.NotFoundException;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import qna.enumType.ContentType;
+import qna.repository.AnswerRepository;
+import qna.repository.QuestionRepository;
 
 @Service
 public class QnaService {

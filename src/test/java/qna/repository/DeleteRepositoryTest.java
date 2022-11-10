@@ -1,15 +1,18 @@
-package qna.domain;
+package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.ContentType.QUESTION;
-import static qna.domain.UserTest.JAVAJIGI;
+import static qna.enumType.ContentType.QUESTION;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.DeleteHistory;
+import qna.domain.User;
+import qna.repository.DeleteHistoryRepository;
+import qna.repository.UserRepository;
 
 @DataJpaTest
 public class DeleteRepositoryTest {

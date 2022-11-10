@@ -2,7 +2,7 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.ContentType.QUESTION;
+import static qna.enumType.ContentType.QUESTION;
 import static qna.domain.UserTest.JAVAJIGI;
 
 import java.time.LocalDateTime;
