@@ -18,7 +18,7 @@
 
 ## DeleteHistory
 
-- [ ] 삭제 내역을 생성한다.
+- [x] 삭제 내역을 생성한다.
 - [x] delete_history 테이블의 엔티티 클래스를 작성한다.
 - [x] delete_history 테이블의 레파지토리 클래스를 작성한다.
     - [x] delete_history 저장 테스트
