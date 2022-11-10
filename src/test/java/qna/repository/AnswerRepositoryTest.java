@@ -45,7 +45,7 @@ class AnswerRepositoryTest {
         );
     }
 
-    @DisplayName("findByQuestionIdAndDeletedFalse 조회 테스트")
+    @DisplayName("findByQuestionIdAndDeletedFalse_조회_성공")
     @Test
     void findByQuestionIdAndDeletedFalse() {
 
@@ -59,7 +59,7 @@ class AnswerRepositoryTest {
         );
     }
 
-    @DisplayName("findByIdAndDeletedFalse 조회 테스트")
+    @DisplayName("findByIdAndDeletedFalse_조회_성공")
     @Test
     void findByIdAndDeletedFalse() {
 

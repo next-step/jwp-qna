@@ -30,7 +30,7 @@ class QuestionRepositoryTest {
 
     @DisplayName("저장_성공")
     @Test
-    void save_success() {
+    void save() {
 
         Question question = questionRepository.save(QUESTION_1);
 
@@ -47,7 +47,7 @@ class QuestionRepositoryTest {
 
     @DisplayName("findByDeletedFalse_조회_성공")
     @Test
-    void findByDeletedFalse_success() {
+    void findByDeletedFalse() {
 
         Question question = questionRepository.save(QUESTION_1);
 
@@ -61,7 +61,7 @@ class QuestionRepositoryTest {
 
     @DisplayName("findByIdAndDeletedFalse_조회_성공")
     @Test
-    void findByIdAndDeletedFalse_success() {
+    void findByIdAndDeletedFalse() {
         assertAll(
                 () -> assertThat(question2.getId()).isNotNull(),
                 () -> assertThat(question2.getContents()).isEqualTo(QUESTION_2.getContents()),

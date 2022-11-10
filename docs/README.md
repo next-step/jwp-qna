@@ -37,7 +37,6 @@
     - [x] user 삭제 테스트
     - [x] findByUserId 조회 테스트
 
-- [ ] 테스트 메서드명 일관성 유지
 - [ ] 메서드, 변수 순서 유지
 - [ ] test setUp사용
 - [ ] inline

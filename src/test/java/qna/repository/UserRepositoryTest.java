@@ -45,7 +45,7 @@ class UserRepositoryTest {
 
     @DisplayName("findByUserId_조회_성공")
     @Test
-    void findByUserId_success() {
+    void findByUserId() {
 
         User user = userRepository.findByUserId(sanjigi.getUserId()).orElse(null);
 
