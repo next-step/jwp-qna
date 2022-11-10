@@ -22,4 +22,10 @@ public class AnswerTest {
                 () -> assertThat(A2.getContents()).isEqualTo("Answers Contents2")
         );
     }
+
+    @Test
+    void 삭제() {
+        A1.setDeleted();
+        assertThat(A1.isDeleted()).isTrue();
+    }
 }
