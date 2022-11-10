@@ -49,8 +49,20 @@ public class AnswerTest {
 
         assertAll(
                 () -> assertThat(answers).hasSize(2),
-                () -> assertThat(answers).contains(answer1),
-                () -> assertThat(answers).contains(answer2)
+                () -> assertThat(answers).containsExactly(answer1, answer2)
+        );
+    }
+
+    @DisplayName("findByIdAndDeletedFalse 조회 테스트")
+    @Test
+    void findByIdAndDeletedFalse() {
+
+        Answer answer = answerRepository.save(AnswerTest.A1);
+        Answer findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getQuestionId()).orElse(null);
+
+        assertAll(
+                () -> assertThat(findAnswer).isNotNull(),
+                () -> assertThat(findAnswer).isEqualTo(answer)
         );
     }
 }

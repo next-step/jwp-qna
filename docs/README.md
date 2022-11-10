@@ -9,7 +9,7 @@
     - [x] answer 저장 테스트
     - [ ] answer 조회 테스트
     - [x] findByQuestionIdAndDeletedFalse 조회 테스트
-    - [ ] findByIdAndDeletedFalse
+    - [x] findByIdAndDeletedFalse 조회 테스트
     - [ ] answer 수정 테스트
     - [ ] answer 삭제 테스트
 
