@@ -20,12 +20,12 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Autowired
-    QuestionRepository questions;
+    private QuestionRepository questions;
     @Autowired
-    DeleteHistoryRepository deletes;
+    private DeleteHistoryRepository deletes;
 
     @BeforeAll
-    static void init(@Autowired UserRepository users) {
+    private static void init(@Autowired UserRepository users) {
         users.save(UserTest.JAVAJIGI);
         users.save(UserTest.SANJIGI);
     }
@@ -38,7 +38,7 @@ public class QuestionTest {
     @DisplayName("question 엔티티 저장 후 찾기 테스트")
     @MethodSource
     void save_question_and_find_test(Question input) {
-        Question question = questions.save(input);
+        final Question question = questions.save(input);
         assertThat(questions.findById(question.getId()).get()).isEqualTo(question);
     }
 
@@ -46,11 +46,11 @@ public class QuestionTest {
     @DisplayName("question 엔티티 저장 후 수정 테스트")
     void save_question_and_update_test() {
         //given
-        Question question = questions.save(Q1);
-        Long id = question.getId();
+        final Question question = questions.save(Q1);
+        final Long id = question.getId();
         //when
-        Question searchResult = questions.findById(id).get();
-        String updateContents = "수정된 컨텐츠";
+        final Question searchResult = questions.findById(id).get();
+        final String updateContents = "수정된 컨텐츠";
         questions.save(new Question(id, searchResult.getTitle(), updateContents));
         //then
         assertThat(questions.findById(id).get().getContents()).isEqualTo(updateContents);
@@ -65,13 +65,13 @@ public class QuestionTest {
     @MethodSource
     void save_question_and_delete_test(Question input) {
         //given
-        Question question = questions.save(input);
-        Long id = question.getId();
-        DeleteHistory deleteHistory = deletes
+        final Question question = questions.save(input);
+        final Long id = question.getId();
+        final DeleteHistory deleteHistory = deletes
                 .save(new DeleteHistory(ContentType.QUESTION, id, id, LocalDateTime.now()));
         //when
         questions.deleteById(id);
-        DeleteHistory expected = deletes.save(deleteHistory);
+        final DeleteHistory expected = deletes.save(deleteHistory);
         //then
         assertThat(questions.findById(id).orElse(null)).isNull();
         assertThat(deleteHistory).isEqualTo(expected);

@@ -35,6 +35,6 @@ references user
 - [ ] QuestionTest 구현 (저장 후 찾기 테스트, 저장 후 수정 테스트, 저장 후 삭제 테스트)
 - [ ] UserTest 구현 (저장 후 찾기 테스트, 저장 후 수정 테스트)
 - [ ] Answer Entity 연관관계 추가
-- [X] DelteHistory Entity 연관관계 추가
-- [X] User Entity 연관관계 추가
+- [ ] DeleteHistory Entity 연관관계 추가
+- [ ] User Entity 연관관계 추가
 - [ ] Question Entity 연관관계 추가

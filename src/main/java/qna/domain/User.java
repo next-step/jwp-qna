@@ -3,6 +3,8 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +21,9 @@ public class User extends BaseTimeEntity {
     private String password;
     @Column(nullable = false, unique = true, length = 20)
     private String userId;
+    @OneToMany
+    @JoinColumn(name = "deletedById", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    private List<DeleteHistory> deleteHistories = new ArrayList();
 
     protected User() {
     }
@@ -87,6 +92,10 @@ public class User extends BaseTimeEntity {
 
     public String getEmail() {
         return email;
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
     }
 
     @Override
