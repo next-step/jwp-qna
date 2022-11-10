@@ -47,8 +47,8 @@ class AnswerRepositoryTest {
     @Test
     void findByQuestionIdAndDeletedFalse() {
 
-        Answer answer1 = answerRepository.save(AnswerTest.A1);
-        Answer answer2 = answerRepository.save(AnswerTest.A2);
+        Answer answer1 = answerRepository.save(AnswerTest.ANSWER_1);
+        Answer answer2 = answerRepository.save(AnswerTest.ANSWER_2);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestionId());
 
@@ -62,7 +62,7 @@ class AnswerRepositoryTest {
     @Test
     void findByIdAndDeletedFalse() {
 
-        Answer answer = answerRepository.save(AnswerTest.A1);
+        Answer answer = answerRepository.save(AnswerTest.ANSWER_1);
         Answer findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getQuestionId()).orElse(null);
 
         assertAll(
