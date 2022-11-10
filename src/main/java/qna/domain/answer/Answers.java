@@ -33,9 +33,4 @@ public class Answers {
 		}
 		return deleteHistories;
 	}
-
-	public boolean allMatchLoginUser(User loginUser) {
-		return answers.stream()
-			.allMatch(it -> loginUser.equals(it.getWriter()));
-	}
 }

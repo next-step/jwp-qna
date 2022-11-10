@@ -26,9 +26,6 @@ public class Answer extends BaseEntity {
 
 	private static final String ANSWER_DELETE_UNAUTHORIZED_EXCEPTION_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
-	protected Answer() {
-	}
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -46,6 +43,9 @@ public class Answer extends BaseEntity {
 
 	@Column(nullable = false)
 	private boolean deleted = false;
+
+	protected Answer() {
+	}
 
 	public Answer(User writer, Question question, String contents) {
 		this(null, writer, question, contents);
