@@ -1,12 +1,13 @@
 package qna.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Question {
 
-    @Id
+    @Id @GeneratedValue
     private Long id;
     private String title;
     private String contents;

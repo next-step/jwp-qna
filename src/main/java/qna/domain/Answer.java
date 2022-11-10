@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Answer {
+public class Answer extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +57,10 @@ public class Answer {
         return writerId;
     }
 
+    public String getContents() {
+        return contents;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -65,14 +69,7 @@ public class Answer {
         this.deleted = deleted;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public Long getQuestionId() {
+        return questionId;
     }
 }

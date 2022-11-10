@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    @Id
+    @Id @GeneratedValue
     private Long id;
     private String userId;
     private String password;
