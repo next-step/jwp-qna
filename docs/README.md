@@ -35,4 +35,4 @@
     - [x] user 저장 테스트
     - [ ] user 수정 테스트
     - [ ] user 삭제 테스트
-    - [ ] findByUserId
+    - [x] findByUserId 조회 테스트
