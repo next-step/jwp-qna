@@ -11,14 +11,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class DeleteHistoryTest {
-    private static final DeleteHistory deleteHistoryTest = new DeleteHistory(QUESTION, 1L, JAVAJIGI, LocalDateTime.now());
+    private static final DeleteHistory D1 = new DeleteHistory(QUESTION, 1L, JAVAJIGI, LocalDateTime.now());
 
     @Test
     void 값_검증() {
         assertAll(
-                () -> assertThat(deleteHistoryTest.getContentType()).isEqualTo(QUESTION),
-                () -> assertThat(deleteHistoryTest.getContentId()).isEqualTo(1L),
-                () -> assertThat(deleteHistoryTest.getDeletedBy()).isEqualTo(1L)
+                () -> assertThat(D1.getContentType()).isEqualTo(QUESTION),
+                () -> assertThat(D1.getContentId()).isEqualTo(1L),
+                () -> assertThat(D1.getDeletedBy()).isEqualTo(1L)
         );
     }
 }
