@@ -18,18 +18,6 @@ public class DeleteHistory {
     private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public User getDeletedBy() {
-        return deletedBy;
-    }
-
-    public void setDeletedBy(User deletedBy) {
-        this.deletedBy = deletedBy;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
     public DeleteHistory() {
     }
 
