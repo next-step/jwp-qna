@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
+import qna.repository.AnswerRepository;
+import qna.repository.QuestionRepository;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -77,7 +79,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.QUESTION_1, "Answers Contents1");
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
