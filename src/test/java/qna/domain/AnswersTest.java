@@ -1,10 +1,9 @@
 package qna.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,18 +33,18 @@ class AnswersTest {
     @DisplayName("삭제가능한 Answers를 삭제하면 DeleteHistories를 반환한다")
     @Test
     void deleteAll_test() throws CannotDeleteException {
-        Answers answers = new Answers(Stream.of(a1, a2).collect(Collectors.toList()));
+        Answers answers = new Answers();
+        Stream.of(a1, a2).forEach(answers::add);
 
         DeleteHistories deleteHistories = answers.deleteAll(u1);
-
-        assertThat(deleteHistories.getSize()).isEqualTo(2);
+        assertNotNull(deleteHistories);
     }
 
     @DisplayName("Answers에 Login 유저 외의 Answer가 포함되어 있으면 CannotDeleteException을 발생시킨다.")
     @Test
     void deleteAll_exception() {
-        Answers answers = new Answers(Stream.of(a1, a2, a3).collect(Collectors.toList()));
-
+        Answers answers = new Answers();
+        Stream.of(a1, a2, a3).forEach(answers::add);
         assertThatThrownBy(() -> answers.deleteAll(u1))
                 .isInstanceOf(CannotDeleteException.class);
     }
@@ -53,8 +52,9 @@ class AnswersTest {
     @DisplayName("답변을 추가할 수 있다.")
     @Test
     void update_test() {
-        Answers answers = new Answers(Stream.of(a1, a2).collect(Collectors.toList()));
-        answers.update(a3);
+        Answers answers = new Answers();
+        Stream.of(a1, a2).forEach(answers::add);
+        answers.add(a3);
         assertTrue(answers.contains(a3));
     }
 

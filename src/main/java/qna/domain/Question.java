@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -45,7 +44,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.answers = new Answers(new ArrayList<>());
+        this.answers = new Answers();
     }
 
     protected Question() {
@@ -65,7 +64,7 @@ public class Question extends BaseEntity {
         if (!answer.getQuestion().equals(this)) {
             throw new CannotUpdateException(ErrMsg.CANNOT_ADD_ANSWER_TO_WRONG_QUESTION);
         }
-        answers.update(answer);
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -92,10 +91,12 @@ public class Question extends BaseEntity {
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         validateDeletable(loginUser);
         DeleteHistories answerDeleteHistories = answers.deleteAll(loginUser);
-        DeleteHistory questionDeleteHistory = DeleteHistory.of(this);
-
+        DeleteHistory questionDeleteHistory = DeleteHistory.ofQuestion(this);
         this.deleted = true;
-        return DeleteHistories.of(questionDeleteHistory, answerDeleteHistories);
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(questionDeleteHistory);
+        deleteHistories.addAll(answerDeleteHistories);
+        return deleteHistories;
     }
 
     private void validateDeletable(User loginUser) {
@@ -113,8 +114,8 @@ public class Question extends BaseEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
                 ", deleted=" + deleted +
+                ", writer=" + writer.toString() +
                 '}';
     }
 }

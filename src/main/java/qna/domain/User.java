@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -44,7 +43,7 @@ public class User extends BaseEntity {
         this.password = password;
         this.name = name;
         this.email = email;
-        this.deleteHistories = new DeleteHistories(new ArrayList<>());
+        this.deleteHistories = new DeleteHistories();
     }
 
     public void update(User loginUser, User target) {
@@ -113,7 +112,7 @@ public class User extends BaseEntity {
         if (!deleteHistory.getDeletedBy().equals(this)) {
             throw new CannotUpdateException(ErrMsg.CANNOT_ADD_DELETE_HISTORY_TO_WRONG_USER);
         }
-        this.deleteHistories.update(deleteHistory);
+        this.deleteHistories.add(deleteHistory);
     }
 
     @Override
@@ -126,7 +125,6 @@ public class User extends BaseEntity {
                 ", email='" + email + '\'' +
                 '}';
     }
-
 
     private static class GuestUser extends User {
 

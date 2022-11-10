@@ -74,7 +74,8 @@ public class QuestionTest {
         assertFalse(q1.isDeleted());
         DeleteHistories deleteHistories = q1.delete(u1);
         assertAll(
-                () -> assertEquals(2, deleteHistories.getSize()),
+                () -> assertTrue(deleteHistories.contains(DeleteHistory.ofQuestion(q1))),
+                () -> assertTrue(deleteHistories.contains(DeleteHistory.ofAnswer(a1))),
                 () -> assertTrue(q1.isDeleted()),
                 () -> assertTrue(a1.isDeleted())
         );

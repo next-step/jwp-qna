@@ -94,7 +94,7 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete(User loginUser) {
         validateDeletable(loginUser);
         this.deleted = true;
-        return DeleteHistory.of(this);
+        return DeleteHistory.ofAnswer(this);
     }
 
     private void validateDeletable(User loginUser) {
@@ -115,20 +115,22 @@ public class Answer extends BaseEntity {
             return false;
         }
         Answer answer = (Answer) o;
-        return getId().equals(answer.getId());
+        return isDeleted() == answer.isDeleted() && Objects.equals(getId(), answer.getId())
+                && Objects.equals(contents, answer.contents) && Objects.equals(getQuestion(),
+                answer.getQuestion()) && Objects.equals(getWriter(), answer.getWriter());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), contents, isDeleted(), getQuestion(), getWriter());
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
+                ", writer=" + writer.toString() +
+                ", question_id=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

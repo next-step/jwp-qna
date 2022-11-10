@@ -45,14 +45,15 @@ class UserRepositoryTest {
     private DeleteHistory d1;
     private DeleteHistory d2;
 
+
     @BeforeEach
     void setup() {
         u1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
         u2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
         q1 = new Question("title1", "contents1").writeBy(u1);
         a1 = new Answer(u1, q1, "contents");
-        d1 = DeleteHistory.of(a1);
-        d2 = DeleteHistory.of(q1);
+        d1 = DeleteHistory.ofAnswer(a1);
+        d2 = DeleteHistory.ofQuestion(q1);
     }
 
     @DisplayName("유저를 저장할 수 있다")
@@ -105,9 +106,9 @@ class UserRepositoryTest {
         DeleteHistories deleteHistories = user.getDeleteHistories();
 
         assertAll(
-                () -> assertThat(persistenceUnitUtil.isLoaded(deleteHistories, "deleteHistoryList")).isFalse(),
+                () -> assertThat(persistenceUnitUtil.isLoaded(deleteHistories, "deleteHistories")).isFalse(),
                 () -> assertEquals(user, deleteHistories.getList().get(0).getDeletedBy()),
-                () -> assertThat(persistenceUnitUtil.isLoaded(deleteHistories, "deleteHistoryList")).isTrue()
+                () -> assertThat(persistenceUnitUtil.isLoaded(deleteHistories, "deleteHistories")).isTrue()
         );
 
     }
@@ -122,6 +123,7 @@ class UserRepositoryTest {
         assertEquals(2, deleteHistoryRepository.findAll().size());
 
         User user = userRepository.findByUserId(u1.getUserId()).get();
+   
         userRepository.delete(user);
         manager.flush();
 

@@ -11,37 +11,27 @@ import javax.persistence.OneToMany;
 public class DeleteHistories {
 
     @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL)
-    private List<DeleteHistory> deleteHistoryList;
-
-    public DeleteHistories(List<DeleteHistory> deleteHistoryList) {
-        this.deleteHistoryList = deleteHistoryList;
-    }
+    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     protected DeleteHistories() {
 
     }
 
-    public static DeleteHistories of(DeleteHistory questionDeleteHistory, DeleteHistories answerDeleteHistories) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(questionDeleteHistory);
-        deleteHistories.addAll(answerDeleteHistories.getList());
-        return new DeleteHistories(deleteHistories);
-    }
-
 
     public List<DeleteHistory> getList() {
-        return Collections.unmodifiableList(deleteHistoryList);
+        return Collections.unmodifiableList(this.deleteHistories);
     }
 
-    public void update(DeleteHistory deleteHistory) {
-        this.deleteHistoryList.add(deleteHistory);
+    public void add(DeleteHistory deleteHistory) {
+        this.deleteHistories.add(deleteHistory);
     }
 
-    public int getSize() {
-        return this.deleteHistoryList.size();
+    public void addAll(DeleteHistories deleteHistories) {
+        this.deleteHistories.addAll(deleteHistories.getList());
     }
 
     public boolean contains(DeleteHistory deleteHistory) {
-        return this.deleteHistoryList.contains(deleteHistory);
+        return this.deleteHistories.contains(deleteHistory);
     }
+
 }

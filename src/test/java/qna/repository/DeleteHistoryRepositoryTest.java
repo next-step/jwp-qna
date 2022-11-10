@@ -38,7 +38,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("답변 삭제이력을 생성할 수 있다")
     @Test
     void save_test() {
-        DeleteHistory d1 = DeleteHistory.of(q1);
+        DeleteHistory d1 = DeleteHistory.ofQuestion(q1);
         DeleteHistory actual = deleteHistoryRepository.save(d1);
         assertAll(
                 () -> assertNotNull(actual.getId()),

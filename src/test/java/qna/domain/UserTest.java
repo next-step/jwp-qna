@@ -79,7 +79,7 @@ public class UserTest {
     @DisplayName("유저의 삭제이력을 추가할 수 있다.")
     @Test
     void addDeleteHistory_test() {
-        DeleteHistory d1 = DeleteHistory.of(q1);
+        DeleteHistory d1 = DeleteHistory.ofQuestion(q1);
         assertFalse(JAVAJIGI.getDeleteHistories().contains(d1));
 
         assertEquals(d1.getDeletedBy(), JAVAJIGI);
@@ -88,7 +88,7 @@ public class UserTest {
     @DisplayName("유저의 삭제이력을 추가할때 작성자가 다르면 CannotUpdateException에러를 발생시킨다.")
     @Test
     void addDeleteHistory_exception() {
-        DeleteHistory d1 = DeleteHistory.of(q1);
+        DeleteHistory d1 = DeleteHistory.ofQuestion(q1);
         assertEquals(d1.getDeletedBy(), JAVAJIGI);
         assertThatThrownBy(() -> SANJIGI.addDeleteHistory(d1)).isInstanceOf(CannotUpdateException.class);
     }
