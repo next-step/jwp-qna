@@ -21,48 +21,49 @@ public class AnswerRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    @BeforeEach
-    void beforeEach(){
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(QuestionTest.Q1);
-    }
-
     @Test
     @DisplayName("답변 저장 테스트")
     void saveTest(){
-        Answer answer1 = answerRepository.save(AnswerTest.A1);
+        User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
+        Question question = questionRepository.save(new Question("질문입니다", "본문입니다.").writeBy(user));
+        Answer answer = answerRepository.save(new Answer(user, question, "본문입니다."));
 
-        Answer findAnswer = answerRepository.findById(answer1.getId())
+        Answer findAnswer = answerRepository.findById(answer.getId())
                 .orElseGet(null);
 
         assertThat(findAnswer).isNotNull();
-        assertThat(findAnswer).isEqualTo(answer1);
+        assertThat(findAnswer).isEqualTo(answer);
     }
 
     @Test
     @DisplayName("특정 질문에 대한 미삭제 답변 조회 테스트")
-    void findByQuestionIdAndDeletedFalseTest(){
+    void findByQuestionAndDeletedFalseTest(){
         // given
-        Answer answer1 = answerRepository.save(AnswerTest.A1);
-        Answer answer2 = answerRepository.save(AnswerTest.A2);
+        User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
+        Question question = questionRepository.save(new Question("질문입니다", "본문입니다.").writeBy(user));
+        Answer answer1 = answerRepository.save(new Answer(user, question, "본문입니다."));
+        Answer answer2 = answerRepository.save(new Answer(user, question, "본문입니다2."));
 
         // when
-        List<Answer> answerList = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
+        List<Answer> answerList = answerRepository.findByQuestionAndDeletedFalse(question);
+        List<Answer> answers = question.getAnswers();
 
         //then
         assertThat(answerList).isNotNull();
         assertThat(answerList).containsExactly(
                 answer1, answer2
         );
+        assertThat(answerList).isEqualTo(answers);
     }
 
     @Test
     @DisplayName("삭제되지 않은 특정 답변 조회 테스트")
     void findByIdAndDeletedFalse(){
         // given
-        Answer answer1 = answerRepository.save(AnswerTest.A1);
-        Answer answer2 = answerRepository.save(AnswerTest.A2);
+        User user = userRepository.save(new User("user1", "user1!", "사용자1", ""));
+        Question question = questionRepository.save(new Question("질문입니다", "본문입니다.").writeBy(user));
+        Answer answer1 = answerRepository.save(new Answer(user, question, "본문입니다."));
+        Answer answer2 = answerRepository.save(new Answer(user, question, "본문입니다2."));
 
         // when
         Answer findAnswer1 = answerRepository.findByIdAndDeletedFalse(answer1.getId())
@@ -79,7 +80,7 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("특정 사용자가 답변한 내역 조회")
-    void findAllByWriterIdTest(){
+    void findAllByWriterTest(){
         //given
         User user = userRepository.save(new User("test11", "test11!", "테스트유저11", ""));
         Question question = questionRepository.save(new Question("질문합니다.", "본문입니다.").writeBy(user));
@@ -87,11 +88,13 @@ public class AnswerRepositoryTest {
         Answer answer2 = answerRepository.save(new Answer(user, question, "또 다른 답변입니다."));
 
         //when
-        List<Answer> answers = answerRepository.findAllByWriterId(user.getId());
+        List<Answer> answers = answerRepository.findAllByWriter(user);
+        List<Answer> answersByUser = user.getAnswers();
 
         //then
         assertThat(answers).containsExactly(
                 answer1, answer2
         );
+        assertThat(answers).isEqualTo(answersByUser);
     }
 }

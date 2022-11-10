@@ -42,4 +42,9 @@ public class Line {
     public List<Station> getStations() {
         return stations;
     }
+
+    public void add(Station station){
+        this.stations.add(station);
+        station.setLine(this);
+    }
 }
