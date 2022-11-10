@@ -3,13 +3,17 @@ package qna.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.common.base.BaseTimeEntity;
+import qna.common.exception.NotFoundException;
+import qna.common.exception.UnAuthorizedException;
 
 @Entity
 @Table
@@ -20,7 +24,9 @@ public class Answer extends BaseTimeEntity {
 
     private Long writerId;
 
-    private Long questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Lob
     private String contents;
@@ -31,14 +37,14 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
+    public Answer(Long writerId, Question question, String contents) {
+        this(null, writerId, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, Long writerId, Question question, String contents) {
         this.id = id;
 
-        if (Objects.isNull(writer)) {
+        if (Objects.isNull(writerId)) {
             throw new UnAuthorizedException();
         }
 
@@ -46,8 +52,8 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writerId = writerId;
+        this.question = question;
         this.contents = contents;
     }
 
@@ -56,7 +62,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -68,7 +74,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
     }
 
     public String getContents() {
@@ -88,7 +94,7 @@ public class Answer extends BaseTimeEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
