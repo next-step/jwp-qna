@@ -17,7 +17,7 @@
 - [x] delete_history 테이블의 엔티티 클래스를 작성한다.
 - [ ] delete_history 테이블의 레파지토리 클래스를 작성한다.
     - [x] delete_history 저장 테스트
-    - [ ] delete_history 조회 테스트
+    - [x] delete_history 조회 테스트
     - [ ] delete_history 수정 테스트
     - [ ] delete_history 삭제 테스트
 
