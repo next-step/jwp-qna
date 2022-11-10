@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.DeleteHistory;
 import qna.domain.User;
-import qna.repository.DeleteHistoryRepository;
-import qna.repository.UserRepository;
 
 @DataJpaTest
 public class DeleteRepositoryTest {

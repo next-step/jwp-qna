@@ -12,9 +12,6 @@ import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
-import qna.repository.AnswerRepository;
-import qna.repository.QuestionRepository;
-import qna.repository.UserRepository;
 
 @DataJpaTest
 public class AnswerRepositoryTest {

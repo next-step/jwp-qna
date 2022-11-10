@@ -1,5 +1,8 @@
 package qna.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.common.exception.CannotDeleteException;
 import qna.common.exception.NotFoundException;
-import qna.domain.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import qna.domain.Answer;
+import qna.domain.DeleteHistory;
+import qna.domain.Question;
+import qna.domain.User;
 import qna.enumType.ContentType;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;

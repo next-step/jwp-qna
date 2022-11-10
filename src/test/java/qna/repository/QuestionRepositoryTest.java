@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
 import qna.domain.User;
-import qna.repository.QuestionRepository;
-import qna.repository.UserRepository;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
