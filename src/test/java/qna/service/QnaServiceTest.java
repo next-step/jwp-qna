@@ -16,6 +16,7 @@ import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.QuestionTest;
 import qna.domain.Title;
+import qna.domain.UserRepository;
 import qna.domain.UserTest;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,9 @@ class QnaServiceTest {
     @Mock
     private DeleteHistoryService deleteHistoryService;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private QnaService qnaService;
 
@@ -51,9 +55,10 @@ class QnaServiceTest {
     @Test
     public void delete_성공() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        when(userRepository.findById(UserTest.JAVAJIGI.getId())).thenReturn(Optional.of(UserTest.JAVAJIGI));
 
         assertThat(question.isDeleted()).isFalse();
-        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(UserTest.JAVAJIGI.getId(), question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         verifyDeleteHistories();
@@ -63,15 +68,16 @@ class QnaServiceTest {
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.SANJIGI.getId(), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        when(userRepository.findById(UserTest.JAVAJIGI.getId())).thenReturn(Optional.of(UserTest.JAVAJIGI));
 
-        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(UserTest.JAVAJIGI.getId(), question.getId());
 
         assertThat(question.isDeleted()).isTrue();
         assertThat(answer.isDeleted()).isTrue();
@@ -85,7 +91,7 @@ class QnaServiceTest {
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI.getId(), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

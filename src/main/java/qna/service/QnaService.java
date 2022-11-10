@@ -9,6 +9,7 @@ import qna.NotFoundException;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
+import qna.domain.UserRepository;
 
 @Service
 public class QnaService {
@@ -16,10 +17,12 @@ public class QnaService {
 
     private QuestionRepository questionRepository;
     private DeleteHistoryService deleteHistoryService;
+    private UserRepository userRepository;
 
-    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService) {
+    public QnaService(QuestionRepository questionRepository, DeleteHistoryService deleteHistoryService, UserRepository userRepository) {
         this.questionRepository = questionRepository;
         this.deleteHistoryService = deleteHistoryService;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -29,8 +32,11 @@ public class QnaService {
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+    public void deleteQuestion(Long userId, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
+
+        User loginUser = userRepository.findById(userId)
+            .orElseThrow(() -> new CannotDeleteException("유저를 찾을 수 없습니다."));
         deleteHistoryService.saveAll(question.delete(loginUser));
     }
 }
