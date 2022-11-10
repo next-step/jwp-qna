@@ -2,11 +2,8 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -29,5 +26,12 @@ public class AnswerTest {
     void writer_not_null() {
         assertThatThrownBy(() -> new Answer(1L, null, QuestionTest.QUESTION_1, ANSWERS_CONTENTS_1))
                 .isInstanceOf(UnAuthorizedException.class);
+    }
+
+    @DisplayName("질문이 없을 수 없다.")
+    @Test
+    void question_not_null() {
+        assertThatThrownBy(() -> new Answer(1L, UserTest.JAVAJIGI, null, ANSWERS_CONTENTS_1))
+                .isInstanceOf(NotFoundException.class);
     }
 }
