@@ -67,4 +67,4 @@ alter table question
 
 ### 2단계 피드백
 - [x] FetchType.LAZY 에 고민해 볼 것
-- [ ] 연관관계 편의 메서드 적용해 볼 것
+- [x] 연관관계 편의 메서드 적용해 볼 것

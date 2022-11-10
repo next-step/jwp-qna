@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,14 +18,22 @@ public class QuestionTest {
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private TestEntityManager entityManager;
 
-    @Test
-    void saveAndFind() {
+    @BeforeEach
+    void setUp() {
         userRepository.save(UserTest.JAVAJIGI);
         userRepository.save(UserTest.SANJIGI);
+
+        answerRepository.save(AnswerTest.A1);
+    }
+
+    @Test
+    void saveAndFind() {
         questionRepository.save(Q1);
         questionRepository.save(Q2);
         flushAndClear();
@@ -32,12 +42,22 @@ public class QuestionTest {
         Question question2 = questionRepository.findById(2L).get();
 
         assertAll(
-                () -> assertThat(question1.getTitle()).isEqualTo("title1"),
-                () -> assertThat(question2.getTitle()).isEqualTo("title2")
+                () -> assertThat(question1.getId()).isEqualTo(1L),
+                () -> assertThat(question2.getId()).isEqualTo(2L)
         );
     }
 
+    @DisplayName("연관관계 편의 메서드 테스트")
+    @Test
+    void questionAddAnswers() {
+        Q1.addAnswer(AnswerTest.A1);
+        questionRepository.save(Q1);
+        flushAndClear();
 
+        Question question = questionRepository.findById(1L).get();
+
+        assertThat(question.getAnswers()).contains(AnswerTest.A1);
+    }
 
     private void flushAndClear() {
         entityManager.flush();

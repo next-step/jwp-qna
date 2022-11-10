@@ -18,7 +18,7 @@ public class Question {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private final List<Answer> answers = new ArrayList<>();
     private boolean deleted = false;
 
     public Question() {
@@ -45,14 +45,17 @@ public class Question {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        if (!this.answers.contains(answer)) {
+            answers.add(answer);
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getTitle() {
-        return title;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
     public User getWriter() {
