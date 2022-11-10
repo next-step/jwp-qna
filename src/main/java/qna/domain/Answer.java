@@ -13,7 +13,9 @@ public class Answer extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Long writerId;
+    @OneToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
     private Long questionId;
     @Lob
     private String contents;
@@ -35,7 +37,7 @@ public class Answer extends TimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.questionId = question.getId();
         this.contents = contents;
     }
@@ -45,7 +47,7 @@ public class Answer extends TimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -61,11 +63,10 @@ public class Answer extends TimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        if (Objects.isNull(writer)) {
+            return null;
+        }
+        return writer.getId();
     }
 
     public Long getQuestionId() {
@@ -109,7 +110,7 @@ public class Answer extends TimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
+                ", writer=" + writer.toString() +
                 ", questionId=" + questionId +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +

@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -88,10 +87,12 @@ public class QuestionTest {
     static Stream<Arguments> questionAndAnswerTestFixture() {
         return Stream.of(
             Arguments.of(
-                Q1, A1
+                Q1, new Answer(new User("userId", "password", "name", "email"),
+                    new Question("title", "contents"), "contents")
             ),
             Arguments.of(
-                Q2, A2
+                Q2, new Answer(new User("userId", "password", "name", "email"),
+                    new Question("title", "contents"), "contents")
             )
         );
     }
