@@ -83,4 +83,16 @@ public class QuestionTest {
             assertTrue(answer2.isDeleted());
         });
     }
+
+    @Test
+    @DisplayName("질문을 삭제하는 경우 삭제 이력에 대한 정보를 생성한다.")
+    void delete_삭제_이력_생성() {
+        Answer answer1 = new Answer(writer, question, "Answers Contents1");
+        Answer answer2 = new Answer(writer, question, "Answers Contents2");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        DeleteHistories deleteHistories = question.deleteByWriter(writer);
+
+        assertThat(deleteHistories.values()).hasSize(3);
+    }
 }

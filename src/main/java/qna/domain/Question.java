@@ -3,6 +3,7 @@ package qna.domain;
 import qna.ForbiddenException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -65,10 +66,28 @@ public class Question extends BaseTimeEntity {
         this.title = title;
     }
 
-    public void deleteByWriter(User writer) {
+    public DeleteHistories deleteByWriter(User writer) {
         this.validateWriter(writer);
         this.validateAnswer(writer);
         this.delete();
+        return getDeleteHistories();
+    }
+
+    private DeleteHistories getDeleteHistories() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        addQuestionDeleteHistory(deleteHistories);
+        addAnswerDeleteHistory(deleteHistories);
+        return deleteHistories;
+    }
+
+    private void addAnswerDeleteHistory(DeleteHistories deleteHistories) {
+        this.answers.values().forEach(answer ->
+                deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()))
+        );
+    }
+
+    private void addQuestionDeleteHistory(DeleteHistories deleteHistories) {
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
     }
 
     private void validateWriter(User writer) {
