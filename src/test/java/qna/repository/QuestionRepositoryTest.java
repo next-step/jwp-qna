@@ -72,4 +72,15 @@ class QuestionRepositoryTest {
                 () -> assertThat(question2.getUpdatedAt()).isNotNull()
         );
     }
+
+    @DisplayName("삭제_성공")
+    @Test
+    void delete() {
+
+        assertThat(question2).isNotNull();
+
+        questionRepository.delete(question2);
+
+        assertThat(questionRepository.findByIdAndDeletedFalse(question2.getId()).isPresent()).isFalse();
+    }
 }
