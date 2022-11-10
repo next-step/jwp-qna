@@ -68,6 +68,6 @@ class UserRepositoryTest {
 
         userRepository.delete(sanjigi);
 
-        assertThat(userRepository.findByUserId(sanjigi.getUserId()).isPresent()).isFalse();
+        assertThat(userRepository.findByUserId(sanjigi.getUserId())).isNotPresent();
     }
 }

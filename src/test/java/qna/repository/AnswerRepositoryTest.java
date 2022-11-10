@@ -82,6 +82,6 @@ class AnswerRepositoryTest {
 
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(answer_2.getId());
 
-        assertThat(answer.isPresent()).isFalse();
+        assertThat(answer).isNotPresent();
     }
 }

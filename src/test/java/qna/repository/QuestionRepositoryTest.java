@@ -81,6 +81,6 @@ class QuestionRepositoryTest {
 
         questionRepository.delete(question2);
 
-        assertThat(questionRepository.findByIdAndDeletedFalse(question2.getId()).isPresent()).isFalse();
+        assertThat(questionRepository.findByIdAndDeletedFalse(question2.getId())).isNotPresent();
     }
 }
