@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,6 +27,16 @@ public class AnswerTest {
     QuestionRepository questions;
     @Autowired
     UserRepository users;
+
+    private static boolean isInit = false;
+
+    @BeforeAll
+    static void init(@Autowired UserRepository users, @Autowired QuestionRepository questions) {
+        users.save(UserTest.JAVAJIGI);
+        users.save(UserTest.SANJIGI);
+        questions.save(QuestionTest.Q1);
+        questions.save(QuestionTest.Q2);
+    }
 
     private static Stream<Answer> save_entity_and_find_test() {
         return Stream.of(A1,A2);

@@ -16,7 +16,9 @@ public class Answer extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
     private Long questionId;
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     protected Answer() {
 
@@ -37,13 +39,13 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.questionId = question.getId();
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -55,7 +57,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
     public Long getQuestionId() {
@@ -81,7 +83,7 @@ public class Answer extends BaseTimeEntity {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 ", questionId=" + questionId +
-                ", writerId=" + writerId +
+                ", writerId=" + writer.getId() +
                 ", " + super.toString() +
                 '}';
     }

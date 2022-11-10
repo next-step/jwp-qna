@@ -25,7 +25,7 @@ public class QuestionTest {
     DeleteHistoryRepository deletes;
 
     @BeforeAll
-    static void setUp(@Autowired UserRepository users) {
+    static void init(@Autowired UserRepository users) {
         users.save(UserTest.JAVAJIGI);
         users.save(UserTest.SANJIGI);
     }
