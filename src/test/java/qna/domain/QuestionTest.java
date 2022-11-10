@@ -22,4 +22,10 @@ public class QuestionTest {
                 () -> assertThat(Q2.getWriterId()).isEqualTo(UserTest.SANJIGI.getId())
         );
     }
+
+    @Test
+    void 삭제() {
+        Q1.setDeleted();
+        assertThat(Q1.isDeleted()).isTrue();
+    }
 }
