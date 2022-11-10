@@ -76,7 +76,7 @@ public class QuestionRepositoryTest {
 
         Question findQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion.getId()).get();
 
-        assertThat(findQuestion.getAnswers()).hasSize(2);
+        assertThat(findQuestion.sizeOfAnswers()).isEqualTo(2);
 
     }
 }

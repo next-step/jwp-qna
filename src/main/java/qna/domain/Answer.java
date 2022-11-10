@@ -4,10 +4,13 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 public class Answer extends BaseEntity {
+    private static final String ONLY_DELETED_STATE = "삭제된 질문만 허용합니다";
+    private static final String NONE_AUTH_DELETE = "답변을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,8 +45,10 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+    private void validateOwner(User writer) {
+        if (!isOwner(writer)) {
+            throw new RuntimeException(NONE_AUTH_DELETE);
+        }
     }
 
     public void toQuestion(Question question) {
@@ -62,8 +67,14 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public DeleteHistory delete(User writer) {
+        validateOwner(writer);
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     public Question getQuestion() {
@@ -80,4 +91,5 @@ public class Answer extends BaseEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

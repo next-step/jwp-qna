@@ -1,10 +1,14 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
+    private static final String ONLY_DELETED_STATE = "삭제된 질문만 허용합니다";
+    private static final String NONE_AUTH_DELETE = "질문을 삭제할 권한이 없습니다.";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,8 +19,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
     private boolean deleted = false;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "question")
-    private List<Answer> answers;
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -36,11 +40,23 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public List<DeleteHistory> delete(User writer) {
+        validateOwner(writer);
+        this.deleted = true;
+        List<DeleteHistory> deleteHistories = new ArrayList();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(this.answers.deleteAllAnswer(writer));
+        return deleteHistories;
+    }
+
+    private void validateOwner(User writer) {
+        if (!this.writer.equals(writer)) {
+            throw new RuntimeException(NONE_AUTH_DELETE);
+        }
     }
 
     public void addAnswer(Answer answer) {
+        answers.addAnswer(answer);
         answer.toQuestion(this);
     }
 
@@ -56,12 +72,8 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
+    public int sizeOfAnswers() {
+        return answers.size();
     }
 
     @Override
