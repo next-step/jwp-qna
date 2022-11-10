@@ -54,7 +54,7 @@ public class Answer extends BaseTime {
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
 
     }
 

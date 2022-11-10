@@ -40,7 +40,7 @@ public class Question {
         this.contents = contents;
     }
 
-    public Question() {
+    protected Question() {
 
     }
 
