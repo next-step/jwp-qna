@@ -27,7 +27,7 @@
     - [ ] question 수정 테스트
     - [ ] question 삭제 테스트
     - [x] findByDeletedFalse 조회 테스트
-    - [ ] findByIdAndDeletedFalse 조회 테스트
+    - [x] findByIdAndDeletedFalse 조회 테스트
 
 ## User
 - [ ] user 테이블의 엔티티 클래스를 작성한다.

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.QUESTION_1;
@@ -47,16 +49,27 @@ class QuestionRepositoryTest {
     @Test
     void findByDeletedFalse_success() {
 
-        Question question = questionRepository.findByIdAndDeletedFalse(question2.getId()).orElse(null);
+        Question question = questionRepository.save(QUESTION_1);
+
+        List<Question> questions = questionRepository.findByDeletedFalse();
 
         assertAll(
-                () -> assertThat(question.getId()).isNotNull(),
-                () -> assertThat(question.getContents()).isEqualTo(QUESTION_2.getContents()),
-                () -> assertThat(question.getTitle()).isEqualTo(QUESTION_2.getTitle()),
-                () -> assertThat(question.isDeleted()).isFalse(),
-                () -> assertThat(question.getWriterId()).isNotNull(),
-                () -> assertThat(question.getCreatedAt()).isNotNull(),
-                () -> assertThat(question.getUpdatedAt()).isNotNull()
+                () -> assertThat(questions).hasSize(2),
+                () -> assertThat(questions).containsExactly(question2, question)
+        );
+    }
+
+    @DisplayName("findByIdAndDeletedFalse_조회_성공")
+    @Test
+    void findByIdAndDeletedFalse_success() {
+        assertAll(
+                () -> assertThat(question2.getId()).isNotNull(),
+                () -> assertThat(question2.getContents()).isEqualTo(QUESTION_2.getContents()),
+                () -> assertThat(question2.getTitle()).isEqualTo(QUESTION_2.getTitle()),
+                () -> assertThat(question2.isDeleted()).isFalse(),
+                () -> assertThat(question2.getWriterId()).isNotNull(),
+                () -> assertThat(question2.getCreatedAt()).isNotNull(),
+                () -> assertThat(question2.getUpdatedAt()).isNotNull()
         );
     }
 }
