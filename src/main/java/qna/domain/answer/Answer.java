@@ -5,10 +5,13 @@ import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.BaseEntity;
+import qna.domain.ContentType;
+import qna.domain.deleteHistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -100,6 +103,11 @@ public class Answer extends BaseEntity {
     public Long getWriterId() {
         return writer.getId();
     }
+
+    public DeleteHistory createDeleteHistory() {
+        return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
+    }
+
 
     @Override
     public String toString() {

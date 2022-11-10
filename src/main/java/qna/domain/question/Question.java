@@ -4,13 +4,16 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.domain.BaseEntity;
+import qna.domain.ContentType;
 import qna.domain.content.Content;
+import qna.domain.deleteHistory.DeleteHistory;
 import qna.domain.user.User;
 import qna.domain.answer.Answer;
 import qna.domain.answer.Answers;
 import qna.domain.content.Title;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static qna.constant.Message.NOT_VALID_DELETE_QUESTION_AUTH;
@@ -96,6 +99,10 @@ public class Question extends BaseEntity {
 
     public void updateContents(Content content) {
         this.content = content;
+    }
+
+    public DeleteHistory createDeleteHistory() {
+        return new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now());
     }
 
     @Override

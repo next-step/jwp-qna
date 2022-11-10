@@ -30,15 +30,10 @@ public class Answers {
         return Collections.unmodifiableList(answers);
     }
 
-    public void validateDeleteAnswer(User loginUser) {
-        // for보다는 stream
-        answers.stream().forEach(answer -> {
-            try {
-                checkAnswerWriter(answer,loginUser);
-            } catch (CannotDeleteException e) {
-                e.printStackTrace();
-            }
-        });
+    public void validateDeleteAnswer(User loginUser) throws CannotDeleteException {
+        for(Answer answer : answers) {
+            checkAnswerWriter(answer,loginUser);
+        }
     }
 
     private void checkAnswerWriter(Answer answer, User loginUser) throws CannotDeleteException {
@@ -48,7 +43,7 @@ public class Answers {
     }
 
     public void deleteAll() {
-        for(Answer answer : answers) {
+        for (Answer answer : answers) {
             answer.updateDeleted(true);
         }
     }
