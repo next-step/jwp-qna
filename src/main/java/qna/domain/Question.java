@@ -6,9 +6,10 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Question extends BaseEntity{
+public class Question extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String title;
     @Lob

@@ -23,7 +23,7 @@
 ## Question
 - [x] question 테이블의 엔티티 클래스를 작성한다.
 - [ ] question 테이블의 레파지토리 클래스를 작성한다.
-    - [ ] question 저장 테스트
+    - [x] question 저장 테스트
     - [ ] question 수정 테스트
     - [ ] question 삭제 테스트
     - [ ] findByDeletedFalse

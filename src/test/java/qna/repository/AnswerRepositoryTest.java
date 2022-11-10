@@ -20,13 +20,13 @@ class AnswerRepositoryTest {
 
     public static final String ANSWERS_CONTENTS_1 = "Answers Contents1";
     public static final String ANSWERS_CONTENTS_2 = "Answers Contents2";
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, ANSWERS_CONTENTS_1);
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, ANSWERS_CONTENTS_2);
+    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.QUESTION_1, ANSWERS_CONTENTS_1);
+    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.QUESTION_2, ANSWERS_CONTENTS_2);
 
     @Autowired
     private AnswerRepository answerRepository;
 
-    @DisplayName("저장 테스트")
+    @DisplayName("저장_성공")
     @Test
     void save() {
 
@@ -41,7 +41,6 @@ class AnswerRepositoryTest {
                 () -> assertThat(answer.getContents()).isEqualTo(ANSWERS_CONTENTS_1)
         );
     }
-
 
     @DisplayName("findByQuestionIdAndDeletedFalse 조회 테스트")
     @Test
