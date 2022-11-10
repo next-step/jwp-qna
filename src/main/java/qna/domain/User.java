@@ -96,7 +96,7 @@ public class User extends BaseEntity {
     public String getPassword() {
         return password;
     }
-    
+
     @Override
     public String toString() {
         return "User{" +

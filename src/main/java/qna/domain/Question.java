@@ -1,10 +1,11 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,12 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
-    @OneToMany(mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +32,7 @@ public class Question extends BaseEntity {
 
     @Lob
     private String contents;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
@@ -59,8 +62,36 @@ public class Question extends BaseEntity {
         return this.writer.equals(writer);
     }
 
+    public boolean isNotOwner(User writer) {
+        return !isOwner(writer);
+    }
+
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.remove(answer);
+    }
+
+    public boolean notContainsAnswer(Answer answer) {
+        return this.answers.notContains(answer);
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        validateIsOwner(loginUser);
+        this.deleted = true;
+
+        DeleteHistories deleteHistories = new DeleteHistories(Collections.singletonList(
+            new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now())
+        ));
+        return deleteHistories.concat(this.answers.delete(loginUser));
+    }
+
+    private void validateIsOwner(User loginUser) {
+        if (isNotOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -75,11 +106,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
-        this.deleted = true;
-    }
-
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 

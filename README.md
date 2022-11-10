@@ -27,3 +27,11 @@
 - [X] Answer - User 연관 관계 매핑
 - [X] DeleteHistory - User 연관 관계 매핑
 - [X] Question - User 연관 관계 매핑
+
+## Step3. 질문 삭제하기 리팩터링
+
+- [X] Question 삭제하기
+- [X] DeleteHistory - Question 삭제 히스토리 저장
+- [X] Answer 삭제하기
+- [X] DeleteHistory - Answer 삭제 히스토리 저장
+

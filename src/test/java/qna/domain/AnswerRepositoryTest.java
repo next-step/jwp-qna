@@ -29,8 +29,8 @@ class AnswerRepositoryTest {
     @BeforeEach
     void setup() {
         JAVAJIGI = userRepository.save(JAVAJIGI());
-        Q1 = questionRepository.save(Q1(JAVAJIGI));
-        A1 = answerRepository.save(A1(JAVAJIGI, Q1));
+        Q1 = questionRepository.save(QUESTION1(JAVAJIGI));
+        A1 = answerRepository.save(ANSWER1(JAVAJIGI, Q1));
 
     }
 
