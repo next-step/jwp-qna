@@ -19,7 +19,7 @@ class DeleteHistoryTest {
 		User user = UserGenerator.questionWriter();
 		Question question = QuestionGenerator.question(user);
 		DeleteHistory deleteHistory = DeleteHistory.ofQuestion(question);
-		assertThat(deleteHistory).isInstanceOf(DeleteHistory.class);
+		assertThat(deleteHistory).isNotNull();
 	}
 
 }

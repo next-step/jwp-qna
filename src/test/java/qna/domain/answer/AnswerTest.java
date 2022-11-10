@@ -30,7 +30,7 @@ public class AnswerTest {
         final Answer answer = new Answer(writer, question, "answer_contents");
 
         // then
-        assertThat(answer).isInstanceOf(Answer.class);
+        assertThat(answer).isNotNull();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class AnswerTest {
 
         // then
         assertThat(answer.isDeleted()).isTrue();
-        assertThat(delete).isInstanceOf(DeleteHistory.class);
+        assertThat(delete).isNotNull();
     }
 
     @Test

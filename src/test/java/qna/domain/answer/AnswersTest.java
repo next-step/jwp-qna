@@ -29,7 +29,7 @@ class AnswersTest {
 		// when
 		Answers answers = question.getAnswers();
 
-		assertThat(answers).isInstanceOf(Answers.class);
+		assertThat(answers).isNotNull();
 	}
 
 	@Test

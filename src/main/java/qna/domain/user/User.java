@@ -116,7 +116,7 @@ public class User extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return userId != null ? userId.hashCode() : 0;
+        return id.hashCode();
     }
 
     @Override
