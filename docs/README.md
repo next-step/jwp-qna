@@ -8,7 +8,7 @@
 - [ ] answer 테이블의 레파지토리 클래스를 작성한다.
     - [x] answer 저장 테스트
     - [ ] answer 조회 테스트
-    - [ ] findByQuestionIdAndDeletedFalse
+    - [x] findByQuestionIdAndDeletedFalse 조회 테스트
     - [ ] findByIdAndDeletedFalse
     - [ ] answer 수정 테스트
     - [ ] answer 삭제 테스트
