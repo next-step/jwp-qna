@@ -26,7 +26,7 @@
 
 ## Question
 
-- [ ] 질문을 생성한다.
+- [x] 질문을 생성한다.
 - [x] question 테이블의 엔티티 클래스를 작성한다.
 - [x] question 테이블의 레파지토리 클래스를 작성한다.
     - [x] question 저장 테스트
@@ -44,3 +44,4 @@
     - [x] findByUserId 조회 테스트
 
 - 테스트 클래스 DIsplayName체크
+- 불필요 import체크
