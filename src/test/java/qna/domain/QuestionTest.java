@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +23,12 @@ public class QuestionTest {
     QuestionRepository questions;
     @Autowired
     DeleteHistoryRepository deletes;
+
+    @BeforeAll
+    static void setUp(@Autowired UserRepository users) {
+        users.save(UserTest.JAVAJIGI);
+        users.save(UserTest.SANJIGI);
+    }
 
     private static Stream<Question> save_question_and_find_test() {
         return Stream.of(Q1,Q2);

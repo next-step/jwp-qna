@@ -37,4 +37,4 @@ references user
 - [X] Answer Entity 연관관계 추가
 - [X] DelteHistory Entity 연관관계 추가
 - [X] User Entity 연관관계 추가
-- [X] Question Entity 연관관계 추가
+- [ ] Question Entity 연관관계 추가
