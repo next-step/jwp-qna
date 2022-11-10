@@ -34,7 +34,7 @@ public class Question extends BaseTimeEntity {
     @OneToMany(
         mappedBy = "question",
         fetch = FetchType.LAZY,
-        cascade = CascadeType.PERSIST,
+        cascade = CascadeType.REMOVE,
         orphanRemoval = true
     )
     private List<Answer> answers = new ArrayList<>();
