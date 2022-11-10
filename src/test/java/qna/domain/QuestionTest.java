@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import qna.ForbiddenException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -42,6 +41,7 @@ public class QuestionTest {
     void addAnswer_답변_추가() {
         Answer answer = new Answer(writer, question, "Answers Contents1");
         question.addAnswer(answer);
+
         assertThat(question.getAnswers()).contains(answer);
     }
 
@@ -52,6 +52,7 @@ public class QuestionTest {
         Answer answer2 = new Answer(otherUser, question, "Answers Contents2");
         question.addAnswer(answer1);
         question.addAnswer(answer2);
+
         assertThrows(IllegalStateException.class, () -> question.deleteByWriter(writer));
     }
 
@@ -63,6 +64,23 @@ public class QuestionTest {
         question.addAnswer(answer1);
         question.addAnswer(answer2);
         question.deleteByWriter(writer);
+
         assertTrue(question.isDeleted());
+    }
+
+    @Test
+    @DisplayName("질문 삭제가 가능한 경우 - 질문을 삭제할 때 답변 또한 삭제된다.")
+    void delete_질문과_답변_삭제() {
+        Answer answer1 = new Answer(writer, question, "Answers Contents1");
+        Answer answer2 = new Answer(writer, question, "Answers Contents2");
+        question.addAnswer(answer1);
+        question.addAnswer(answer2);
+        question.deleteByWriter(writer);
+
+        assertAll(() -> {
+            assertTrue(question.isDeleted());
+            assertTrue(answer1.isDeleted());
+            assertTrue(answer2.isDeleted());
+        });
     }
 }

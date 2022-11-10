@@ -28,6 +28,10 @@ public class Answers {
         return !this.answers.isEmpty();
     }
 
+    public void deleteAll() {
+        this.answers.forEach(Answer::delete);
+    }
+
     public List<Answer> values() {
         return Collections.unmodifiableList(answers);
     }

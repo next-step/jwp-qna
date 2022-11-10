@@ -58,6 +58,7 @@ public class Question extends BaseTimeEntity {
 
     public void delete() {
         this.deleted = true;
+        this.answers.deleteAll();
     }
 
     public void changeTitle(String title) {
