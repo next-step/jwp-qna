@@ -59,7 +59,7 @@ alter table question
     foreign key (writer_id)
       references user
 ```
-![](src/main/resources/연관관계매핑.png)
+![](src/main/resources/연관관계매핑.jpeg)
 - [x] User : Question = 1 : *
 - [x] User : Answer = 1 : *
 - [x] User : DeleteHistory = 1 : 1
