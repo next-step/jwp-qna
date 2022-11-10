@@ -1,6 +1,6 @@
 package qna.domain;
 
-import qna.ForbiddenException;
+import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -66,7 +66,7 @@ public class Question extends BaseTimeEntity {
         this.title = title;
     }
 
-    public DeleteHistories deleteByWriter(User writer) {
+    public DeleteHistories deleteByWriter(User writer) throws CannotDeleteException {
         this.validateWriter(writer);
         this.validateAnswer(writer);
         this.delete();
@@ -90,13 +90,13 @@ public class Question extends BaseTimeEntity {
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
     }
 
-    private void validateWriter(User writer) {
+    private void validateWriter(User writer) throws CannotDeleteException {
         if (this.writer.isNotEquals(writer)) {
-            throw new ForbiddenException();
+            throw new CannotDeleteException(ErrorMessage.FORBIDDEN);
         }
     }
 
-    private void validateAnswer(User writer) {
+    private void validateAnswer(User writer) throws CannotDeleteException {
         if (isNotSameOwner(writer)) {
             validateAnswerIsEmpty();
         }
@@ -107,9 +107,9 @@ public class Question extends BaseTimeEntity {
                 .anyMatch(answer -> !answer.isOwner(writer));
     }
 
-    private void validateAnswerIsEmpty() {
+    private void validateAnswerIsEmpty() throws CannotDeleteException {
         if (this.answers.isNotEmpty()) {
-            throw new IllegalStateException();
+            throw new CannotDeleteException(ErrorMessage.CANNOT_DELETE);
         }
     }
 

@@ -3,7 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.ForbiddenException;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +33,7 @@ public class QuestionTest {
     @Test
     @DisplayName("로그인 사용자와 질문 작성자가 다른 경우 예외가 발생한다.")
     void delete_작성자가_아닌_경우() {
-        assertThrows(ForbiddenException.class, () -> question.deleteByWriter(otherUser));
+        assertThrows(CannotDeleteException.class, () -> question.deleteByWriter(otherUser));
     }
 
     @Test
@@ -53,12 +53,12 @@ public class QuestionTest {
         question.addAnswer(answer1);
         question.addAnswer(answer2);
 
-        assertThrows(IllegalStateException.class, () -> question.deleteByWriter(writer));
+        assertThrows(CannotDeleteException.class, () -> question.deleteByWriter(writer));
     }
 
     @Test
     @DisplayName("질문자와 답변자가 같은 경우 - 질문자와 모든 답변자가 같은 경우 삭제가 가능하다.")
-    void delete_질문자와_답변자가_같은_경우() {
+    void delete_질문자와_답변자가_같은_경우() throws CannotDeleteException {
         Answer answer1 = new Answer(writer, question, "Answers Contents1");
         Answer answer2 = new Answer(writer, question, "Answers Contents2");
         question.addAnswer(answer1);
@@ -70,7 +70,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문 삭제가 가능한 경우 - 질문을 삭제할 때 답변 또한 삭제된다.")
-    void delete_질문과_답변_삭제() {
+    void delete_질문과_답변_삭제() throws CannotDeleteException {
         Answer answer1 = new Answer(writer, question, "Answers Contents1");
         Answer answer2 = new Answer(writer, question, "Answers Contents2");
         question.addAnswer(answer1);
@@ -86,7 +86,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문을 삭제하는 경우 삭제 이력에 대한 정보를 생성한다.")
-    void delete_삭제_이력_생성() {
+    void delete_삭제_이력_생성() throws CannotDeleteException {
         Answer answer1 = new Answer(writer, question, "Answers Contents1");
         Answer answer2 = new Answer(writer, question, "Answers Contents2");
         question.addAnswer(answer1);

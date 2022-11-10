@@ -67,7 +67,7 @@ class UserRepositoryTest {
     @DisplayName("User 저장 후 User name 수정 테스트")
     void updateUser() {
         User saveUser = userRepository.save(UserTest.JAVAJIGI);
-        saveUser.setName(UserTest.SANJIGI.getName());
+        saveUser.changeName(UserTest.SANJIGI.getName());
 
         Optional<User> findUser = userRepository.findById(saveUser.getId());
 

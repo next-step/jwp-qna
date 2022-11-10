@@ -83,7 +83,7 @@ public class AnswerRepositoryTest {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         Question question = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
         Answer saveAnswer = answerRepository.save(new Answer(javajigi, question, "Answers Contents1"));
-        saveAnswer.setContents("수정 테스트");
+        saveAnswer.changeContents("수정 테스트");
         Optional<Answer> findAnswer = answerRepository.findById(saveAnswer.getId());
 
         assertThat(findAnswer).isPresent();
