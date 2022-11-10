@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.NotFoundException;
+import qna.config.TruncateConfig;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -18,7 +19,7 @@ import static qna.domain.AnswerTest.A1;
 
 @DataJpaTest
 @EnableJpaAuditing
-public class QuestionTest {
+public class QuestionTest extends TruncateConfig {
     private static final String TITLE_1 = "title1";
     private static final String TITLE_2 = "title2";
 

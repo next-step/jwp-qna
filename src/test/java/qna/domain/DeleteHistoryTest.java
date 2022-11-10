@@ -5,6 +5,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import qna.config.TruncateConfig;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -13,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @EnableJpaAuditing
-class DeleteHistoryTest {
+class DeleteHistoryTest extends TruncateConfig {
 
     public static final DeleteHistory DH1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
     public static final DeleteHistory DH2 = new DeleteHistory(ContentType.QUESTION, 2L, 1L, LocalDateTime.now());

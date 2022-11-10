@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,24 +9,41 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.config.TruncateConfig;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @EnableJpaAuditing
-public class AnswerTest {
+public class AnswerTest extends TruncateConfig {
     private static final String ANSWERS_CONTENTS_1 = "Answers Contents1";
     private static final String ANSWERS_CONTENTS_2 = "Answers Contents2";
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, ANSWERS_CONTENTS_1);
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, ANSWERS_CONTENTS_2);
+    public static final Answer A1 = new Answer(JAVAJIGI, Q1, ANSWERS_CONTENTS_1);
+    public static final Answer A2 = new Answer(SANJIGI, Q1, ANSWERS_CONTENTS_2);
 
     @Autowired
     AnswerRepository answers;
+
+    @Autowired
+    QuestionRepository questions;
+
+    @Autowired
+    UserRepository users;
+
+    @BeforeEach
+    void setUp() {
+        users.save(JAVAJIGI);
+        users.save(SANJIGI);
+        questions.save(Q1);
+    }
 
     @ParameterizedTest(name = "save_테스트")
     @MethodSource("answerTestFixture")
