@@ -64,3 +64,7 @@ alter table question
 - [x] User : Answer = 1 : *
 - [x] User : DeleteHistory = 1 : 1
 - [x] Question : Answer = 1 : *
+
+### 2단계 피드백
+- [ ] FetchType.LAZY 에 고민해 볼 것
+- [ ] 연관관계 편의 메서드 적용해 볼 것
