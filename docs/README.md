@@ -10,7 +10,7 @@
     - [x] findByQuestionIdAndDeletedFalse 조회 테스트
     - [x] findByIdAndDeletedFalse 조회 테스트
     - [ ] answer 수정 테스트
-    - [ ] answer 삭제 테스트
+    - [x] answer 삭제 테스트
 
 ## DeleteHistory
 - [x] delete_history 테이블의 엔티티 클래스를 작성한다.
@@ -36,3 +36,7 @@
     - [ ] user 수정 테스트
     - [ ] user 삭제 테스트
     - [x] findByUserId 조회 테스트
+
+- [ ] 테스트 메서드명 일관성 유지
+- [ ] 메서드, 변수 순서 유지
+- [ ] test setUp사용

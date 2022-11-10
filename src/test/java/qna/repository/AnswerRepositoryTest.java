@@ -1,19 +1,18 @@
 package qna.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
-import qna.domain.AnswerTest;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.*;
-import static qna.domain.AnswerTest.ANSWERS_CONTENTS_1;
-import static qna.domain.AnswerTest.ANSWER_1;
 
 @DataJpaTest
 @DisplayName("답변 Repository")
@@ -21,6 +20,14 @@ class AnswerRepositoryTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    private Answer answer_2;
+
+    @BeforeEach
+    void setUp() {
+        answer_2 = answerRepository.save(ANSWER_2);
+    }
+
 
     @DisplayName("저장_성공")
     @Test
@@ -43,7 +50,6 @@ class AnswerRepositoryTest {
     void findByQuestionIdAndDeletedFalse() {
 
         Answer answer1 = answerRepository.save(ANSWER_1);
-        Answer answer2 = answerRepository.save(ANSWER_2);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestionId());
 
@@ -64,5 +70,18 @@ class AnswerRepositoryTest {
                 () -> assertThat(findAnswer).isNotNull(),
                 () -> assertThat(findAnswer).isEqualTo(answer)
         );
+    }
+
+    @DisplayName("삭제_성공")
+    @Test
+    void delete() {
+
+        assertThat(answer_2).isNotNull();
+
+        answerRepository.delete(answer_2);
+
+        Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(answer_2.getId());
+
+        assertThat(answer.isPresent()).isFalse();
     }
 }
