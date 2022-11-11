@@ -71,11 +71,19 @@ public class Answer extends BaseDateTimeEntity {
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateSameUser(loginUser);
+        setDeleted();
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
+    }
+
+    private void setDeleted() {
+        this.deleted = CONTENT_DELETED_FLAG;
+    }
+
+    private void validateSameUser(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(EXCEPTION_MESSAGE_FOR_CANNOT_DELETE);
         }
-        this.deleted = CONTENT_DELETED_FLAG;
-        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
     }
 
     @Override
