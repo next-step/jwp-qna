@@ -59,11 +59,6 @@ alter table question
     foreign key (writer_id)
       references user
 ```
-![](src/main/resources/연관관계매핑.jpeg)
-- [x] User : Question = 1 : *
-- [x] User : Answer = 1 : *
-- [x] User : DeleteHistory = 1 : 1
-- [x] Question : Answer = 1 : *
 
 ### 2단계 피드백
 - [x] FetchType.LAZY 에 고민해 볼 것
@@ -71,6 +66,14 @@ alter table question
 
 ## 3단계 - 질문 삭제하기 리팩터링
 > QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 구성하고 객체와 테이블을 어떻게 매핑해야 하는지 알아본다
+
+### 연관 관계 매핑 수정
+![](src/main/resources/연관관계매핑.jpeg)
+**_User : DeleteHistory = 1 : 1 --> User : DeleteHistory = 1 : * 로 변경했습니다._** 
+- [x] User : Question = 1 : *
+- [x] User : Answer = 1 : *
+- [x] User : DeleteHistory = 1 : *
+- [x] Question : Answer = 1 : *
 
 ### 프로그래밍 요구사항
 - `qna.service.QnaService.deleteQuestion()`의 메서드에서 비즈니스 로직을 도메인으로 분리
@@ -113,3 +116,6 @@ alter table question
 
 #### DeleteHistory
 - [x] 삭제 될 때 데이터와 삭제한 사람의 정보를 저장
+
+#### DeleteHistories
+- [ ] DeleteHistory의 일급 컬렉션 생성

@@ -13,7 +13,7 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();
@@ -33,7 +33,10 @@ public class DeleteHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(id, that.id) &&
+                contentType == that.contentType &&
+                Objects.equals(contentId, that.contentId) &&
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
