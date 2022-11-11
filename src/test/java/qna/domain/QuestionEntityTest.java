@@ -27,7 +27,7 @@ class QuestionEntityTest {
         DeleteHistories actual = question.delete(writer);
 
         // then
-        DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question_id, writer, LocalDateTime.now());
+        DeleteHistory expected = DeleteHistory.ofQuestion(question_id, writer);
         assertThat(question.isDeleted()).isTrue();
         assertThat(actual.getAll()).usingFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("createDate")

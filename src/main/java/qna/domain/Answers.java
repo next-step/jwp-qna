@@ -19,8 +19,7 @@ public class Answers {
         DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
             validateWriterAndLoginUser(loginUser, answer);
-            deleteHistories.add(
-                    new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            deleteHistories.add(DeleteHistory.ofAnswer(answer.getId(), answer.getWriter()));
             answer.delete();
         }
         return deleteHistories;

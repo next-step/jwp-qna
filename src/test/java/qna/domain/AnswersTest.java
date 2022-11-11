@@ -40,7 +40,7 @@ class AnswersTest {
         DeleteHistories actual = answers.deleteAll(user);
 
         // then
-        DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, null, user, LocalDateTime.now());
+        DeleteHistory expected = DeleteHistory.ofAnswer(null, user);
         assertThat(actual.getAll()).usingFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("createDate")
                 .containsExactly(expected);
