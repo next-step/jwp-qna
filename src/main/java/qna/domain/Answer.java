@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -36,17 +37,30 @@ public class Answer extends BaseTime {
     public Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (Objects.isNull(question)) {
-            throw new NotFoundException();
-        }
+        validationAuthorized(writer);
+        validationNotFounded(question);
 
         this.writer = writer;
         this.question = question;
         this.contents = contents;
+    }
+
+    private void validationAuthorized(User writer) {
+        if (Objects.isNull(writer)) {
+            throw new UnAuthorizedException();
+        }
+    }
+
+    private void validationNotFounded(Question question) {
+        if (Objects.isNull(question)) {
+            throw new NotFoundException();
+        }
+    }
+
+    public void checkedSameOwner(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(writer);
+        }
     }
 
     public boolean isOwner(User writer) {
@@ -57,12 +71,12 @@ public class Answer extends BaseTime {
         this.question = question;
     }
 
-    public Long getId() {
-        return id;
+    public void changeDeleted() {
+        this.deleted = true;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public User getWriter() {
@@ -73,28 +87,12 @@ public class Answer extends BaseTime {
         this.writer = writer;
     }
 
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -107,4 +105,5 @@ public class Answer extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

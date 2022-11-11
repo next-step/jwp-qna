@@ -1,6 +1,11 @@
 package qna.domain;
 
+import qna.UnAuthorizedException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+
+import static qna.constant.ContentType.QUESTION;
 
 @Entity
 public class Question extends BaseTime {
@@ -18,6 +23,9 @@ public class Question extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writerId", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -39,36 +47,47 @@ public class Question extends BaseTime {
         return this;
     }
 
+    public DeleteHistories delete(User loginUser) {
+        this.validationDeleteQuestionRequestUser(loginUser);
+        answers.validationDeleteAnswersRequestUser(loginUser);
+
+        setDeleted(true);
+
+        return generateDeleteHistories();
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
+    }
+
+    public boolean isAllDeletedAnswers() {
+        return answers.isAllDeleted();
+    }
+
+    private void validationDeleteQuestionRequestUser(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new UnAuthorizedException(writer, loginUser);
+        }
+    }
+
+    private DeleteHistories generateDeleteHistories() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.generateDeleteHistories());
+        return deleteHistories;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public User getWriter() {
@@ -97,4 +116,5 @@ public class Question extends BaseTime {
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
