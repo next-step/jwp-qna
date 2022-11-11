@@ -1,11 +1,9 @@
 package qna.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.common.exception.NotFoundException;
@@ -25,26 +23,16 @@ public class QnaService {
     private final AnswerRepository answerRepository;
     private final DeleteHistoryService deleteHistoryService;
 
-    @Autowired
     public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.deleteHistoryService = deleteHistoryService;
     }
 
-    @Transactional(readOnly = true)
-    public Question findQuestionById(Long id) {
-        return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(NotFoundException::new);
-    }
-
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
-        Question question = findQuestionById(questionId);
-        question.isOwner(loginUser);
-
-        List<Answer> answers = answerRepository.findByQuestion_IdAndDeletedFalse(questionId);
-        answers.forEach(answer -> answer.isOwner(loginUser));
+        Question question = findQuestionById(questionId, loginUser);
+        List<Answer> answers = findByQuestionIdAndDeletedFalse(questionId, loginUser);
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted();
@@ -54,5 +42,19 @@ public class QnaService {
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser));
         }
         deleteHistoryService.saveAll(deleteHistories);
+    }
+
+    @Transactional(readOnly = true)
+    public Question findQuestionById(Long id, User loginUser) {
+        Question question = questionRepository.findByIdAndDeletedFalse(id).orElseThrow(NotFoundException::new);
+        question.isOwner(loginUser);
+        return question;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Answer> findByQuestionIdAndDeletedFalse(Long id, User loginUser){
+        List<Answer> answers = answerRepository.findByQuestion_IdAndDeletedFalse(id);
+        answerRepository.findByQuestion_IdAndDeletedFalse(id).forEach(answer -> answer.isOwner(loginUser));
+        return answers;
     }
 }
