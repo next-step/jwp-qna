@@ -12,12 +12,12 @@ import static qna.domain.UserTest.JAVAJIGI;
 
 @DisplayName("삭제 내역")
 public class DeleteHistoryTest {
-    public static final DeleteHistory DELETE_HISTORY_ANSWER = new DeleteHistory(ContentType.ANSWER, ANSWER_1.getId(), JAVAJIGI, LocalDateTime.now());
-    public static final DeleteHistory DELETE_HISTORY_QUESTION = new DeleteHistory(ContentType.QUESTION, QUESTION_1.getId(), QUESTION_1.getWriter(), LocalDateTime.now());
+    public static final DeleteHistory DELETE_HISTORY_ANSWER = DeleteHistory.of(ContentType.ANSWER, ANSWER_1.getId(), JAVAJIGI, LocalDateTime.now());
+    public static final DeleteHistory DELETE_HISTORY_QUESTION = DeleteHistory.of(ContentType.QUESTION, QUESTION_1.getId(), QUESTION_1.getWriter(), LocalDateTime.now());
 
     @DisplayName("삭제 내역 생성")
     @Test
     void constructor() {
-        assertThatNoException().isThrownBy(() -> new DeleteHistory(ContentType.ANSWER, ANSWER_1.getId(), JAVAJIGI, LocalDateTime.now()));
+        assertThatNoException().isThrownBy(() -> DeleteHistory.of(ContentType.ANSWER, ANSWER_1.getId(), JAVAJIGI, LocalDateTime.now()));
     }
 }
