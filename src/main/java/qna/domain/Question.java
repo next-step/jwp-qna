@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -20,7 +21,9 @@ public class  Question extends TimeEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
     @OneToMany(mappedBy = "question")
@@ -42,12 +45,12 @@ public class  Question extends TimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -83,11 +86,10 @@ public class  Question extends TimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        if (Objects.isNull(writer)) {
+            return null;
+        }
+        return writer.getId();
     }
 
     public boolean isDeleted() {
@@ -104,7 +106,7 @@ public class  Question extends TimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer.toString() +
                 ", deleted=" + deleted +
                 '}';
     }

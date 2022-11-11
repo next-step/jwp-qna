@@ -1,6 +1,7 @@
 package qna.domain;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,6 +43,15 @@ public class QuestionTest extends TruncateConfig {
     @Autowired
     UserRepository users;
 
+    User sanjigi;
+    User javajigi;
+
+    @BeforeEach
+    void setUp() {
+        sanjigi = users.save(SANJIGI);
+        javajigi = users.save(JAVAJIGI);
+    }
+
     @ParameterizedTest(name = "save_테스트")
     @MethodSource("questionTestFixture")
     void save_테스트(Question question) {
@@ -62,7 +72,7 @@ public class QuestionTest extends TruncateConfig {
     @ParameterizedTest(name = "save_후_update_테스트")
     @MethodSource("questionAndAnswerTestFixture")
     void save_후_update_테스트(Question question, Answer answer) {
-        Question newQuestion = questions.save(question);
+        Question newQuestion = questions.save(question.writeBy(sanjigi));
         newQuestion.addAnswer(answer);
         Answer linkAnswer = answers.save(answer);
         assertThat(linkAnswer.getQuestionId()).isEqualTo(newQuestion.getId());
@@ -88,12 +98,10 @@ public class QuestionTest extends TruncateConfig {
 
     @Test
     void 질문에서_참조를_통해_답변을_가져올때_삭제된_답변은_가져오지_않는다() {
-        users.save(JAVAJIGI);
-        users.save(SANJIGI);
-        Question newQuestion = questions.save(Q1);
-        Answer answer1 = answers.save(A1);
+        Question newQuestion = questions.save(Q1.writeBy(sanjigi));
+        Answer answer1 = answers.save(new Answer(javajigi, newQuestion, "contents"));
         newQuestion.addAnswer(answer1);
-        Answer answer2 = answers.save(A2);
+        Answer answer2 = answers.save(new Answer(javajigi, newQuestion, "contents2"));
         newQuestion.addAnswer(answer2);
         assertThat(newQuestion.getAnswers()).hasSize(2);
         newQuestion.deleteAnswer(answer2);
