@@ -6,19 +6,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
+import qna.domain.Question;
+import qna.domain.TestAnswerFactory;
+import qna.domain.TestQuestionFactory;
+import qna.domain.TestUserFactory;
+import qna.domain.User;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
 
 @DataJpaTest
 class AnswerRepositoryTest {
 
     @Autowired
     AnswerRepository answerRepository;
+
+    @Autowired
+    QuestionRepository questionRepository;
 
     @BeforeEach
     public void cleanup() {
@@ -28,10 +34,16 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("answer 저장 테스트")
     void save() {
-        Answer answer = answerRepository.save((A1));
+        // given
+        User writer = TestUserFactory.create("henderson");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        // when
+        Answer saverAnswer = answerRepository.save(answer);
+        // then
         assertAll(
-                () -> assertThat(answer.getId()).isNotNull(),
-                () -> assertThat(answer.getContents()).isEqualTo(A1.getContents())
+                () -> assertThat(saverAnswer.getId()).isNotNull(),
+                () -> assertThat(saverAnswer.getContents()).isEqualTo(answer.getContents())
         );
     }
 
@@ -39,17 +51,23 @@ class AnswerRepositoryTest {
     @DisplayName("answer 저장 후 조회 테스트")
     void findByIdAndDeletedFalse_test() {
         // given
-        Answer answer = answerRepository.save(A1);
-        Long saveAnswerId = answer.getId();
+        User writer = TestUserFactory.create("henderson");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+
+        User writer2 = TestUserFactory.create("tiago");
+        Question question2 = TestQuestionFactory.create(writer2);
+        Answer answer2 = TestAnswerFactory.create(writer2, question2);
         // when
-        answerRepository.save(A2);
-        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswerId);
+        answerRepository.save(answer);
+        answerRepository.save(answer2);
+        Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId());
         // then
-        assertThat(findAnswer.isPresent()).isTrue();
+        assertThat(findAnswer).isPresent();
         findAnswer.ifPresent(paramAnswer -> assertAll(
                 () -> assertThat(paramAnswer).isEqualTo(answer),
                 () -> assertThat(paramAnswer.isDeleted()).isFalse(),
-                () -> assertThat(paramAnswer).isNotEqualTo(A2)
+                () -> assertThat(paramAnswer).isNotEqualTo(answer2)
         ));
     }
 
@@ -57,26 +75,46 @@ class AnswerRepositoryTest {
     @DisplayName("answer 삭제 set 후 조회 시 미조회 테스트")
     void set_delete_find_test() {
         // given
-        Answer answer = answerRepository.save(A1);
+        User writer = TestUserFactory.create("henderson");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
         Long id = answer.getId();
         // when
         answer.setDeleted(true);
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // then
-        assertThat(findAnswer.isPresent()).isFalse();
+        assertThat(findAnswer).isNotPresent();
     }
 
     @Test
     @DisplayName("answer 삭제 후 조회 시 미조회 테스트")
     void delete_find_test() {
         // given
-        Answer saveAnswer = answerRepository.save(A1);
-        Long id = saveAnswer.getId();
+        User writer = TestUserFactory.create("henderson");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        Long id = answer.getId();
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // when
-        findAnswer.ifPresent(answer -> answerRepository.delete(answer));
+        findAnswer.ifPresent(paramAnswer -> answerRepository.delete(paramAnswer));
         Optional<Answer> deletedAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // then
-        assertThat(deletedAnswer.isPresent()).isFalse();
+        assertThat(deletedAnswer).isNotPresent();
+    }
+
+    @Test
+    void cascade_remove_test() {
+        // given
+        User writer = TestUserFactory.create("xavi");
+        Question question = TestQuestionFactory.create(writer);
+        Answer answer = TestAnswerFactory.create(writer, question);
+        Answer saveAnswer = answerRepository.save(answer);
+        Question saveQuestion = questionRepository.save(question);
+
+        // when
+        answerRepository.delete(saveAnswer);
+        Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
+        // then
+        assertThat(findQuestion).isPresent();
     }
 }
