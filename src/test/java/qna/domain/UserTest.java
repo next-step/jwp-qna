@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,8 +19,9 @@ public class UserTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    @DisplayName("유저 저장 성공")
     @Test
-    void saveAndFind() {
+    void 유저저장_성공() {
         userRepository.save(JAVAJIGI);
         userRepository.save(SANJIGI);
         flushAndClear();
@@ -32,9 +34,9 @@ public class UserTest {
         );
     }
 
+    @DisplayName("유저 갱신 성공")
     @Test
-    void updateAndFind() {
-        // TODO : save와 같이 통합테스트 하는 경우 update가 실패함
+    void 유저_갱신_성공() {
         userRepository.save(SANJIGI);
         userRepository.save(JAVAJIGI);
         flushAndClear();
