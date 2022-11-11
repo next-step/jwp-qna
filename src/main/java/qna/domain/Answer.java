@@ -3,14 +3,15 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -31,18 +32,19 @@ public class Answer extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+    @Embedded
+    @AttributeOverride(name = "content", column = @Column(name = "contents"))
+    private Contents contents;
 
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    @AttributeOverride(name = "deleted", column = @Column(name = "deleted", nullable = false))
+    private DeleteFlag deleted = DeleteFlag.notDeleted();
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -93,19 +95,19 @@ public class Answer extends BaseDateTimeEntity {
         this.question = question;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void setContents(Contents contents) {
         this.contents = contents;
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(DeleteFlag deleted) {
         this.deleted = deleted;
     }
 
@@ -122,7 +124,7 @@ public class Answer extends BaseDateTimeEntity {
         return "Answer{" +
                 "id=" + id +
                 ", user=" + writer.getUserId() +
-                ", question=" + question.getTitle() +
+                ", question=" + question.getTitle().getName() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
