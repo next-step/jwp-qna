@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.UnAuthorizedException;
 import qna.constant.ContentType;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static qna.constant.ErrorMessage.*;
+import static qna.constant.ContentType.QUESTION;
 
 @Entity
 public class Question extends BaseTime {
@@ -79,7 +80,7 @@ public class Question extends BaseTime {
 
     private void validationDeleteQuestionRequestUser(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(NOT_QUESTION_DELETE_NO_PERMISSION);
+            throw new UnAuthorizedException(writer, loginUser);
         }
     }
 
@@ -91,7 +92,7 @@ public class Question extends BaseTime {
 
     private DeleteHistories generateDeleteHistories() {
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(QUESTION, id, writer, LocalDateTime.now()));
         for (Answer answer : answers) {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));

@@ -1,5 +1,7 @@
 package qna;
 
+import qna.domain.User;
+
 public class UnAuthorizedException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -7,20 +9,11 @@ public class UnAuthorizedException extends RuntimeException {
         super();
     }
 
-    public UnAuthorizedException(String message, Throwable cause, boolean enableSuppression,
-                                 boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public UnAuthorizedException(User writer, User requester) {
+        super(String.format(
+                "질문을 삭제할 권한이 없습니다. [질문작성자: %s] [삭제요청자: %s]",
+                writer.getUserId(), requester.getUserId()));
+
     }
 
-    public UnAuthorizedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UnAuthorizedException(String message) {
-        super(message);
-    }
-
-    public UnAuthorizedException(Throwable cause) {
-        super(cause);
-    }
 }

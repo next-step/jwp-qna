@@ -7,8 +7,6 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.util.Objects;
 
-import static qna.constant.ErrorMessage.NOT_QUESTION_DELETE_WRITE_OTHER_USER;
-
 @Entity
 public class Answer extends BaseTime {
 
@@ -61,7 +59,7 @@ public class Answer extends BaseTime {
 
     public void isSameOwner(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException(NOT_QUESTION_DELETE_WRITE_OTHER_USER);
+            throw new CannotDeleteException(writer);
         }
     }
 
