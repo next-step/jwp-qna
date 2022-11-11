@@ -1,10 +1,12 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.common.exception.CannotDeleteException;
 
 @DataJpaTest
 public class QuestionTest {
@@ -27,5 +29,10 @@ public class QuestionTest {
     void 삭제() {
         Q1.setDeleted();
         assertThat(Q1.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 삭제_권한() {
+        assertThatThrownBy(() -> Q1.isOwner(UserTest.SANJIGI)).isInstanceOf(CannotDeleteException.class);
     }
 }
