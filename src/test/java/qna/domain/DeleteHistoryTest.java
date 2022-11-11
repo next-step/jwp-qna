@@ -27,7 +27,7 @@ class DeleteHistoryTest {
         Question question = new Question("title1", "contents1");
 
         //expect
-        assertThat(DeleteHistory.from(question)).isNotNull();
+        assertThat(DeleteHistory.of(ContentType.QUESTION, question.getId(), question.getWriter())).isNotNull();
     }
 
     @Test
@@ -39,6 +39,6 @@ class DeleteHistoryTest {
         Answer answer = new Answer(1L, writer, question, "Answers Contents");
 
         //expect
-        assertThat(DeleteHistory.from(answer)).isNotNull();
+        assertThat(DeleteHistory.of(ContentType.ANSWER, answer.getId(), answer.getWriter())).isNotNull();
     }
 }

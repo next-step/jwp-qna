@@ -67,7 +67,7 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete(User user) throws CannotDeleteException {
         validateDelete(user);
         this.deleted = true;
-        return DeleteHistory.from(this);
+        return DeleteHistory.of(ContentType.ANSWER, this.getId(), this.getWriter());
     }
 
     private void validateDelete(User user) throws CannotDeleteException {

@@ -17,7 +17,7 @@ public class Answers {
     protected Answers() {
     }
 
-    public void addAnswer(Answer answer) {
+    public void add(Answer answer) {
         this.answers.add(answer);
     }
 
