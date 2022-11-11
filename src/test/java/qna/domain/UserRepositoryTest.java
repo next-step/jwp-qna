@@ -20,15 +20,14 @@ class UserRepositoryTest {
     @Test
     @DisplayName("유저를 저장한다.")
     void save_user_test() {
-        User user = UserTest.SANJIGI;
+        User user = new User(new UserId("javajigi"), new Password("password"), new Name("name"), new Email("javajigi@slipp.net"));
 
         User savedUser = userRepository.save(user);
 
         assertAll(
             () -> assertThat(savedUser.getId()).isNotNull(),
             () -> assertThat(savedUser.getUserId()).isEqualTo(user.getUserId()),
-            () -> assertThat(savedUser.getPassword()).isEqualTo(user.getPassword()),
-            () -> assertThat(savedUser.getName()).isEqualTo(user.getName()),
+            () -> assertThat(savedUser).isEqualTo(user),
             () -> assertThat(savedUser.getEmail()).isEqualTo(user.getEmail())
         );
     }
@@ -36,7 +35,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("유저 ID로 유저를 조회한다.")
     void query_user_by_user_id_test() {
-        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        User savedUser = userRepository.save(new User(new UserId("sanjigi"), new Password("password"), new Name("name"), new Email("sanjigi@slipp.net")));
 
         User findUser = userRepository.findByUserId(savedUser.getUserId()).get();
 
@@ -46,7 +45,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("ID로 유저를 조회한다.")
     void query_user_by_id_test() {
-        User savedUser = userRepository.save(UserTest.JAVAJIGI);
+        User savedUser = userRepository.save(new User(new UserId("javajigi"), new Password("password"), new Name("name"), new Email("javajigi@slipp.net")));
 
         User findUser = userRepository.findById(savedUser.getId()).get();
 
@@ -56,10 +55,10 @@ class UserRepositoryTest {
     @Test
     @DisplayName("저장된 유저의 이름을 변경한다.")
     void change_user_name_test() {
-        User javajigi = UserTest.JAVAJIGI;
+        User javajigi = new User(new UserId("test"), new Password("password"), new Name("name"), new Email("javajigi@slipp.net"));
         User savedUser = userRepository.save(javajigi);
 
-        javajigi.changeName("넥스트스텝");
+        javajigi.rename("넥스트스텝");
         savedUser.update(savedUser, javajigi);
         User findUser = userRepository.findById(savedUser.getId()).get();
 
@@ -69,7 +68,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("유저 정보 업데이트 시 동일한 유저가 아닌 경우 exception이 발생한다.")
     void update_user_info_exception_test() {
-        final User dummyUser = new User("testId", "2345", "dummy", "dummy@example.com");
+        final User dummyUser = new User(new UserId("testId"), new Password("2345"), new Name("dummy"), new Email("dummy@example.com"));
         final User user = userRepository.save(dummyUser);
 
         assertThatThrownBy(() ->
@@ -80,7 +79,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("유저를 삭제한다.")
     void delete_test() {
-        User expected = userRepository.save(UserTest.SANJIGI);
+        User expected = userRepository.save(new User(new UserId("testId123"), new Password("23a45"), new Name("test"), new Email("test@test.com")));
 
         userRepository.delete(expected);
 
@@ -90,10 +89,10 @@ class UserRepositoryTest {
     @Test
     @DisplayName("이미 등록된 ID인 경우 exception이 발생한다.")
     void duplicate_test() {
-        User user = userRepository.save(UserTest.SANJIGI);
+        User user = userRepository.save(new User(new UserId("testId123"), new Password("23a45"), new Name("test"), new Email("test@test.com")));
 
         assertThatThrownBy(() -> {
-            final User newUser = new User(user.getUserId(), "1234", "heowc", "heowc@gmail.com");
+            final User newUser = new User(user.getUserId(), new Password("1234"), new Name("test"), new Email("test@gmail.com"));
             userRepository.save(newUser);
         }).isInstanceOf(DataIntegrityViolationException.class);
     }

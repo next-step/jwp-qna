@@ -2,22 +2,19 @@ package qna.domain;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
@@ -28,12 +25,12 @@ public class Question extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(length = 100, nullable = false)
-    private String title;
-    @Lob
-    private String contents;
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Title title;
+    @Embedded
+    private Contents contents;
+    @Embedded
+    private Answers answers = new Answers();
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writeBy;
@@ -43,11 +40,11 @@ public class Question extends BaseEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -63,34 +60,27 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        if (!answers.contains(answer)) {
-            answers.add(answer);
-        }
-        answer.setQuestion(this);
-    }
-
-    public void deleteAnswer(Answer answer) {
-        answers.remove(answer);
-        answer.delete();
+        answers.add(answer);
+        answer.updateQuestion(this);
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public void changeTitle(String title) {
+    public void changeTitle(Title title) {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
@@ -102,18 +92,29 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void delete() {
+    public DeleteHistories delete(User loginUser, LocalDateTime localDateTime) throws CannotDeleteException {
+        valid(loginUser);
         this.deleted = true;
+        DeleteHistory deleteHistory = DeleteHistory.ofQuestion(this.getId(), loginUser, localDateTime);
+        DeleteHistories deleteHistories = new DeleteHistories(deleteHistory);
+        deleteHistories.add(answers.removeAll(loginUser, localDateTime));
+        return deleteHistories;
+    }
+
+    private void valid(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writeBy.getId() +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writer=" + writeBy +
+            ", deleted=" + deleted +
+            '}';
     }
 }

@@ -3,6 +3,7 @@ package qna.domain;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,23 +20,23 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(name = "user_id", length = 20, nullable = false, unique = true)
-    private String userId;
-    @Column(name = "password", length = 20, nullable = false)
-    private String password;
-    @Column(name = "name", length = 20, nullable = false)
-    private String name;
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private UserId userId;
+    @Embedded
+    private Password password;
+    @Embedded
+    private Name name;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -56,11 +57,11 @@ public class User extends BaseEntity {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -81,24 +82,31 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
+    public void rename(String name) {
+        this.name.change(name);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void changeName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
+    public Email getEmail() {
         return email;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return id.equals(user.id) && userId.equals(user.userId);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(id, userId);
     }
 
     @Override
