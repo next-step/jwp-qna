@@ -13,7 +13,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
-import qna.domain.UserTest;
 
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
