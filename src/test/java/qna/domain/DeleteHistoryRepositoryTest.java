@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.DeleteHistoryTest.D1;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
