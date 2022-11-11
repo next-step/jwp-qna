@@ -76,7 +76,7 @@ class QuestionRepositoryTest {
     void updateQuestion() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         Question saveQuestion = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
-        saveQuestion.setTitle(QuestionTest.Q2.getTitle());
+        saveQuestion.changeTitle(QuestionTest.Q2.getTitle());
 
         Optional<Question> findQuestion = questionRepository.findById(saveQuestion.getId());
 
@@ -102,7 +102,7 @@ class QuestionRepositoryTest {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         Question saveQuestion1 = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
         Question saveQuestion2 = questionRepository.save(QuestionTest.Q2.writeBy(javajigi));
-        saveQuestion2.setDeleted(true);
+        saveQuestion2.delete();
 
         List<Question> findQuestion = questionRepository.findByDeletedFalse();
 
@@ -127,7 +127,7 @@ class QuestionRepositoryTest {
     void findByIdAndDeletedTrue() {
         User javajigi = userRepository.save(UserTest.JAVAJIGI);
         Question saveQuestion1 = questionRepository.save(QuestionTest.Q1.writeBy(javajigi));
-        saveQuestion1.setDeleted(true);
+        saveQuestion1.delete();
 
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestion1.getId());
 
