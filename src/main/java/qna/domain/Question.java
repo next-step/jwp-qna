@@ -1,12 +1,9 @@
 package qna.domain;
 
 import qna.UnAuthorizedException;
-import qna.constant.ContentType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static qna.constant.ContentType.QUESTION;
 
@@ -27,8 +24,8 @@ public class Question extends BaseTime {
     @JoinColumn(name = "writerId", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -51,8 +48,8 @@ public class Question extends BaseTime {
     }
 
     public DeleteHistories delete(User loginUser) {
-        validationDeleteQuestionRequestUser(loginUser);
-        validationDeleteAnswersRequestUser(loginUser);
+        this.validationDeleteQuestionRequestUser(loginUser);
+        answers.validationDeleteAnswersRequestUser(loginUser);
 
         setDeleted(true);
 
@@ -68,9 +65,8 @@ public class Question extends BaseTime {
         this.answers.add(answer);
     }
 
-    public boolean isDeletedStatusAnswers() {
-        return answers.stream()
-                .allMatch(Answer::isDeleted);
+    public boolean isAllDeletedAnswers() {
+        return answers.isAllDeleted();
     }
 
     private void validationDeleteQuestionRequestUser(User loginUser) {
@@ -79,19 +75,10 @@ public class Question extends BaseTime {
         }
     }
 
-    private void validationDeleteAnswersRequestUser(User loginUser) {
-        for (Answer answer : answers) {
-            answer.checkedSameOwner(loginUser);
-        }
-    }
-
     private DeleteHistories generateDeleteHistories() {
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(new DeleteHistory(QUESTION, id, writer, LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
-        }
+        deleteHistories.addAll(answers.generateDeleteHistories());
         return deleteHistories;
     }
 
@@ -133,14 +120,6 @@ public class Question extends BaseTime {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
     }
 
     @Override

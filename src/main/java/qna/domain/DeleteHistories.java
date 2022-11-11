@@ -11,7 +11,12 @@ public class DeleteHistories {
         deleteHistories.add(deleteHistory);
     }
 
+    public void addAll(List<DeleteHistory> histories) {
+        deleteHistories.addAll(histories);
+    }
+
     public List<DeleteHistory> getList() {
         return deleteHistories;
     }
+
 }

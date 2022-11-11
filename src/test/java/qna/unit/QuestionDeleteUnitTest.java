@@ -50,10 +50,10 @@ public class QuestionDeleteUnitTest {
 
     @Test
     void 질문삭제시_답변도삭제하며_답변도_데이터의_상태를_변경() {
-        assertThat(question.isDeletedStatusAnswers()).isFalse();
+        assertThat(question.isAllDeletedAnswers()).isFalse();
         question.delete(UserTest.JAVAJIGI);
 
-        assertThat(question.isDeletedStatusAnswers()).isTrue();
+        assertThat(question.isAllDeletedAnswers()).isTrue();
     }
 
     @Test
