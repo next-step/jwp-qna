@@ -2,7 +2,7 @@ package qna;
 
 import qna.domain.User;
 
-public class CannotDeleteException extends Exception {
+public class CannotDeleteException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

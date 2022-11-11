@@ -57,7 +57,7 @@ public class Answer extends BaseTime {
         }
     }
 
-    public void checkedSameOwner(User loginUser) throws CannotDeleteException {
+    public void checkedSameOwner(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(writer);
         }

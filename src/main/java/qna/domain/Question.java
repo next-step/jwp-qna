@@ -1,6 +1,5 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
 import qna.UnAuthorizedException;
 import qna.constant.ContentType;
 
@@ -51,7 +50,7 @@ public class Question extends BaseTime {
         return this;
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) {
         validationDeleteQuestionRequestUser(loginUser);
         validationDeleteAnswersRequestUser(loginUser);
 
@@ -78,13 +77,13 @@ public class Question extends BaseTime {
         return true;
     }
 
-    private void validationDeleteQuestionRequestUser(User loginUser) throws CannotDeleteException {
+    private void validationDeleteQuestionRequestUser(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException(writer, loginUser);
         }
     }
 
-    private void validationDeleteAnswersRequestUser(User loginUser) throws CannotDeleteException {
+    private void validationDeleteAnswersRequestUser(User loginUser) {
         for (Answer answer : answers) {
             answer.checkedSameOwner(loginUser);
         }
