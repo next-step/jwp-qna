@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import qna.domain.DeleteHistory;
 
 public interface DeleteHistoryRepository extends JpaRepository<DeleteHistory, Long> {
+
+    DeleteHistory findByContentId(long contentId);
 }
