@@ -80,4 +80,15 @@ class DeleteHistoryRepositoryTest {
 
         assertThat(deleteHistory).isEqualTo(expectedDeleteHistory);
     }
+
+    @Test
+    @DisplayName("주어진 삭제자로 삭제 이력을 조회한다")
+    void find_by_deleter_test() {
+        DeleteHistory expectedDeleteHistory = DeleteHistory.ofAnswer(answer);
+        deleteHistoryRepository.save(expectedDeleteHistory);
+
+        DeleteHistory deleteHistory = deleteHistoryRepository.findByDeleter(answer.writer());
+
+        assertThat(deleteHistory).isEqualTo(expectedDeleteHistory);
+    }
 }
