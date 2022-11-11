@@ -1,11 +1,13 @@
-package qna.domain;
+package qna.domain.user;
 
 import qna.UnAuthorizedException;
+import qna.domain.BaseEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+
+import static qna.constant.Message.NOT_VALID_EQUAL_PASSWORD;
+import static qna.constant.Message.NOT_VALID_UPDATE_USER_ID;
 
 @Entity
 @Table(name = "user")
@@ -16,23 +18,23 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @Column(name = "user_id", nullable = false, length = 20, unique = true)
-    private String userId;
-    @Column(name = "password", nullable = false, length= 20)
-    private String password;
-    @Column(name = "name", nullable = false, length = 20)
-    private String name;
-    @Column(name = "email", length = 50)
-    private String email;
+    @Embedded
+    private UserId userId;
+    @Embedded
+    private Password password;
+    @Embedded
+    private Name name;
+    @Embedded
+    private Email email;
 
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -41,23 +43,23 @@ public class User extends BaseEntity {
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+        if (!isMatchUserId(loginUser.userId)) {
+            throw new UnAuthorizedException(NOT_VALID_UPDATE_USER_ID);
         }
 
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+        if (!isMatchPassword(target.password)) {
+            throw new UnAuthorizedException(NOT_VALID_EQUAL_PASSWORD);
         }
 
         this.name = target.name;
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean isMatchUserId(UserId userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean isMatchPassword(Password targetPassword) {
         return this.password.equals(targetPassword);
     }
 
@@ -78,25 +80,26 @@ public class User extends BaseEntity {
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void updateEmail(String email) {
+    public void changeEmail(Email email) {
         this.email = email;
     }
+
 
     @Override
     public String toString() {

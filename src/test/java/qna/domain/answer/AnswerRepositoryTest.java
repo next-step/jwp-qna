@@ -1,22 +1,28 @@
-package qna.domain;
+package qna.domain.answer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.domain.content.Content;
+import qna.domain.content.Title;
+import qna.domain.question.Question;
+import qna.domain.question.QuestionRepository;
+import qna.domain.user.User;
+import qna.domain.user.UserRepository;
+import qna.domain.user.UserTest;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
+import static qna.domain.answer.AnswerTest.A1;
+import static qna.domain.question.QuestionTest.Q1;
+import static qna.domain.question.QuestionTest.Q2;
+import static qna.domain.user.UserTest.JAVAJIGI;
+import static qna.domain.user.UserTest.SANJIGI;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -54,7 +60,7 @@ public class AnswerRepositoryTest {
     @Test
     void modifyQuestion() {
         final Answer answer = new Answer(UserTest.SANJIGI, Q1, "test");
-        Question question = new Question(1L, "test title", "test contents");
+        Question question = new Question(1L, new Title("test title"), Content.of("test contents"));
         answer.toQuestion(question);
         final Answer saved = answerRepository.save(answer);
         assertThat(saved.getQuestion()).isEqualTo(question);
