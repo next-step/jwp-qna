@@ -68,7 +68,7 @@ public class QuestionTest {
         final Question question = questions.save(input);
         final Long id = question.getId();
         final DeleteHistory deleteHistory = deletes
-                .save(new DeleteHistory(ContentType.QUESTION, id, id, LocalDateTime.now()));
+                .save(new DeleteHistory(ContentType.QUESTION, id, input.getWriter(), LocalDateTime.now()));
         //when
         questions.deleteById(id);
         final DeleteHistory expected = deletes.save(deleteHistory);

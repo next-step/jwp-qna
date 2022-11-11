@@ -79,7 +79,7 @@ public class AnswerTest {
         //given
         final Answer answer = answers.save(input);
         final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER,
-                input.getId(), input.getId(), LocalDateTime.now());
+                input.getId(), input.getWriter(), LocalDateTime.now());
         //when
         answers.deleteById(answer.getId());
         final DeleteHistory expected = deletes.save(deleteHistory);

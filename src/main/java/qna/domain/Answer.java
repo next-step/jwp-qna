@@ -15,8 +15,10 @@ public class Answer extends BaseTimeEntity {
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    private Long questionId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
@@ -40,7 +42,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -49,7 +51,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -61,7 +63,7 @@ public class Answer extends BaseTimeEntity {
     }
 
     public Long getQuestionId() {
-        return questionId;
+        return question.getId();
     }
 
     public String getContents() {
@@ -76,13 +78,17 @@ public class Answer extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", writerId=" + writer.getId() +
                 ", " + super.toString() +
                 '}';

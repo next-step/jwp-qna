@@ -15,11 +15,10 @@ public class Question extends BaseTimeEntity {
     private boolean deleted = false;
     @Column(nullable = false, length = 100)
     private String title;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany
-    @JoinColumn(name = "questionId", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList();
 
     protected Question() {
@@ -72,6 +71,14 @@ public class Question extends BaseTimeEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public User getWriter() {
+        return writer;
     }
 
     @Override
