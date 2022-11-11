@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +17,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableJpaAuditing
 class DeleteHistoryTest extends TruncateConfig {
 
-    public static final DeleteHistory DH1 = new DeleteHistory(ContentType.ANSWER, 1L, 1L, LocalDateTime.now());
-    public static final DeleteHistory DH2 = new DeleteHistory(ContentType.QUESTION, 2L, 1L, LocalDateTime.now());
+    public static final DeleteHistory DH1 = new DeleteHistory(ContentType.ANSWER, 1L, UserTest.JAVAJIGI, LocalDateTime.now());
+    public static final DeleteHistory DH2 = new DeleteHistory(ContentType.QUESTION, 2L, UserTest.JAVAJIGI, LocalDateTime.now());
 
     @Autowired
     DeleteHistoryRepository deleteHistories;
+
+    @Autowired
+    UserRepository users;
+
+    @BeforeEach
+    void setUp() {
+        users.save(UserTest.JAVAJIGI);
+        users.save(UserTest.SANJIGI);
+    }
 
     @ParameterizedTest(name = "save_테스트")
     @MethodSource("deleteHistoryTestFixture")
     void save_테스트(DeleteHistory deleteHistory) {
         DeleteHistory saved = deleteHistories.save(deleteHistory);
-        assertThat(saved).isEqualTo(deleteHistory);
         assertThat(saved.getCreateDate()).isNotNull();
     }
 

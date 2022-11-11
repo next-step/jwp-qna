@@ -117,4 +117,8 @@ public class Answer extends TimeEntity {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    public User getWriter() {
+        return this.writer;
+    }
 }

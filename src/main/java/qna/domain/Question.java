@@ -123,4 +123,8 @@ public class  Question extends TimeEntity {
             .filter(answer -> !answer.isDeleted())
             .collect(Collectors.toList());
     }
+
+    public User getWriter() {
+        return this.writer;
+    }
 }
