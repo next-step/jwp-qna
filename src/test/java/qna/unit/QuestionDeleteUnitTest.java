@@ -1,6 +1,7 @@
 package qna.unit;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,7 +26,8 @@ public class QuestionDeleteUnitTest {
     }
 
     @Test
-    void 질문데이터_삭제는_데이터의_상태를_변경() {
+    @DisplayName("질문 데이터를 완전히 삭제하는 것이 아니라 데이터의 상태를 삭제 상태로 변경한다.")
+    void question_soft_delete() {
         assertThat(question.isDeleted()).isFalse();
         question.delete(UserTest.JAVAJIGI);
 
@@ -33,15 +35,16 @@ public class QuestionDeleteUnitTest {
     }
 
     @Test
-    void 로그인사용자_질문사용자_동일해야_삭제가능() {
+    @DisplayName("로그인 사용자와 질문한 사람이 같은 경우 삭제할 수 있다.")
+    void writer_must_same_requester() {
         assertThat(question.delete(UserTest.JAVAJIGI)).isNotNull();
         assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
                 .isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
-    void 질문사용자_모든답변의_답변자가_동일해야_삭제가능() {
-        assertThat(question.delete(UserTest.JAVAJIGI)).isNotNull();
+    @DisplayName("질문자와 답변 글의 모든 답변자 같은 경우 삭제가 가능하다.")
+    void answer_writers_must_same_question_writer() {
         question.addAnswer(new Answer(1L, UserTest.SANJIGI, question, "Answers Contents1"));
 
         assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI))
@@ -49,7 +52,8 @@ public class QuestionDeleteUnitTest {
     }
 
     @Test
-    void 질문삭제시_답변도삭제하며_답변도_데이터의_상태를_변경() {
+    @DisplayName("질문을 삭제할 때 답변 또한 삭제해야 하며, 답변의 삭제 또한 삭제 상태를 변경한다.")
+    void answer_soft_delete() {
         assertThat(question.isAllDeletedAnswers()).isFalse();
         question.delete(UserTest.JAVAJIGI);
 
@@ -57,8 +61,9 @@ public class QuestionDeleteUnitTest {
     }
 
     @Test
-    void 질문과답변_삭제이력은_내역을_관리() {
-        assertThat(question.delete(UserTest.JAVAJIGI).getList().size()).isGreaterThan(0);
+    @DisplayName("질문과 답변 삭제 이력에 대한 정보를 DeleteHistory를 활용해 남긴다.")
+    void must_add_delete_history() {
+        assertThat(question.delete(UserTest.JAVAJIGI).getList()).isNotEmpty();
     }
 
 }
