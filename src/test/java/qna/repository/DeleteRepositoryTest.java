@@ -18,7 +18,7 @@ import qna.domain.User;
 @DataJpaTest
 public class DeleteRepositoryTest {
     private static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    private static final DeleteHistory deleteHistoryTest = new DeleteHistory(QUESTION, 1L, JAVAJIGI, LocalDateTime.now());
+    private static final DeleteHistory deleteHistoryTest = new DeleteHistory(QUESTION, 1L, JAVAJIGI);
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
     @Autowired

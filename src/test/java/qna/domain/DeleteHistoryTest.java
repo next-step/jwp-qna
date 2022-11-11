@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class DeleteHistoryTest {
-    private static final DeleteHistory D1 = new DeleteHistory(QUESTION, 1L, JAVAJIGI, LocalDateTime.now());
+    private static final DeleteHistory D1 = new DeleteHistory(QUESTION, 1L, JAVAJIGI);
 
     @Test
     void 값_검증() {
