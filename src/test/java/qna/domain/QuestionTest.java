@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -33,7 +35,7 @@ public class QuestionTest {
     }
 
     @Test
-    void saveAndFind() {
+    void 질문저장_성공() {
         questionRepository.save(Q1);
         questionRepository.save(Q2);
         flushAndClear();
@@ -49,15 +51,42 @@ public class QuestionTest {
 
     @DisplayName("연관관계 편의 메서드 테스트")
     @Test
-    void questionAddAnswers() {
+    void 답글추가_성공_연관관계_편의_메서드_테스트() {
         Q1.addAnswer(AnswerTest.A1);
         questionRepository.save(Q1);
         flushAndClear();
 
         Question question = questionRepository.findById(1L).get();
 
-        assertThat(question.getAnswers()).contains(AnswerTest.A1);
+        assertThat(question.answers()).contains(AnswerTest.A1);
     }
+
+    @DisplayName("삭제 시 deleted 값을 true로 변경 테스트")
+    @Test
+    void 질문_삭제_성공_테스트() throws CannotDeleteException {
+        // given
+        questionRepository.save(Q1);
+
+        // when
+        Q1.delete(UserTest.JAVAJIGI);
+        flushAndClear();
+
+        // then
+        Question question = questionRepository.findById(1L).get();
+        assertThat(question.isDeleted()).isTrue();
+    }
+
+    @DisplayName("삭제 시 질문 작성자가 로그인 사용자와 다른 경우 예외")
+    @Test
+    void 질문_삭제_예외_작성자_다른경우() {
+        // given
+        questionRepository.save(Q1);
+
+        // when / then
+        assertThatThrownBy(() -> Q1.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
 
     private void flushAndClear() {
         entityManager.flush();

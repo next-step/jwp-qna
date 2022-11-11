@@ -81,6 +81,7 @@ public class AnswerTest {
     void 답변삭제후_DeleteHistory저장_성공() throws Exception {
         // given
         answerRepository.save(A1);
+
         // when
         DeleteHistory delete = A1.delete(UserTest.JAVAJIGI);
         deleteHistoryRepository.save(delete);
