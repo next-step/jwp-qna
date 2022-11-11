@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends DefaultTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

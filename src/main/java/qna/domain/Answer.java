@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer {
+public class Answer extends DefaultTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
