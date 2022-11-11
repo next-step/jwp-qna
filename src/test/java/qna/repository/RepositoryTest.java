@@ -37,6 +37,6 @@ class RepositoryTest {
         question2 = questionRepository.save(new Question("title2", "contents2").writeBy(sanjigi));
         answer1 = answerRepository.save(new Answer(sanjigi, question1, ANSWERS_CONTENTS_2));
         answer2 = answerRepository.save(new Answer(sanjigi, question2, ANSWERS_CONTENTS_2));
-        deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, question1.getId(), question1.getWriterId(), LocalDateTime.now()));
+        deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, question1.getId(), question1.getWriter(), LocalDateTime.now()));
     }
 }

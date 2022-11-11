@@ -29,7 +29,7 @@ class QuestionRepositoryTest extends RepositoryTest {
                 () -> assertThat(question.getContents()).isEqualTo(QUESTION_1.getContents()),
                 () -> assertThat(question.getTitle()).isEqualTo(QUESTION_1.getTitle()),
                 () -> assertThat(question.isDeleted()).isFalse(),
-                () -> assertThat(question.getWriterId()).isNotNull(),
+                () -> assertThat(question.getWriter()).isNotNull(),
                 () -> assertThat(question.getCreatedAt()).isNotNull(),
                 () -> assertThat(question.getUpdatedAt()).isNotNull()
         );
@@ -55,7 +55,7 @@ class QuestionRepositoryTest extends RepositoryTest {
                 () -> assertThat(question2.getContents()).isEqualTo(QUESTION_2.getContents()),
                 () -> assertThat(question2.getTitle()).isEqualTo(QUESTION_2.getTitle()),
                 () -> assertThat(question2.isDeleted()).isFalse(),
-                () -> assertThat(question2.getWriterId()).isNotNull(),
+                () -> assertThat(question2.getWriter()).isNotNull(),
                 () -> assertThat(question2.getCreatedAt()).isNotNull(),
                 () -> assertThat(question2.getUpdatedAt()).isNotNull()
         );

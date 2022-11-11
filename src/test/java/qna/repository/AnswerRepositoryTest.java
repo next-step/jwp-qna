@@ -25,7 +25,7 @@ class AnswerRepositoryTest extends RepositoryTest{
 
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
-                () -> assertThat(answer.getWriterId()).isNotNull(),
+                () -> assertThat(answer.getWriter()).isNotNull(),
                 () -> assertThat(answer.getQuestion().getId()).isNotNull(),
                 () -> assertThat(answer.getCreatedAt()).isNotNull(),
                 () -> assertThat(answer.getUpdatedAt()).isNotNull(),

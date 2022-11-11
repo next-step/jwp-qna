@@ -47,5 +47,5 @@
 
 - [x] User : Question = 1 : n
 - [x] User : Answer = 1 : n
-- [ ] User : DeleteHistory = 1 : 1
+- [x] User : DeleteHistory = 1 : n
 - [x] Question : Answer = 1 : n

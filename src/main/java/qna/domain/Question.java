@@ -66,7 +66,7 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public Long getWriterId() {
-        return this.writer.getId();
+    public User getWriter() {
+        return this.writer;
     }
 }

@@ -21,7 +21,7 @@ class DeleteHistoryRepositoryTest extends RepositoryTest {
     @Test
     void save() {
 
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, answer1.getId(), javajigi.getId(), LocalDateTime.now()));
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, answer1.getId(), javajigi, LocalDateTime.now()));
 
         assertAll(
                 () -> assertThat(deleteHistory.getId()).isNotNull(),
