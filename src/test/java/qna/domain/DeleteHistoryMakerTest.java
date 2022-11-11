@@ -28,7 +28,7 @@ public class DeleteHistoryMakerTest {
         //when:
         List<DeleteHistory> deleteHistoryList = DeleteHistoryMaker.fromQuestion(question);
         //then:
-        assertThat(deleteHistoryList.stream().map(DeleteHistory::getContentId)).containsExactly(
+        assertThat(deleteHistoryList.stream().map(DeleteHistory::getContentId)).contains(
                 question.getId(), answer1.getId(), answer2.getId(), answer3.getId());
     }
 }
