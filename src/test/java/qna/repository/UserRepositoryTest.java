@@ -27,11 +27,33 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("주어진 User ID 값으로 유저를 조회한다")
-    void find_user_test() {
+    void find_user_with_user_id_test() {
         User expectedUser = new User("shshon", "password1", "name", "email@naver.com");
         expectedUser = userRepository.save(expectedUser);
 
         User user = userRepository.findByUserId(expectedUser.getUserId()).get();
+
+        assertThat(user).isEqualTo(expectedUser);
+    }
+
+    @Test
+    @DisplayName("주어진 Name 값으로 유저를 조회한다")
+    void find_user_with_name_test() {
+        User expectedUser = new User("shshon", "password1", "name", "email@naver.com");
+        expectedUser = userRepository.save(expectedUser);
+
+        User user = userRepository.findByName("name");
+
+        assertThat(user).isEqualTo(expectedUser);
+    }
+
+    @Test
+    @DisplayName("주어진 Email 값으로 유저를 조회한다")
+    void find_user_with_email_test() {
+        User expectedUser = new User("shshon", "password1", "name", "email@naver.com");
+        expectedUser = userRepository.save(expectedUser);
+
+        User user = userRepository.findByEmail("email@naver.com");
 
         assertThat(user).isEqualTo(expectedUser);
     }
