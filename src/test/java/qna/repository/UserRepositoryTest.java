@@ -42,7 +42,7 @@ class UserRepositoryTest {
         // when
         Optional<User> findUser = userRepository.findByUserId(saveUser.getUserId());
         // then
-        assertThat(findUser.isPresent()).isTrue();
+        assertThat(findUser).isPresent();
         findUser.ifPresent(user -> assertAll(
                 () -> assertThat(user).isEqualTo(saveUser),
                 () -> assertThat(user.getUserId()).isEqualTo(saveUser.getUserId())
@@ -77,6 +77,6 @@ class UserRepositoryTest {
         findUser.ifPresent(user -> userRepository.delete(user));
         Optional<User> deletedUser = userRepository.findById(saveUserId);
         // then
-        assertThat(deletedUser.isPresent()).isFalse();
+        assertThat(deletedUser).isNotPresent();
     }
 }
