@@ -9,14 +9,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static qna.domain.UserTest.MINGVEL;
+import static qna.domain.UserRepositoryTest.MINGVEL;
 
 @DataJpaTest
 @DisplayName("question 엔티티 테스트")
-public class QuestionTest {
-    public static final Question Q1 = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(2L, "title2", "contents2").writeBy(UserTest.SANJIGI);
-    public static final Question Q3 = new Question(3L, "title3", "contents3").writeBy(MINGVEL);
+public class QuestionRepositoryTest {
+    public static final Question Q1 = new Question(1L, new Title("title1"), Contents.from("contents1")).writeBy(
+            UserRepositoryTest.JAVAJIGI);
+    public static final Question Q2 = new Question(2L, new Title("title2"), Contents.from("contents2")).writeBy(
+            UserRepositoryTest.SANJIGI);
+    public static final Question Q3 = new Question(3L, new Title("title3"), Contents.from("contents3")).writeBy(
+            MINGVEL);
 
     @Autowired
     QuestionRepository questionRepository;
@@ -55,7 +58,7 @@ public class QuestionTest {
     @Test
     void saveNullTitle_question_DataIntegrityViolationException() {
         User user = userRepository.save(MINGVEL);
-        Question question = new Question(null, "contents").writeBy(user);
+        Question question = new Question(null, Contents.from("contents")).writeBy(user);
         assertThatThrownBy(() -> questionRepository.save(question))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
@@ -64,7 +67,7 @@ public class QuestionTest {
     @Test
     void saveOverLengthTitle_question_constraintException() {
         User user = userRepository.save(MINGVEL);
-        Question question = new Question(RandomString.make(101), "contents").writeBy(user);
+        Question question = new Question(new Title(RandomString.make(101)), Contents.from("contents")).writeBy(user);
         assertThatThrownBy(() -> questionRepository.save(question))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
@@ -75,7 +78,7 @@ public class QuestionTest {
         //given:
         User user = userRepository.save(MINGVEL);
         Question question = questionRepository.save(provideQuestion(user));
-        String modifiedContent = "updated Content";
+        Contents modifiedContent = Contents.from("updated Content");
         //when:
         question.setContents(modifiedContent);
         Question modifiedQuestion = questionRepository.findById(question.getId()).orElse(new Question());
@@ -100,6 +103,6 @@ public class QuestionTest {
     }
 
     private Question provideQuestion(User user) {
-        return new Question(3L, "title3", "contents3").writeBy(user);
+        return new Question(3L, new Title("title3"), Contents.from("contents3")).writeBy(user);
     }
 }
