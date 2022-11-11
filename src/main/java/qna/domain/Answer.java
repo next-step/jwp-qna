@@ -20,7 +20,9 @@ public class Answer extends BaseEntity{
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private Question question;
-    private Long writerId;
+    @ManyToOne()
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
     protected Answer() {
     }
@@ -40,13 +42,13 @@ public class Answer extends BaseEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
@@ -58,7 +60,7 @@ public class Answer extends BaseEntity{
     }
 
     public Long getWriterId() {
-        return writerId;
+        return this.writer.getId();
     }
 
     public String getContents() {

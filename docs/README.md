@@ -46,6 +46,6 @@
 # 연관관계 매핑
 
 - [ ] User : Question = 1 : n
-- [ ] User : Answer = 1 : n
+- [x] User : Answer = 1 : n
 - [ ] User : DeleteHistory = 1 : 1
 - [x] Question : Answer = 1 : n
