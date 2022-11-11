@@ -17,7 +17,7 @@ import qna.domain.User;
 @DataJpaTest
 public class QuestionRepositoryTest {
     private static final User userTest = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    private static final Question questionTest = new Question(1L, "title1", "contents1").writeBy(userTest);
+    private static final Question questionTest = Question.of("title1", "contents1").writeBy(1L);
 
     @Autowired
     private QuestionRepository questionRepository;

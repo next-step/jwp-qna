@@ -29,8 +29,7 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    @OneToOne
-    private User writer;
+    private Long writerId;
 
     @OneToMany(
         mappedBy = "question",
@@ -46,23 +45,22 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
-
-    public Question(Long id, String title, String contents) {
-        this.id = id;
+    private Question(String title, String contents) {
         this.title = title;
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
+    public static Question of(String title, String contents){
+        return new Question(title, contents);
+    }
+
+    public Question writeBy(Long writerId) {
+        this.writerId = writerId;
         return this;
     }
 
     public void isOwner(User writer) {
-        if (!this.writer.getId().equals(writer.getId())) {
+        if (!this.writerId.equals(writer.getId())) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
@@ -84,7 +82,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public Long getWriterId() {
-        return writer.getId();
+        return writerId;
     }
 
     public List<Answer> getAnswers() {
@@ -105,7 +103,7 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writer=" + writer +
+                ", writerId=" + writerId +
                 ", answers=" + answers +
                 ", deleted=" + deleted +
                 '}';

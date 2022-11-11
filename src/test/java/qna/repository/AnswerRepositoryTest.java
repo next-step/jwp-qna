@@ -19,7 +19,7 @@ import qna.domain.UserTest;
 @DataJpaTest
 public class AnswerRepositoryTest {
     private static final User userTest = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    private static final Question questionTest = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    private static final Question questionTest = Question.of("title1", "contents1").writeBy(1L);
     private static final Answer answerTest = new Answer(userTest.getId(), questionTest, "contents test");
     @Autowired
     private AnswerRepository answerRepository;
