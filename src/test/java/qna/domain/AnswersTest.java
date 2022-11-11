@@ -21,7 +21,7 @@ class AnswersTest {
     void deleteAll_throw_exception_if_answer_wrtier_and_login_user_diff() {
         // given
         Answers answers = new Answers();
-        answers.add(new Answer(user, null, ""));
+        answers.add(new Answer(user, new Question(), ""));
 
         // when
         assertThatThrownBy(() -> answers.deleteAll(otherUser))
@@ -37,11 +37,11 @@ class AnswersTest {
         answers.add(new Answer(user, new Question(), ""));
 
         // when
-        List<DeleteHistory> actual = answers.deleteAll(user);
+        DeleteHistories actual = answers.deleteAll(user);
 
         // then
         DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, null, user, LocalDateTime.now());
-        assertThat(actual).usingFieldByFieldElementComparator()
+        assertThat(actual.getAll()).usingFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("createDate")
                 .containsExactly(expected);
     }

@@ -15,8 +15,8 @@ public class Answers {
         this.answers.add(answer);
     }
 
-    public List<DeleteHistory> deleteAll(User loginUser) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    public DeleteHistories deleteAll(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
             validateWriterAndLoginUser(loginUser, answer);
             deleteHistories.add(

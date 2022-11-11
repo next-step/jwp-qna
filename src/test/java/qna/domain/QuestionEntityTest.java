@@ -24,12 +24,12 @@ class QuestionEntityTest {
     @DisplayName("엔티티의 delete가 실행되면, deleted가 true가 되고, 삭제 히스토리를 반환해야 한다")
     void delete_should_deleted_true_and_return_remove_history() throws CannotDeleteException {
         // when
-        List<DeleteHistory> actual = question.delete(writer);
+        DeleteHistories actual = question.delete(writer);
 
         // then
         DeleteHistory expected = new DeleteHistory(ContentType.QUESTION, question_id, writer, LocalDateTime.now());
         assertThat(question.isDeleted()).isTrue();
-        assertThat(actual).usingFieldByFieldElementComparator()
+        assertThat(actual.getAll()).usingFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("createDate")
                 .containsExactly(expected);
     }
