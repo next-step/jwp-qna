@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static qna.domain.QuestionEntityTest.provideQuestion;
 
 @DataJpaTest
 @DisplayName("delete_history 엔티티 테스트")
-public class DeleteHistoryTest {
+public class DeleteHistoryRepositoryTest {
 
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
@@ -21,9 +22,10 @@ public class DeleteHistoryTest {
     @Test
     void save_deleteHistory_success() {
         //given:
-        final User user = userRepository.save(UserTest.MINGVEL);
+        final User user = userRepository.save(UserRepositoryTest.MINGVEL);
+        final Question question = provideQuestion().writeBy(user);
         //when:
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.QUESTION, 1L, user));
+        final DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.fromQuestion(question));
         //then:
         assertThat(deleteHistory.getDeletedByUser()).isEqualTo(user);
     }

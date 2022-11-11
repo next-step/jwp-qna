@@ -41,7 +41,7 @@ public class DeleteHistory {
     @Column(name = "created_date")
     private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
@@ -59,6 +59,10 @@ public class DeleteHistory {
 
     public void toDeletedUser(User user) {
         this.deletedByUser = user;
+    }
+
+    public Long getContentId() {
+        return contentId;
     }
 
     @Override
@@ -91,6 +95,14 @@ public class DeleteHistory {
                 ", deletedById=" + deletedByUser.getUserId() +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    public static DeleteHistory fromQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory fromAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 }
 
