@@ -79,7 +79,7 @@ public class Question extends BaseDateEntity{
     }
 
     public boolean isOwner(User writer) {
-        return this.user.getId().equals(writer.getId());
+        return this.user.equals(writer);
     }
 
     public Long getId() {

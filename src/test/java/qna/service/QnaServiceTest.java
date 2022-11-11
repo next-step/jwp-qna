@@ -62,7 +62,7 @@ class QnaServiceTest {
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(writer, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(TestUserFactory.create("messi"), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 

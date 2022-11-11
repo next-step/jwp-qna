@@ -54,15 +54,16 @@ class UserRepositoryTest {
     void duplicate_userId_test() {
         User writer = TestUserFactory.create("sagjigi");
         userRepository.save(writer);
+        User dulpicateUser = TestUserFactory.create("sagjigi");
 
         assertThatExceptionOfType(DataIntegrityViolationException.class)
-                .isThrownBy(() -> userRepository.save(writer)).withMessageContaining("constraint");
+                .isThrownBy(() -> userRepository.save(dulpicateUser)).withMessageContaining("constraint");
     }
 
     @Test
     void user_auto_id_strategy_test() {
         // given
-        User user = new User("deokmoon", "password", "name", "deokmoon@nextstep.com");
+        User user = TestUserFactory.create("deokmoon");
         // when
         User saveUser = userRepository.save(user);
         // then
