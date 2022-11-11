@@ -4,8 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -23,11 +21,12 @@ public class Question extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question")
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
     private boolean deleted = false;
 
     public Question() {
+        this.answers = new Answers();
     }
 
     public Question(String title, String contents) {
@@ -38,6 +37,7 @@ public class Question extends BaseDateTimeEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question writeBy(User writer) {
@@ -51,9 +51,7 @@ public class Question extends BaseDateTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
-        if (!this.answers.contains(answer)) {
-            answers.add(answer);
-        }
+        answers.add(answer);
     }
 
     public Long getId() {
@@ -69,15 +67,23 @@ public class Question extends BaseDateTimeEntity {
     }
 
     public List<Answer> answers() {
-        return Collections.unmodifiableList(answers);
+        return answers.answers();
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateSameUser(loginUser);
+        setDeleted();
+        return new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now());
+    }
+
+    private void setDeleted() {
+        this.deleted = CONTENT_DELETED_FLAG;
+    }
+
+    private void validateSameUser(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException(EXCEPTION_MESSAGE_FOR_CANNOT_DELETE);
         }
-        this.deleted = CONTENT_DELETED_FLAG;
-        return new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now());
     }
 
     @Override
