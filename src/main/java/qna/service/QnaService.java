@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.common.exception.NotFoundException;
 import qna.domain.Answer;
+import qna.domain.Answers;
 import qna.domain.DeleteHistories;
 import qna.domain.Question;
 import qna.domain.User;
@@ -30,7 +31,7 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId, loginUser);
-        List<Answer> answers = findByQuestionIdAndDeletedFalse(questionId, loginUser);
+        Answers answers = new Answers(findByQuestionIdAndDeletedFalse(questionId, loginUser));
 
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.addQuestionDeleteHistory(question, loginUser);

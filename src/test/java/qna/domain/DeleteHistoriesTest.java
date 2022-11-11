@@ -29,7 +29,7 @@ public class DeleteHistoriesTest {
     @Test
     void DeleteHistory_Answers_추가() {
         DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.addAnswersDeleteHistory(new ArrayList<>(Arrays.asList(A1, A2)), JAVAJIGI);
+        deleteHistories.addAnswersDeleteHistory(new Answers(new ArrayList<>(Arrays.asList(A1, A2))), JAVAJIGI);
         assertThat(deleteHistories.size()).isEqualTo(2);
     }
 }

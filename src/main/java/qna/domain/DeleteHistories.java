@@ -20,11 +20,8 @@ public class DeleteHistories {
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), loginUser));
     }
 
-    public void addAnswersDeleteHistory(List<Answer> answers, User loginUser) {
-        answers.stream()
-                .peek(Answer::setDeleted)
-                .map(answer -> new DeleteHistory(ContentType.ANSWER, answer.getId(), loginUser))
-                .forEach(deleteHistories::add);
+    public void addAnswersDeleteHistory(Answers answers, User loginUser) {
+        answers.addDeleteHistory(deleteHistories, loginUser);
     }
 
     public int size() {
