@@ -86,7 +86,7 @@ public class Question extends BaseTime {
 
     private void validationDeleteAnswersRequestUser(User loginUser) throws CannotDeleteException {
         for (Answer answer : answers) {
-            answer.isSameOwner(loginUser);
+            answer.checkedSameOwner(loginUser);
         }
     }
 
