@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;

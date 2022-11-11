@@ -1,10 +1,8 @@
 package qna.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
 
 import java.util.List;
@@ -15,24 +13,16 @@ import static qna.domain.QuestionTest.QUESTION_1;
 import static qna.domain.QuestionTest.QUESTION_2;
 
 @DisplayName("질문 Repository")
-@DataJpaTest
-class QuestionRepositoryTest {
+class QuestionRepositoryTest extends RepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
-
-    private Question question2;
-
-    @BeforeEach
-    void setUp() {
-        question2 = questionRepository.save(QUESTION_2);
-    }
 
     @DisplayName("저장_성공")
     @Test
     void save() {
 
-        Question question = questionRepository.save(QUESTION_1);
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
 
         assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
