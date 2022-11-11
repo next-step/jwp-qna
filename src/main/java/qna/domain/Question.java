@@ -3,8 +3,10 @@ package qna.domain;
 import qna.ForbiddenException;
 import subway.domain.Station;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +35,7 @@ public class Question extends BaseDateEntity{
     private String title;
     @OneToMany(mappedBy = "question")
     List<Answer> answers = new ArrayList<Answer>();
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "WRITER_ID")
     private User user;
 
