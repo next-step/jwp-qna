@@ -4,8 +4,6 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -72,17 +70,18 @@ public class Question extends BaseDateTimeEntity {
         return answers.answers();
     }
 
-    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         validateSameUser(loginUser);
-        setDeleted();
+        setDeleted(CONTENT_DELETED_FLAG);
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>(Arrays.asList(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now())));
+        DeleteHistories deleteHistories = new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
         deleteHistories.addAll(answers.delete(loginUser));
+
         return deleteHistories;
     }
 
-    private void setDeleted() {
-        this.deleted = CONTENT_DELETED_FLAG;
+    private void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     private void validateSameUser(User loginUser) throws CannotDeleteException {

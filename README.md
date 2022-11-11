@@ -118,7 +118,7 @@ alter table question
 - [x] 삭제 될 때 데이터와 삭제한 사람의 정보를 저장
 
 #### DeleteHistories
-- [ ] DeleteHistory의 일급 컬렉션 생성
+- [x] DeleteHistory의 일급 컬렉션 생성
 
 #### Content
 - [ ] Question과 Answer의 공통 부분...
