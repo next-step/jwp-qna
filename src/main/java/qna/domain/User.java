@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends DefaultTime {
+public class User extends BaseDateTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

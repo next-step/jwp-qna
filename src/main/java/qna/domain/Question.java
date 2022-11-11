@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "question")
-public class Question extends DefaultTime {
+public class Question extends BaseDateTimeEntity {
     private static final boolean CONTENT_DELETED_FLAG = true;
     private static final String EXCEPTION_MESSAGE_FOR_CANNOT_DELETE = "질문을 삭제할 권한이 없습니다.";
     @Id
