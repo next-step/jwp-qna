@@ -54,7 +54,7 @@ public class QnaService {
     @Transactional(readOnly = true)
     public List<Answer> findByQuestionIdAndDeletedFalse(Long id, User loginUser){
         List<Answer> answers = answerRepository.findByQuestion_IdAndDeletedFalse(id);
-        answerRepository.findByQuestion_IdAndDeletedFalse(id).forEach(answer -> answer.isOwner(loginUser));
+        answers.forEach(answer -> answer.isOwner(loginUser));
         return answers;
     }
 }
