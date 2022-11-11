@@ -119,3 +119,6 @@ alter table question
 
 #### DeleteHistories
 - [ ] DeleteHistory의 일급 컬렉션 생성
+
+#### Content
+- [ ] Question과 Answer의 공통 부분...
