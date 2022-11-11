@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.CannotDeleteException;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -23,6 +25,8 @@ public class QuestionTest {
     private AnswerRepository answerRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
     @Autowired
     private TestEntityManager entityManager;
 
@@ -68,7 +72,8 @@ public class QuestionTest {
         questionRepository.save(Q1);
 
         // when
-        Q1.delete(UserTest.JAVAJIGI);
+        List<DeleteHistory> deletes = Q1.delete(UserTest.JAVAJIGI);
+        deleteHistoryRepository.saveAll(deletes);
         flushAndClear();
 
         // then

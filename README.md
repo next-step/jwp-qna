@@ -106,8 +106,8 @@ alter table question
 - [x] 삭제 시 deleted 값 삭제 상태로 변경
 - [x] 삭제 시 writer가 로그인 사용자와 같은 지 검증로직
 - [x] List<Answer> answers 를 일급 컬렉션으로 정의
-- [ ] 답변이 없는 경우만 삭제 ; 답변이 모두 삭제된 상태
-- [ ] 삭제 후 deletehistory에 삭제된 데이터가 존재해야 함
+- [x] 답변이 없는 경우만 삭제 ; 답변이 모두 삭제된 상태
+- [x] 삭제 후 deletehistory에 삭제된 데이터가 존재해야 함
 
 #### Answer
 - [x] 삭제 시 deleted 값 삭제 상태로 변경
