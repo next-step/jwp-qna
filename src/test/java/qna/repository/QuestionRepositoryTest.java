@@ -39,13 +39,11 @@ class QuestionRepositoryTest extends RepositoryTest {
     @Test
     void findByDeletedFalse() {
 
-        Question question = questionRepository.save(QUESTION_1);
-
         List<Question> questions = questionRepository.findByDeletedFalse();
 
         assertAll(
                 () -> assertThat(questions).hasSize(2),
-                () -> assertThat(questions).containsExactly(question2, question)
+                () -> assertThat(questions).containsExactly(question1, question2)
         );
     }
 
@@ -69,7 +67,9 @@ class QuestionRepositoryTest extends RepositoryTest {
 
         assertThat(question2).isNotNull();
 
-        questionRepository.delete(question2);
+        question2.setDeleted(true);
+
+        questionRepository.save(question2);
 
         assertThat(questionRepository.findByIdAndDeletedFalse(question2.getId())).isNotPresent();
     }

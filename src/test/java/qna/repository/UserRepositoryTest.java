@@ -49,15 +49,4 @@ class UserRepositoryTest extends RepositoryTest{
                 () -> assertThat(user.getUpdatedAt()).isNotNull()
         );
     }
-
-    @DisplayName("삭제_성공")
-    @Test
-    void delete() {
-
-        assertThat(sanjigi).isNotNull();
-
-        userRepository.delete(sanjigi);
-
-        assertThat(userRepository.findByUserId(sanjigi.getUserId())).isNotPresent();
-    }
 }
