@@ -16,6 +16,9 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.AnswerTest.A1;
+import static qna.domain.AnswerTest.A2;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @EnableJpaAuditing
@@ -26,8 +29,8 @@ public class QuestionTest extends TruncateConfig {
     private static final String CONTENTS_1 = "contents1";
     private static final String CONTENTS_2 = "contents2";
 
-    public static final Question Q1 = new Question(TITLE_1, CONTENTS_1).writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question(TITLE_2, CONTENTS_2).writeBy(UserTest.SANJIGI);
+    public static final Question Q1 = new Question(TITLE_1, CONTENTS_1).writeBy(JAVAJIGI);
+    public static final Question Q2 = new Question(TITLE_2, CONTENTS_2).writeBy(SANJIGI);
 
 
     @Autowired
@@ -35,6 +38,9 @@ public class QuestionTest extends TruncateConfig {
 
     @Autowired
     AnswerRepository answers;
+
+    @Autowired
+    UserRepository users;
 
     @ParameterizedTest(name = "save_테스트")
     @MethodSource("questionTestFixture")
@@ -78,6 +84,20 @@ public class QuestionTest extends TruncateConfig {
         Question question = questions.save(newQuestion);
         Assertions.assertThatThrownBy(() -> question.addAnswer(A1))
             .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 질문에서_참조를_통해_답변을_가져올때_삭제된_답변은_가져오지_않는다() {
+        users.save(JAVAJIGI);
+        users.save(SANJIGI);
+        Question newQuestion = questions.save(Q1);
+        Answer answer1 = answers.save(A1);
+        newQuestion.addAnswer(answer1);
+        Answer answer2 = answers.save(A2);
+        newQuestion.addAnswer(answer2);
+        assertThat(newQuestion.getAnswers()).hasSize(2);
+        newQuestion.deleteAnswer(answer2);
+        assertThat(newQuestion.getAnswers()).hasSize(1);
     }
 
     static Stream<Question> questionTestFixture() {

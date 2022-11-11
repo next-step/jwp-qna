@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -23,6 +24,7 @@ public class  Question extends TimeEntity {
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
     @OneToMany(mappedBy = "question")
+    @Where(clause = "deleted = false")
     private List<Answer> answers = new ArrayList<>();
 
     public Question(String title, String contents) {
@@ -109,5 +111,14 @@ public class  Question extends TimeEntity {
 
     public List<Answer> getAnswers() {
         return this.answers;
+    }
+
+    public void deleteAnswer(Answer deletedAnswer) {
+        getAnswers().stream()
+            .filter(deletedAnswer::equals)
+            .forEach(answer -> answer.setDeleted(true));
+        this.answers = getAnswers().stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList());
     }
 }
