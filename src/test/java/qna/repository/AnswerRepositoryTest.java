@@ -19,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.Answer;
+import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.User;
+import qna.exception.CannotDeleteException;
 
 @DataJpaTest
 class AnswerRepositoryTest {
@@ -189,4 +191,27 @@ class AnswerRepositoryTest {
                 () -> assertFalse(expect2.isPresent())
         );
     }
+
+    @DisplayName("삭제되지 않은 답변을 삭제처리 할 수 있다.")
+    @Test
+    void delete_non_deleted_answer_test() throws CannotDeleteException {
+
+        Answer answer = answerRepository.save(a1);
+        Answer actual = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
+
+        DeleteHistory deleteHistory = actual.delete(u1);
+
+        manager.flush();
+        manager.clear();
+
+        Optional<Answer> actual2 = answerRepository.findByIdAndDeletedFalse(answer.getId());
+        Optional<Answer> actual3 = answerRepository.findById(answer.getId());
+        assertAll(
+                () -> assertNotNull(deleteHistory),
+                () -> assertFalse(actual2.isPresent()),
+                () -> assertTrue(actual3.isPresent()),
+                () -> assertTrue(actual3.get().isDeleted())
+        );
+    }
+
 }

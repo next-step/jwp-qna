@@ -1,16 +1,15 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import qna.UnAuthorizedException;
+import qna.constant.ErrMsg;
+import qna.exception.CannotUpdateException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class User extends BaseEntity {
@@ -28,18 +27,23 @@ public class User extends BaseEntity {
     private String name;
     @Column(length = 50)
     private String email;
-
-    @OneToMany(mappedBy = "deletedBy", cascade = CascadeType.ALL)
-    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
+    @Embedded
+    private DeleteHistories deleteHistories;
 
     protected User() {
     }
 
     public User(String userId, String password, String name, String email) {
+        this(null, userId, password, name, email);
+    }
+
+    public User(Long id, String userId, String password, String name, String email) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+        this.deleteHistories = new DeleteHistories();
     }
 
     public void update(User loginUser, User target) {
@@ -100,10 +104,16 @@ public class User extends BaseEntity {
         return email;
     }
 
-    public List<DeleteHistory> getDeleteHistories() {
+    public DeleteHistories getDeleteHistories() {
         return deleteHistories;
     }
-    
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        if (!deleteHistory.getDeletedBy().equals(this)) {
+            throw new CannotUpdateException(ErrMsg.CANNOT_ADD_DELETE_HISTORY_TO_WRONG_USER);
+        }
+        this.deleteHistories.add(deleteHistory);
+    }
 
     @Override
     public String toString() {

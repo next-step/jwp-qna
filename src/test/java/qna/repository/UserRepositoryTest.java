@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
@@ -19,7 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import qna.domain.Answer;
-import qna.domain.ContentType;
+import qna.domain.DeleteHistories;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.User;
@@ -28,10 +27,10 @@ import qna.domain.User;
 class UserRepositoryTest {
 
     @Autowired
-    UserRepository userRepository;
-
+    private UserRepository userRepository;
     @Autowired
-    DeleteHistoryRepository deleteHistoryRepository;
+    private DeleteHistoryRepository deleteHistoryRepository;
+
 
     @Autowired
     private TestEntityManager manager;
@@ -43,9 +42,9 @@ class UserRepositoryTest {
     private User u2;
     private Question q1;
     private Answer a1;
-
     private DeleteHistory d1;
     private DeleteHistory d2;
+
 
     @BeforeEach
     void setup() {
@@ -53,23 +52,19 @@ class UserRepositoryTest {
         u2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
         q1 = new Question("title1", "contents1").writeBy(u1);
         a1 = new Answer(u1, q1, "contents");
-        d1 = new DeleteHistory(ContentType.ANSWER, a1.getId(), u1,
-                LocalDateTime.now());
-        d2 = new DeleteHistory(ContentType.QUESTION, q1.getId(), u1,
-                LocalDateTime.now());
+        d1 = DeleteHistory.ofAnswer(a1);
+        d2 = DeleteHistory.ofQuestion(q1);
     }
 
     @DisplayName("유저를 저장할 수 있다")
     @Test
     void save_test() {
-        u1.getDeleteHistories().add(d1);
         User saved = userRepository.save(u1);
 
         assertAll(
                 () -> assertNotNull(saved.getId()),
                 () -> assertEquals(saved.getUserId(), u1.getUserId()),
-                () -> assertEquals(saved.getPassword(), u1.getPassword()),
-                () -> assertNotNull(saved.getDeleteHistories().get(0).getId())
+                () -> assertEquals(saved.getPassword(), u1.getPassword())
         );
     }
 
@@ -103,16 +98,17 @@ class UserRepositoryTest {
     @Test
     void findByUserId_with_deleteHistory_test() {
         PersistenceUnitUtil persistenceUnitUtil = factory.getPersistenceUnitUtil();
-        u1.getDeleteHistories().add(d1);
+        u1.addDeleteHistory(d1);
         userRepository.save(u1);
         manager.clear();
 
         User user = userRepository.findByUserId(u1.getUserId()).get();
+        DeleteHistories deleteHistories = user.getDeleteHistories();
 
         assertAll(
-                () -> assertThat(persistenceUnitUtil.isLoaded(user, "deleteHistories")).isFalse(),
-                () -> assertEquals(user.getUserId(), user.getDeleteHistories().get(0).getDeletedBy().getUserId()),
-                () -> assertThat(persistenceUnitUtil.isLoaded(user, "deleteHistories")).isTrue()
+                () -> assertThat(persistenceUnitUtil.isLoaded(deleteHistories, "deleteHistories")).isFalse(),
+                () -> assertEquals(user, deleteHistories.getList().get(0).getDeletedBy()),
+                () -> assertThat(persistenceUnitUtil.isLoaded(deleteHistories, "deleteHistories")).isTrue()
         );
 
     }
@@ -120,13 +116,14 @@ class UserRepositoryTest {
     @DisplayName("유저를 삭제하면 CascadeType.All로 연관관계 설정된 엔티티도 삭제된다.")
     @Test
     void delete_test() {
-        u1.getDeleteHistories().add(d1);
-        u1.getDeleteHistories().add(d2);
+        u1.addDeleteHistory(d1);
+        u1.addDeleteHistory(d2);
         userRepository.save(u1);
 
         assertEquals(2, deleteHistoryRepository.findAll().size());
 
         User user = userRepository.findByUserId(u1.getUserId()).get();
+   
         userRepository.delete(user);
         manager.flush();
 

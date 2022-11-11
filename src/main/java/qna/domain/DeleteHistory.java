@@ -28,11 +28,19 @@ public class DeleteHistory {
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
     }
 
     protected DeleteHistory() {
@@ -56,12 +64,15 @@ public class DeleteHistory {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(getId(), that.getId());
+        return Objects.equals(getId(), that.getId())
+                && contentType == that.contentType
+                && Objects.equals(contentId, that.contentId)
+                && Objects.equals(getDeletedBy(), that.getDeletedBy());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), contentType, contentId, createDate, getDeletedBy());
     }
 
     @Override
@@ -74,5 +85,6 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
 
 }

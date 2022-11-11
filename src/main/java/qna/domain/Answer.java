@@ -11,8 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.constant.ErrMsg;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
 
 @Entity
 public class Answer extends BaseEntity {
@@ -57,10 +59,6 @@ public class Answer extends BaseEntity {
 
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void toQuestion(Question question) {
         this.question = question;
     }
@@ -89,14 +87,53 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public DeleteHistory delete(User loginUser) {
+        validateDeletable(loginUser);
+        this.deleted = true;
+        return DeleteHistory.ofAnswer(this);
+    }
+
+    private void validateDeletable(User loginUser) {
+        if (this.deleted) {
+            throw new CannotDeleteException(ErrMsg.CANNOT_DELETE_ALREADY_DELETED);
+        }
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrMsg.CANNOT_DELETE_WRONG_USER);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Answer)) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return isDeleted() == answer.isDeleted() && Objects.equals(getId(), answer.getId())
+                && Objects.equals(contents, answer.contents) && Objects.equals(getQuestion(),
+                answer.getQuestion()) && Objects.equals(getWriter(), answer.getWriter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), contents, isDeleted(), getQuestion(), getWriter());
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer.toString() +
-                ", question=" + question.toString() +
+                ", question_id=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
