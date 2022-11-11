@@ -89,6 +89,45 @@ spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.show-sql=true
 ```
 
+## 🚀 2단계 - 연관 관계 매핑
+
+### Requirement
+
+객체의 참조와 테이블의 외래 키를 매핑해서, 객체에서는 참조를 사용하고 테이블에서는 외래 키를 사용할 수 있도록 한다.
+
+### Hints
+
+아래의 DDL을 보고 유추한다.
+
+```sql
+alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+
+```
+
+### TODO
+- [ ] question entity 수정
+- [ ] answer entity 수정
+- [ ] delete_history entity 수정
+- [ ] 해당 TestCodes수정
+- [ ] (Optional) 필요하다면 해당 ServiceCode , Test수정
 
 ### Note
 
@@ -167,4 +206,8 @@ spring.jpa.show-sql=true
 	- 굳이 지금 요구사항을 모르는데, 섣부르게 동등성 판단을 하려고 하는게 아닌가?
 	- Step1에서는 동등성 계산 보류.
 
-Q : save전후로 참조 요소가 달라지는건, ID속성이 NULL일때만 아니었나? 
+##### Q : save전후로 참조 요소가 달라지는건, ID속성이 NULL일때만 아니었나? 
+
+
+##### Q : LAZY의 성능 이점 이외의 Pros과 Consideration
+- LazyInitializationException, N+1 query, fetch join, @BatchSize, entity graph 키워드를 순서대로 찾아서 학습
