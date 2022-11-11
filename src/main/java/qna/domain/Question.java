@@ -13,7 +13,9 @@ public class Question extends BaseEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne()
+    @JoinColumn(name = "writer_id")
+    private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -32,12 +34,12 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -56,15 +58,15 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Long getWriterId() {
+        return this.writer.getId();
     }
 }
