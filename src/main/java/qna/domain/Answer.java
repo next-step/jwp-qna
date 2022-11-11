@@ -11,12 +11,15 @@ public class Answer extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "answer_id")
     private Long id;
     @Lob
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    private Long questionId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id")
+    private Question question;
     private Long writerId;
 
     protected Answer() {
@@ -38,7 +41,7 @@ public class Answer extends BaseEntity{
         }
 
         this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -47,7 +50,7 @@ public class Answer extends BaseEntity{
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -70,7 +73,7 @@ public class Answer extends BaseEntity{
         this.deleted = deleted;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return this.question;
     }
 }

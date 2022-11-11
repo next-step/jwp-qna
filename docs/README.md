@@ -42,3 +42,10 @@
     - [x] user 저장 테스트
     - [x] user 삭제 테스트
     - [x] findByUserId 조회 테스트
+
+# 연관관계 매핑
+
+- [ ] User : Question = 1 : n
+- [ ] User : Answer = 1 : n
+- [ ] User : DeleteHistory = 1 : 1
+- [x] Question : Answer = 1 : n

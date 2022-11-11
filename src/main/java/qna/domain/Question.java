@@ -7,6 +7,7 @@ public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue
+    @Column(name = "question_id")
     private Long id;
     @Column(nullable = false)
     private String title;

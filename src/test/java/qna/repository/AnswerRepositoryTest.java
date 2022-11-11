@@ -37,7 +37,7 @@ class AnswerRepositoryTest {
         assertAll(
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(answer.getWriterId()).isNotNull(),
-                () -> assertThat(answer.getQuestionId()).isNotNull(),
+                () -> assertThat(answer.getQuestion().getId()).isNotNull(),
                 () -> assertThat(answer.getCreatedAt()).isNotNull(),
                 () -> assertThat(answer.getUpdatedAt()).isNotNull(),
                 () -> assertThat(answer.getContents()).isEqualTo(ANSWERS_CONTENTS_1)
@@ -50,7 +50,7 @@ class AnswerRepositoryTest {
 
         Answer answer1 = answerRepository.save(ANSWER_1);
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestionId());
+        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(answer1.getQuestion().getId());
 
         assertAll(
                 () -> assertThat(answers).hasSize(1),
@@ -63,7 +63,7 @@ class AnswerRepositoryTest {
     void findByIdAndDeletedFalse() {
 
         Answer answer = answerRepository.save(ANSWER_1);
-        Answer findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getQuestionId()).orElse(null);
+        Answer findAnswer = answerRepository.findByIdAndDeletedFalse(answer.getQuestion().getId()).orElse(null);
 
         assertAll(
                 () -> assertThat(findAnswer).isNotNull(),

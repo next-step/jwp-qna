@@ -9,6 +9,7 @@ public class DeleteHistory {
 
     @Id
     @GeneratedValue
+    @Column(name = "delete_history_id")
     private Long id;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
