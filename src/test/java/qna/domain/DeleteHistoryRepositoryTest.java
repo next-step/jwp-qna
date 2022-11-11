@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.DeleteHistoryTest.D1;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.QuestionTest.Q2;
 import static qna.domain.UserTest.JAVAJIGI;
@@ -66,12 +65,12 @@ class DeleteHistoryRepositoryTest {
         Question question = questionRepository.save(Q1.writeBy(user));
         Answer a1 = new Answer(user, question, "answer1");
         a1.toQuestion(question);
-        return new DeleteHistory(ContentType.ANSWER, a1.getId(), user, LocalDateTime.now());
+        return DeleteHistory.ofAnswer(a1.getId(), user);
     }
 
     private DeleteHistory getQuestionHistory(User user) {
         Question question = questionRepository.save(Q2.writeBy(user));
-        return new DeleteHistory(ContentType.QUESTION, question.getId(), user, LocalDateTime.now());
+        return DeleteHistory.ofQuestion(question.getId(), user);
     }
 
 }
