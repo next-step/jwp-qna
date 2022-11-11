@@ -85,7 +85,6 @@ public class AnswerTest {
         // when
         DeleteHistory delete = A1.delete(UserTest.JAVAJIGI);
         deleteHistoryRepository.save(delete);
-        flushAndClear();
 
         // then
         DeleteHistory deleteHistory = deleteHistoryRepository.findById(1L).get();
