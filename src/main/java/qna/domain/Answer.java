@@ -17,10 +17,10 @@ public class Answer extends BaseEntity{
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private Question question;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
