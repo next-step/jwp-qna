@@ -55,7 +55,12 @@ public class Answer extends BaseDateEntity{
 
         this.contents = contents;
         this.user = writer;
+        addQuestion(question);
+    }
+
+    public void addQuestion(Question question) {
         this.question = question;
+        question.getAnswers().add(this);
     }
 
     public boolean isOwner(User loginUser) {
@@ -107,8 +112,8 @@ public class Answer extends BaseDateEntity{
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + user.getUserId() +
-                ", questionId=" + question.getId() +
+                ", writerId=" + user +
+                ", questionId=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
