@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import qna.domain.TestUserFactory;
 import qna.domain.User;
 
 import java.util.Optional;
@@ -12,8 +13,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.UserTest.JAVAJIGI;
-import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -28,17 +27,19 @@ class UserRepositoryTest {
 
     @Test
     void save() {
-        User user = userRepository.save(JAVAJIGI);
+        User writer = TestUserFactory.create("javajigi");
+        User user = userRepository.save(writer);
         assertAll(
-                () -> assertThat(user.getUserId()).isEqualTo(JAVAJIGI.getUserId()),
-                () -> assertThat(user.getEmail()).isEqualTo(JAVAJIGI.getEmail())
+                () -> assertThat(user.getUserId()).isEqualTo(writer.getUserId()),
+                () -> assertThat(user.getEmail()).isEqualTo(writer.getEmail())
         );
     }
 
     @Test
     void save_retreive_test() {
         // given
-        User saveUser = userRepository.save(JAVAJIGI);
+        User writer = TestUserFactory.create("javajigi");
+        User saveUser = userRepository.save(writer);
         // when
         Optional<User> findUser = userRepository.findByUserId(saveUser.getUserId());
         // then
@@ -51,10 +52,11 @@ class UserRepositoryTest {
 
     @Test
     void duplicate_userId_test() {
-        userRepository.save(SANJIGI);
+        User writer = TestUserFactory.create("sagjigi");
+        userRepository.save(writer);
 
         assertThatExceptionOfType(DataIntegrityViolationException.class)
-                .isThrownBy(() -> userRepository.save(SANJIGI)).withMessageContaining("constraint");
+                .isThrownBy(() -> userRepository.save(writer)).withMessageContaining("constraint");
     }
 
     @Test
@@ -70,7 +72,8 @@ class UserRepositoryTest {
     @Test
     void user_delete_test() {
         // given
-        User saveUser = userRepository.save(SANJIGI);
+        User writer = TestUserFactory.create("sagjigi");
+        User saveUser = userRepository.save(writer);
         Long saveUserId = saveUser.getId();
         Optional<User> findUser = userRepository.findById(saveUserId);
         // when
