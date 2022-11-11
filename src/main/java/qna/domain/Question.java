@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.error.ErrorMessage.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +66,7 @@ public class Question extends BaseEntity {
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException{
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(NO_AUTH_DELETE_QUESTION.message());
         }
         changeStatusDeleted();
 

@@ -1,5 +1,7 @@
 package qna.domain;
 
+import static qna.error.ErrorMessage.*;
+
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -65,7 +67,7 @@ public class Answer extends BaseEntity {
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(CANT_DELETE_ANSWER_IF_EXISTS_OTHER_WRITER.message());
         }
         changeStatusDeleted();
 
