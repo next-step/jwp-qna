@@ -21,7 +21,7 @@ import static org.junit.jupiter.params.ParameterizedTest.DEFAULT_DISPLAY_NAME;
 
 @DataJpaTest
 @DisplayName("user 엔티티 테스트")
-public class UserTest {
+public class UserRepositoryTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
     public static final User MINGVEL = new User(3L, "mingvel", "password", "name", "dlsqo2005@naver.com");

@@ -16,7 +16,6 @@ import java.util.Objects;
         @UniqueConstraint(columnNames = { "user_id" })
 })
 public class User extends BaseDateTimeEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
