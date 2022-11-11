@@ -69,12 +69,8 @@ public class Question extends BaseTime {
     }
 
     public boolean isDeletedStatusAnswers() {
-        for (Answer answer : answers) {
-            if (!answer.isDeleted()) {
-                return false;
-            }
-        }
-        return true;
+        return answers.stream()
+                .allMatch(Answer::isDeleted);
     }
 
     private void validationDeleteQuestionRequestUser(User loginUser) {
