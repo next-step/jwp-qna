@@ -1,0 +1,11 @@
+기능목록
+- 엔티티
+  - [ ] User 구현
+  - [ ] Question 구현
+  - [ ] DeleteHistory 구현
+  - [ ] Answer 구현
+- 리포지토리
+  - [ ] UserRepository 구현
+  - [ ] QuestionRepository 구현
+  - [ ] DeleteHistoryRepository 구현
+  - [ ] AnswerRepository 구현
