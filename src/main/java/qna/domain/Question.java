@@ -47,6 +47,10 @@ public class Question extends BaseTimeEntity {
         return Objects.equals(this.writer, writer);
     }
 
+    public boolean isAnswersOwner(User writer) {
+        return answers.stream().allMatch(answer -> answer.isOwner(writer));
+    }
+
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
@@ -79,10 +83,6 @@ public class Question extends BaseTimeEntity {
         return answers;
     }
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
     public User getWriter() {
         return writer;
     }
@@ -105,7 +105,6 @@ public class Question extends BaseTimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", answers=" + answers +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
                 '}';
