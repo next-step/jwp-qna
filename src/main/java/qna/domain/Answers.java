@@ -6,8 +6,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.transaction.Transactional;
 
 @Embeddable
+@Transactional
 public class Answers {
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private final List<Answer> answers;
@@ -28,10 +30,10 @@ public class Answers {
         answers.remove(answer);
     }
 
-    public DeleteHistories delete(User writer) {
+    public DeleteHistories delete(User loginUser) {
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
         for (Answer answer : answers) {
-            deleteHistoryList.add(answer.delete(writer));
+            deleteHistoryList.add(answer.delete(loginUser));
         }
         return new DeleteHistories(deleteHistoryList);
     }

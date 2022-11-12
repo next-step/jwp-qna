@@ -76,14 +76,14 @@ public class QuestionRepositoryTest {
         questionRepository.save(saveQuestion);
         flush();
 
-        saveQuestion.delete();
+        saveQuestion.delete(writer);
         assertThat(answerRepository.findById(1L)).isEmpty();
     }
 
     @Test
     @DisplayName("question 삭제 상태변경 검증")
     void question_set_delete() {
-        saveQuestion.delete();
+        saveQuestion.delete(writer);
         Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
     }
 

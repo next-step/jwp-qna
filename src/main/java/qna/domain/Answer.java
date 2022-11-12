@@ -84,21 +84,10 @@ public class Answer extends BaseEntity {
         return new DeleteHistory(ContentType.ANSWER, id, this.writer);
     }
 
-    public DeleteHistory delete(User writer) {
+    public DeleteHistory delete(User loginUser) {
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, writer);
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser);
     }
-
-//    @Override
-//    public String toString() {
-//        return "Answer{" +
-//                "id=" + id +
-//                ", writer=" + writer +
-//                ", questionId=" + question.getId() +
-//                ", contents='" + contents + '\'' +
-//                ", deleted=" + deleted +
-//                '}';
-//    }
 
     @Override
     public String toString() {

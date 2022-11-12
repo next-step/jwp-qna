@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteHistories {
@@ -9,11 +10,24 @@ public class DeleteHistories {
         this.deleteHistories = deleteHistories;
     }
 
+    public DeleteHistories(DeleteHistory deleteHistory) {
+        this.deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteHistory);
+    }
+
     public void add(DeleteHistory deleteHistory) {
         deleteHistories.add(deleteHistory);
     }
 
     public boolean contains(DeleteHistory deleteHistory) {
         return deleteHistories.contains(deleteHistory);
+    }
+
+    public List<DeleteHistory> getList() {
+        return deleteHistories;
+    }
+
+    public void addAll(DeleteHistories delete) {
+        deleteHistories.addAll(delete.getList());
     }
 }
