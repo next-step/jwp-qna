@@ -1,5 +1,8 @@
 package qna.domain;
 
+import static qna.error.ErrorMessage.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -13,6 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import qna.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -58,6 +62,19 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException{
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(NO_AUTH_DELETE_QUESTION.message());
+        }
+        changeStatusDeleted();
+
+        return new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now());
+    }
+
+    private void changeStatusDeleted(){
+        this.deleted = true;
     }
 
     public Long getId() {
