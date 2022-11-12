@@ -11,12 +11,8 @@ public class DeleteHistories {
     public DeleteHistories() {
     }
 
-    public DeleteHistories(DeleteHistory deleteHistory) {
-        this.add(deleteHistory);
-    }
-
     public DeleteHistories(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories.addAll(deleteHistories);
+        this.deleteHistories = deleteHistories;
     }
 
     public void add(DeleteHistory deleteHistory) {

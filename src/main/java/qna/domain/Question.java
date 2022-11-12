@@ -45,7 +45,9 @@ public class Question extends BaseContentEntity {
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         validateOwnerAndSetDeleted(loginUser);
 
-        DeleteHistories deleteHistories = new DeleteHistories(new DeleteHistory(ContentType.QUESTION, getId(), loginUser, LocalDateTime.now()));
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, getId(), loginUser, LocalDateTime.now()));
+
         deleteHistories.addAll(answers.delete(loginUser));
 
         return deleteHistories;
