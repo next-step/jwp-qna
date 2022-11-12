@@ -5,8 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.context.annotation.Import;
 import qna.NotFoundException;
+import qna.config.JpaAuditingConfiguration;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
-@EnableJpaAuditing
+@Import(JpaAuditingConfiguration.class)
 public class QuestionTest {
     private static final String TITLE_1 = "title1";
     private static final String TITLE_2 = "title2";
