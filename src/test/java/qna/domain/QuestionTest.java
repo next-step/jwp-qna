@@ -71,7 +71,7 @@ public class QuestionTest {
 
         // when
         DeleteHistories delete = Q1.delete(UserTest.JAVAJIGI);
-        deleteHistoryRepository.saveAll(delete.deleteHistories());
+        deleteHistoryRepository.saveAll(delete.values());
         flushAndClear();
 
         // then

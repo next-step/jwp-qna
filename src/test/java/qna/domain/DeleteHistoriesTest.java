@@ -45,6 +45,6 @@ public class DeleteHistoriesTest {
         deleteHistories.add(DH1);
         deleteHistories.add(DH2);
 
-        assertThat(deleteHistories.deleteHistories()).contains(DH2);
+        assertThat(deleteHistories.values()).contains(DH2);
     }
 }

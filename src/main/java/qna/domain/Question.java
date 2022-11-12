@@ -39,7 +39,7 @@ public class Question extends BaseContentEntity {
     }
 
     public List<Answer> answers() {
-        return answers.answers();
+        return answers.values();
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {

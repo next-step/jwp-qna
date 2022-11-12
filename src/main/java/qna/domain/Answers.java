@@ -22,7 +22,7 @@ public class Answers {
         }
     }
 
-    public List<Answer> answers() {
+    public List<Answer> values() {
         return Collections.unmodifiableList(answers);
     }
 
