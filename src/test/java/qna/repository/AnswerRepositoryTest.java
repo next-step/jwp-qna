@@ -52,6 +52,7 @@ public class AnswerRepositoryTest {
             () -> assertThat(answer.getQuestion()).isEqualTo(question),
             () -> assertThat(answer.getContents()).isEqualTo("contents"),
             () -> assertThat(answer.isDeleted()).isFalse()
+        );
     }
 
     @Test
