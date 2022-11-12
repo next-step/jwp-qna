@@ -41,7 +41,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.writer = writer;
-        this.question = question;
+        toQuestion(question);
         this.contents = contents;
     }
 
@@ -50,6 +50,9 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        if (!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
+        }
         this.question = question;
     }
 
