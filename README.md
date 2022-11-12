@@ -6,6 +6,6 @@
   - [ ] Answer 구현
 - 리포지토리
   - [x] UserRepository 구현
-  - [ ] QuestionRepository 구현
+  - [x] QuestionRepository 구현
   - [ ] DeleteHistoryRepository 구현
   - [ ] AnswerRepository 구현
