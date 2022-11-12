@@ -70,7 +70,7 @@ class QuestionEntityTest {
         //given:
         User owner = provideUser();
         Question question = provideQuestion().writeBy(owner);
-        question.setAnswers(new HashSet<>(Arrays.asList(
+        question.updateAnswers(new HashSet<>(Arrays.asList(
                 provideAnswer(1L, owner, question),
                 provideAnswer(2L, owner, question),
                 provideAnswer(3L, owner, question))));
@@ -87,7 +87,7 @@ class QuestionEntityTest {
         User owner = provideUser(1L);
         User anotherUser = provideUser(2L);
         Question question = provideQuestion().writeBy(owner);
-        question.setAnswers(new HashSet<>(Arrays.asList(
+        question.updateAnswers(new HashSet<>(Arrays.asList(
                 provideAnswer(1L, anotherUser, question),
                 provideAnswer(2L, owner, question),
                 provideAnswer(3L, owner, question))));

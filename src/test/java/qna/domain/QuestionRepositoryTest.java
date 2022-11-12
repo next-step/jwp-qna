@@ -80,7 +80,7 @@ public class QuestionRepositoryTest {
         Question question = questionRepository.save(provideQuestion(user));
         Contents modifiedContent = Contents.from("updated Content");
         //when:
-        question.setContents(modifiedContent);
+        question.updateContents(modifiedContent);
         Question modifiedQuestion = questionRepository.findById(question.getId()).orElse(new Question());
         //then:
         assertThat(modifiedQuestion.getContents()).isEqualTo(modifiedContent);

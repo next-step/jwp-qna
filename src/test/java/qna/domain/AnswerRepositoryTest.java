@@ -69,7 +69,7 @@ class AnswerRepositoryTest {
         final Answer answer = answerRepository.save(provideAnswer(user, question));
         final Contents modifiedContent = Contents.from("updated Content");
         //when:
-        answer.setContents(modifiedContent);
+        answer.updateContents(modifiedContent);
         final Answer modifiedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).orElse(new Answer());
         //then:
         assertThat(modifiedAnswer.getContents()).isEqualTo(modifiedContent);

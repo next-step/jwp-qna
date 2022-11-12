@@ -24,7 +24,7 @@ public class DeleteHistoryMakerTest {
         Answer answer1 = provideAnswer(1L, owner, question);
         Answer answer2 = provideAnswer(2L, owner, question);
         Answer answer3 = provideAnswer(3L, owner, question);
-        question.setAnswers(new HashSet<>(Arrays.asList(answer1, answer2, answer3)));
+        question.updateAnswers(new HashSet<>(Arrays.asList(answer1, answer2, answer3)));
         //when:
         List<DeleteHistory> deleteHistoryList = DeleteHistoryMaker.fromQuestion(question);
         //then:

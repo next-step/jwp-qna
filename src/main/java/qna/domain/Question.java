@@ -96,7 +96,7 @@ public class Question extends BaseDateTimeEntity {
         return contents;
     }
 
-    public void setContents(Contents contents) {
+    public void updateContents(Contents contents) {
         this.contents = contents;
     }
 
@@ -120,12 +120,12 @@ public class Question extends BaseDateTimeEntity {
         checkDeleteableOwner(loginUser);
         checkAnswersOwner();
         if (!answers.isEmpty()) {
-            answers.forEach(answer -> answer.setDeleted(DeleteFlag.deleted()));
+            answers.forEach(answer -> answer.deleteStatus(DeleteFlag.deleted()));
         }
         deleted = DeleteFlag.deleted();
     }
 
-    public void setAnswers(Set<Answer> answers) {
+    public void updateAnswers(Set<Answer> answers) {
         this.answers = answers;
     }
 

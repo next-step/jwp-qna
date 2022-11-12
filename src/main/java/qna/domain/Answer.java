@@ -99,7 +99,7 @@ public class Answer extends BaseDateTimeEntity {
         return contents;
     }
 
-    public void setContents(Contents contents) {
+    public void updateContents(Contents contents) {
         this.contents = contents;
     }
 
@@ -107,7 +107,7 @@ public class Answer extends BaseDateTimeEntity {
         return deleted.getDeleted();
     }
 
-    public void setDeleted(DeleteFlag deleted) {
+    public void deleteStatus(DeleteFlag deleted) {
         this.deleted = deleted;
     }
 
