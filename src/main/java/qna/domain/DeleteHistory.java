@@ -41,11 +41,11 @@ public class DeleteHistory {
         this.deletedBy = deletedBy;
     }
 
-    public static DeleteHistory ofAnswer(Long questionId, User deletedBy) {
-        return new DeleteHistory(ContentType.ANSWER, questionId, deletedBy);
+    public static DeleteHistory ofAnswer(Long id, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, id, deletedBy);
     }
-    public static DeleteHistory ofQuestion(Long questionId, User deletedBy) {
-        return new DeleteHistory(ContentType.QUESTION, questionId, deletedBy);
+    public static DeleteHistory ofQuestion(Long id, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, id, deletedBy);
     }
 
     public Long getId() {
