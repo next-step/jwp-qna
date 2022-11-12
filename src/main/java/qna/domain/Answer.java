@@ -61,7 +61,15 @@ public class Answer extends BaseDateTimeEntity {
     }
 
     public void toQuestion(Question question) {
+        isAssignableQuestion();
+        validateQuestion(question);
         this.question = question;
+    }
+
+    private void isAssignableQuestion() {
+        if (!Objects.isNull(this.question)) {
+            throw new IllegalStateException(EXCEPTION_MESSAGE_FOR_DUPLICATION_QUESTION);
+        }
     }
 
     public Long getId() {
