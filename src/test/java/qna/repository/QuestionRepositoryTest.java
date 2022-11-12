@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
-import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
@@ -26,8 +25,6 @@ public class QuestionRepositoryTest {
     UserRepository userRepository;
     @Autowired
     AnswerRepository answerRepository;
-    @Autowired
-    DeleteHistoryRepository deleteHistoryRepository;
     @Autowired
     EntityManager entityManager;
     public User writer;
@@ -74,22 +71,20 @@ public class QuestionRepositoryTest {
     @DisplayName("질문삭제시 답변도 삭제 검증")
     @Test
     void deleted_test() {
-        new Answer(writer, saveQuestion, "Answers test");
-        Question question = questionRepository.save(saveQuestion);
+        new Answer(writer, saveQuestion, "Answers test1");
+        new Answer(writer, saveQuestion, "Answers test2");
+        questionRepository.save(saveQuestion);
         flush();
 
-        questionRepository.delete(question);
+        saveQuestion.delete();
         assertThat(answerRepository.findById(1L)).isEmpty();
     }
 
     @Test
     @DisplayName("question 삭제 상태변경 검증")
     void question_set_delete() {
-        DeleteHistory deleteHistory = saveQuestion.delete();
-        deleteHistoryRepository.save(deleteHistory);
-
+        saveQuestion.delete();
         Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
-        Assertions.assertThat(deleteHistoryRepository.findByDeletedBy(writer)).isNotEmpty();
     }
 
     void flush() {

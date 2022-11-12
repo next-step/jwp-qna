@@ -14,7 +14,7 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
@@ -46,10 +46,12 @@ public class Answer extends BaseEntity {
     }
 
     private void setQuestion(Question question) {
-        if (Objects.isNull(this.question)) {
-            question.addAnswer(this);
+        if (Objects.nonNull(this.question)) {
+            question.removeAnswer(this);
         }
+        question.addAnswer(this);
         this.question = question;
+
 
     }
 
@@ -80,15 +82,30 @@ public class Answer extends BaseEntity {
     public DeleteHistory delete() {
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, this.writer);
-
     }
+
+    public DeleteHistory delete(User writer) {
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
+    }
+
+//    @Override
+//    public String toString() {
+//        return "Answer{" +
+//                "id=" + id +
+//                ", writer=" + writer +
+//                ", questionId=" + question.getId() +
+//                ", contents='" + contents + '\'' +
+//                ", deleted=" + deleted +
+//                '}';
+//    }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
-                ", questionId=" + question.getId() +
+                ", question=" + question +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

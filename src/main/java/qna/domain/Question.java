@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 
@@ -17,8 +16,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -33,6 +32,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers(new ArrayList<>());
     }
 
     public Question writeBy(User writer) {
@@ -46,7 +46,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         if (!answers.contains(answer)) {
-            answers.add(answer);
+            answers.addAnswer(answer);
         }
     }
 
@@ -68,13 +68,15 @@ public class Question extends BaseEntity {
 
     public void removeAnswer(Answer answer) {
         if (answers.contains(answer)) {
-            this.answers.remove(answer);
+            this.answers.removeAnswer(answer);
         }
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistories delete() {
         this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, this.writer);
+        DeleteHistories deleteHistories = answers.delete(writer);
+        deleteHistories.add(new DeleteHistory(ContentType.ANSWER, id, this.writer));
+        return deleteHistories;
     }
 
     @Override
