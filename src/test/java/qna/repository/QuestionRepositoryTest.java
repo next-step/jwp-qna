@@ -3,7 +3,10 @@ package qna.repository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.UserTest;
 
 import java.util.List;
 
@@ -12,17 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.QuestionTest.QUESTION_1;
 import static qna.domain.QuestionTest.QUESTION_2;
 
+@DataJpaTest
 @DisplayName("질문 Repository")
-class QuestionRepositoryTest extends RepositoryTest {
+class QuestionRepositoryTest {
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @DisplayName("저장_성공")
     @Test
     void save() {
 
-        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(javajigi));
+        Question question = questionRepository.save(new Question("title1", "contents1").writeBy(createUser(UserTest.JAVAJIGI)));
 
         assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
@@ -39,6 +45,9 @@ class QuestionRepositoryTest extends RepositoryTest {
     @Test
     void findByDeletedFalse() {
 
+        Question question1 = createQuestion(createUser(UserTest.JAVAJIGI), QUESTION_1);
+        Question question2 = createQuestion(createUser(UserTest.SANJIGI), QUESTION_2);
+
         List<Question> questions = questionRepository.findByDeletedFalse();
 
         assertAll(
@@ -50,14 +59,17 @@ class QuestionRepositoryTest extends RepositoryTest {
     @DisplayName("findByIdAndDeletedFalse_조회_성공")
     @Test
     void findByIdAndDeletedFalse() {
+
+        Question question = createQuestion(createUser(UserTest.JAVAJIGI), QUESTION_1);
+
         assertAll(
-                () -> assertThat(question2.getId()).isNotNull(),
-                () -> assertThat(question2.getContents()).isEqualTo(QUESTION_2.getContents()),
-                () -> assertThat(question2.getTitle()).isEqualTo(QUESTION_2.getTitle()),
-                () -> assertThat(question2.isDeleted()).isFalse(),
-                () -> assertThat(question2.getWriter()).isNotNull(),
-                () -> assertThat(question2.getCreatedAt()).isNotNull(),
-                () -> assertThat(question2.getUpdatedAt()).isNotNull()
+                () -> assertThat(question.getId()).isNotNull(),
+                () -> assertThat(question.getContents()).isEqualTo(QUESTION_1.getContents()),
+                () -> assertThat(question.getTitle()).isEqualTo(QUESTION_1.getTitle()),
+                () -> assertThat(question.isDeleted()).isFalse(),
+                () -> assertThat(question.getWriter()).isNotNull(),
+                () -> assertThat(question.getCreatedAt()).isNotNull(),
+                () -> assertThat(question.getUpdatedAt()).isNotNull()
         );
     }
 
@@ -65,12 +77,21 @@ class QuestionRepositoryTest extends RepositoryTest {
     @Test
     void delete() {
 
-        assertThat(question2).isNotNull();
+        Question question = createQuestion(createUser(UserTest.JAVAJIGI), QUESTION_1);
+        assertThat(question).isNotNull();
 
-        question2.setDeleted(true);
+        question.setDeleted(true);
 
-        questionRepository.save(question2);
+        questionRepository.save(question);
 
-        assertThat(questionRepository.findByIdAndDeletedFalse(question2.getId())).isNotPresent();
+        assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).isNotPresent();
+    }
+
+    private User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    private Question createQuestion(User user, Question question) {
+        return questionRepository.save(question.writeBy(user));
     }
 }
