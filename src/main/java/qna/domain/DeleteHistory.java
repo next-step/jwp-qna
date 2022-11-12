@@ -60,4 +60,17 @@ public class DeleteHistory {
                 ", createDate=" + createDate +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeleteHistory history = (DeleteHistory) o;
+        return contentType == history.contentType && Objects.equals(contentId, history.contentId) && Objects.equals(whoDeleted, history.whoDeleted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contentType, contentId, whoDeleted);
+    }
 }
