@@ -8,11 +8,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,6 +87,16 @@ public class QuestionRepositoryTest {
     void question_set_delete() {
         saveQuestion.delete(writer);
         Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("동일한 유저 아닌경우 예외발생")
+    void question_delete_user_valid() {
+        saveQuestion.delete(writer);
+        Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
+        assertThatThrownBy(() -> saveQuestion.delete(User.GUEST_USER))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("삭제할 권한");
     }
 
     void flush() {
