@@ -12,11 +12,11 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
     private String contents;
@@ -47,7 +47,7 @@ public class Answer extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -75,8 +75,25 @@ public class Answer extends BaseEntity {
     }
 
 
-    public void changeDeleted(boolean deleted) {
+    public void delete(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Answer answer = (Answer) o;
+        return Objects.equals(id, answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
