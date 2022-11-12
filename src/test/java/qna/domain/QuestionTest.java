@@ -3,27 +3,20 @@ package qna.domain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.NotFoundException;
-import qna.config.TruncateConfig;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static qna.domain.AnswerTest.A1;
-import static qna.domain.AnswerTest.A2;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @EnableJpaAuditing
-public class QuestionTest extends TruncateConfig {
+public class QuestionTest {
     private static final String TITLE_1 = "title1";
     private static final String TITLE_2 = "title2";
 
@@ -43,85 +36,60 @@ public class QuestionTest extends TruncateConfig {
     @Autowired
     UserRepository users;
 
-    User sanjigi;
-    User javajigi;
+    Question question;
+    User writer;
+    Answer answer;
+
 
     @BeforeEach
     void setUp() {
-        sanjigi = users.save(SANJIGI);
-        javajigi = users.save(JAVAJIGI);
+        writer = users.save(new User("userId", "password", "name", "email"));
+        question = questions.save(new Question("제 질문은요", "80점입니다."));
+        answer = answers.save(new Answer(writer, question, "What?!"));
     }
 
-    @ParameterizedTest(name = "save_테스트")
-    @MethodSource("questionTestFixture")
-    void save_테스트(Question question) {
-        Question saved = questions.save(question);
-        assertThat(saved.getContents()).isEqualTo(question.getContents());
-        assertThat(saved.getCreatedAt()).isNotNull();
+    @Test
+    void save_테스트() {
+        assertThat(question.getId()).isNotNull();
+        assertThat(question.getContents()).isEqualTo("80점입니다.");
+        assertThat(question.getCreatedAt()).isNotNull();
     }
 
-    @ParameterizedTest(name = "save_후_findById_테스트")
-    @MethodSource("questionTestFixture")
-    void save_후_findById_테스트(Question question) {
-        Question question1 = questions.save(question);
-        Question question2 = questions.findById(question1.getId()).get();
-        assertThat(question1).isEqualTo(question2);
-        assertThat(question1.getContents()).isEqualTo(question2.getContents());
+    @Test
+    void save_후_findById_테스트() {
+        Optional<Question> maybe = questions.findById(question.getId());
+        assertThat(maybe.isPresent()).isTrue();
+        assertThat(maybe.get()).isEqualTo(question);
     }
 
-    @ParameterizedTest(name = "save_후_update_테스트")
-    @MethodSource("questionAndAnswerTestFixture")
-    void save_후_update_테스트(Question question, Answer answer) {
-        Question newQuestion = questions.save(question.writeBy(sanjigi));
-        newQuestion.addAnswer(answer);
-        Answer linkAnswer = answers.save(answer);
-        assertThat(linkAnswer.getQuestionId()).isEqualTo(newQuestion.getId());
+    @Test
+    void save_후_update_테스트() {
+        Question modifiedQuestion = questions.findById(question.getId()).get();
+        String contents = modifiedQuestion.getContents();
+        modifiedQuestion.setContents("90점입니다.");
+        Answer checkQuestion = answers.findById(modifiedQuestion.getId()).get();
+        assertThat(contents).isNotEqualTo(checkQuestion.getContents());
     }
 
-    @ParameterizedTest(name = "save_후_delete_테스트")
-    @MethodSource("questionTestFixture")
-    void save_후_delete_테스트(Question question) {
-        Question newQuestion = questions.save(question);
-        questions.delete(newQuestion);
-        Optional<Question> questionsById = questions.findById(question.getId());
-        assertThat(questionsById.isPresent()).isFalse();
+    @Test
+    void save_후_delete_테스트() {
+        questions.delete(question);
+        Optional<Question> maybe = questions.findById(question.getId());
+        assertThat(maybe.isPresent()).isFalse();
     }
 
     @Test
     void 삭제된_질문에_답변을_달수_없다() {
-        Question newQuestion = questions.save(Q1);
-        newQuestion.setDeleted(true);
-        Question question = questions.save(newQuestion);
-        Assertions.assertThatThrownBy(() -> question.addAnswer(A1))
+        question.setDeleted(true);
+        Assertions.assertThatThrownBy(() -> question.addAnswer(new Answer(writer, question, "추가 답변드립니다.")))
             .isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void 질문에서_참조를_통해_답변을_가져올때_삭제된_답변은_가져오지_않는다() {
-        Question newQuestion = questions.save(Q1.writeBy(sanjigi));
-        Answer answer1 = answers.save(new Answer(javajigi, newQuestion, "contents"));
-        newQuestion.addAnswer(answer1);
-        Answer answer2 = answers.save(new Answer(javajigi, newQuestion, "contents2"));
-        newQuestion.addAnswer(answer2);
-        assertThat(newQuestion.getAnswers()).hasSize(2);
-        newQuestion.deleteAnswer(answer2);
-        assertThat(newQuestion.getAnswers()).hasSize(1);
-    }
-
-    static Stream<Question> questionTestFixture() {
-        return Stream.of(Q1, Q2);
-    }
-
-    static Stream<Arguments> questionAndAnswerTestFixture() {
-        return Stream.of(
-            Arguments.of(
-                Q1, new Answer(new User("userId", "password", "name", "email"),
-                    new Question("title", "contents"), "contents")
-            ),
-            Arguments.of(
-                Q2, new Answer(new User("userId", "password", "name", "email"),
-                    new Question("title", "contents"), "contents")
-            )
-        );
+        question.addAnswer(answer);
+        assertThat(question.getAnswers()).hasSize(1);
+        question.deleteAnswer(answer);
+        assertThat(question.getAnswers()).hasSize(0);
     }
 }
