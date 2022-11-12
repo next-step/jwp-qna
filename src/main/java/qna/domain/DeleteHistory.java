@@ -44,6 +44,10 @@ public class DeleteHistory {
         return new DeleteHistory(type, question.getId(), question.getWriter());
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -74,9 +78,5 @@ public class DeleteHistory {
                 ", deletedBy=" + deletedBy +
                 ", createDate=" + createDate +
                 '}';
-    }
-
-    public Long getId() {
-        return id;
     }
 }

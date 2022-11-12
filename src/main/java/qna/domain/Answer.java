@@ -60,7 +60,6 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
-
     public Long getId() {
         return id;
     }
@@ -77,19 +76,21 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void deleted() {
+        this.deleted = true;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public DeleteHistory deleteIfDifferentUserAnswerEmpty(User loginUser) {
+        validCheckDifferentUserAnswerPresent(loginUser);
+        deleted();
+
+        return DeleteHistory.of(ContentType.ANSWER, this.question);
+    }
+
+    private void validCheckDifferentUserAnswerPresent(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(QuestionExceptionType.DIFFERENT_USER_ANSWER_PRESENT.getMessage());
+        }
     }
 
     @Override
@@ -111,16 +112,14 @@ public class Answer extends BaseTimeEntity {
         return Objects.hash(id, writer, question, contents, deleted);
     }
 
-    public DeleteHistory deleteIfDifferentUserAnswerEmpty(User loginUser) {
-        validCheckDifferentUserAnswerPresent(loginUser);
-        this.deleted = true;
-
-        return DeleteHistory.of(ContentType.ANSWER, this.question);
-    }
-
-    private void validCheckDifferentUserAnswerPresent(User loginUser) {
-        if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException(QuestionExceptionType.DIFFERENT_USER_ANSWER_PRESENT.getMessage());
-        }
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", writer=" + writer +
+                ", question=" + question +
+                ", contents='" + contents + '\'' +
+                ", deleted=" + deleted +
+                '}';
     }
 }

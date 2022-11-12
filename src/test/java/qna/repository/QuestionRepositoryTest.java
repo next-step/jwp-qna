@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
 import qna.domain.User;
-import qna.domain.UserTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +39,7 @@ class QuestionRepositoryTest {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = new Question("title1", "contents1").writeBy(user);
         Question saveQuestion = questionRepository.save(question);
-        saveQuestion.setDeleted(false);
+        saveQuestion.deleted();
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
 
         assertThat(result).get().isEqualTo(question);
@@ -69,7 +68,7 @@ class QuestionRepositoryTest {
         Question question = new Question("title1", "contents1").writeBy(user);
 
         Question saveQuestion = questionRepository.save(question);
-        saveQuestion.setDeleted(true);
+        saveQuestion.deleted();
 
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
 
@@ -102,7 +101,7 @@ class QuestionRepositoryTest {
                 new Question("title1", "contents1").writeBy(userA));
         Question questionB = questionRepository.save(
                 new Question("title2", "contents2").writeBy(userB));
-        questionB.setDeleted(true);
+        questionB.deleted();
 
         List<Question> result = questionRepository.findByDeletedFalse();
 
