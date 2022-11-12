@@ -2,9 +2,9 @@ package qna.domain.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import qna.CannotDeleteException;
+import qna.domain.ContentType;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -111,12 +111,18 @@ public class Question extends BaseTime {
         this.answers = answers;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validCheckOwner(loginUser);
 
-        this.answers.delete(loginUser);
+        List<DeleteHistory> deleteHistories = this.answers.delete(loginUser);
+        return deleteQuestionAndSaveHistory(deleteHistories);
+    }
 
+    private List<DeleteHistory> deleteQuestionAndSaveHistory(List<DeleteHistory> deleteHistories) {
         setDeleted(true);
+        deleteHistories.add(0, new DeleteHistory(ContentType.QUESTION, id, user));
+
+        return deleteHistories;
     }
 
     private void validCheckOwner(User loginUser) throws CannotDeleteException {

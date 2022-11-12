@@ -3,6 +3,7 @@ package qna.domain.entity;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.ContentType;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -103,12 +104,13 @@ public class Answer extends BaseTime {
         this.deleted = deleted;
     }
 
-    public void delete(User writer) throws CannotDeleteException {
+    public DeleteHistory delete(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
         setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, id, user);
     }
 
     @Override
