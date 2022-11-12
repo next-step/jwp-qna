@@ -124,7 +124,12 @@ alter table question
 - [x] Question과 Answer의 공통 부분...
 
 ### 3단계 피드백
-- [ ] BaseContentEntity 에 대한 과도한 책임 부여 --> Content에 집중된 책임과 역할에 대해 생각해 볼 것
+- [x] BaseContentEntity 에 대한 과도한 책임 부여 --> Content에 집중된 책임과 역할에 대해 생각해 볼 것
+  - **_BaseContenctEntity MappedSuperclass 삭제_**
+    - 단일 책임의 원칙에 따르면 BaseContentEntity는 Content와 관련된 역할만 수행해야 한다.  
+      하지만, **_Content만 별도 Entity로 구성하는 것은 현재 구조상 별 의미가 없다고 판단됨.._**
+    - `id`, `writer`, `deleted`는 공통된 속성이면서도, `Question`과 `Answer` 객체에선 각자의 역할에서  
+      다르게 확장될 수 있는 가능성이 높은 속성이다. 따라서 각자 가지고 있는 것이 역할과 책임의 측면에서 바람직하다고 판단됨
 - [x] 일급컬렉션의 getter는 values 라는 네이밍이 어울린다..!
 - [x] 생성자에서 validate외 다른 로직은 없는 것이 좋다는 의견에 대한 고민
 - [x] 주석 코드나 사용되지 않는 코드는 삭제
