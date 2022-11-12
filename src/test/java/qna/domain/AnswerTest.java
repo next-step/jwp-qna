@@ -68,7 +68,7 @@ public class AnswerTest {
 
     @DisplayName("답변 삭제 시 답변 작성자가 로그인 사용자와 다른 경우 예외")
     @Test
-    void 답변삭제_예외_작성자_다른경우() throws Exception {
+    void 답변삭제_예외_작성자_다른경우() {
         // given
         answerRepository.save(A1);
 
