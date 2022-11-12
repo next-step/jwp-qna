@@ -134,3 +134,23 @@ alter table question
   - [x] DeleteHistoryTest
 - [x] 엔티티 클래스 setId 삭제
 - [x] User 엔티티 클래스 equals 추가
+
+<br/>
+<hr/>
+
+## 3단계 - 질문 삭제하기 리팩터링
+### 프로그래밍 요구 사항
+- `qna.service.QnaService의 deleteQuestion()`는 앞의 질문 삭제 기능을 구현한 코드이다. 이 메서드는 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드가 섞여 있다.
+- 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드에 대해 단위 테스트를 구현한다.
+- 리팩터링을 완료한 후에도 `src/test/java` 디렉터리의 `qna.service.QnaServiceTest`의 모든 테스트가 통과해야 한다.
+
+### 구현 기능 목록
+- [x] `List<Answer>`를 일급 컬렉션 `Answers`로 만든다
+- [x] `Question`에 `List<Answer>`를 `Answers`로 대체
+- [x] `Question`, `Answer`에 글 삭제 메소드 추가
+  - [x] 글 삭제 시 로그인 유저와 글쓴이는 동일한지 확인
+  - [x] 글 삭제 시 로그인 유저와 글쓴이가 다르면 에러 발생
+  - [x] 글 삭제의 반환 값은 `List<DeleteHistory>`
+- [x] `Question`을 받아 `DeleteHistory` 생성하는 메소드 추가
+- [x] `Answer`을 받아 `DeleteHistory` 생성하는 메소드 추가
+- [x] `QnaService` 리팩터링 

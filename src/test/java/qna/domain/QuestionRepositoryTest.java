@@ -62,7 +62,7 @@ class QuestionRepositoryTest {
         Optional<Question> optionalQuestion = questionRepository.findById(question.getId());
 
         //then
-        assertThat(optionalQuestion.get().getAnswers()).hasSize(1);
+        assertThat(optionalQuestion.get().getAnswers().size()).isEqualTo(1);
     }
 
     @Test
