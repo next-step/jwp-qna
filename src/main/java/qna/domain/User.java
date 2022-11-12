@@ -1,6 +1,6 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
+import qna.exception.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -8,8 +8,6 @@ import java.util.Objects;
 @Table
 @Entity(name = "user")
 public class User extends BaseTimeEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,40 +39,6 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
-        }
-
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
-        }
-
-        this.name = target.name;
-        this.email = target.email;
-    }
-
-    public boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
-    }
-
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-
-        return name.equals(target.name) &&
-                email.equals(target.email);
-    }
-
-    public boolean isGuestUser() {
-        return false;
-    }
-
     public Long getId() {
         return id;
     }
@@ -85,24 +49,6 @@ public class User extends BaseTimeEntity {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 
     @Override
@@ -122,5 +68,10 @@ public class User extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, userId, password, name, email);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", userId='" + userId + '\'' + ", password='" + password + '\'' + ", name='" + name + '\'' + ", email='" + email + '\'' + '}';
     }
 }

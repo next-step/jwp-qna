@@ -1,7 +1,10 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exception.CannotDeleteException;
+import qna.exception.NotFoundException;
+import qna.exception.UnAuthorizedException;
+import qna.exception.type.NotFoundExceptionType;
+import qna.exception.type.QuestionExceptionType;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,11 +18,11 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
 
     @Lob
@@ -41,7 +44,7 @@ public class Answer extends BaseTimeEntity {
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new NotFoundException(NotFoundExceptionType.NOT_FOUND_ANSWER.getMessage());
         }
 
         this.writer = writer;
@@ -49,16 +52,11 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-
     protected Answer() {
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
     }
 
     public Long getId() {
@@ -77,19 +75,21 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void deleted() {
+        this.deleted = true;
     }
 
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writer=" + writer +
-                ", question=" + question +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public DeleteHistory deleteIfDifferentUserAnswerEmpty(User loginUser) {
+        validCheckDifferentUserAnswerPresent(loginUser);
+        deleted();
+
+        return DeleteHistory.ofAnswer(question.getId(), question.getWriter());
+    }
+
+    private void validCheckDifferentUserAnswerPresent(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(QuestionExceptionType.DIFFERENT_USER_ANSWER_PRESENT.getMessage());
+        }
     }
 
     @Override
@@ -109,5 +109,16 @@ public class Answer extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", writer=" + writer +
+                ", question=" + question +
+                ", contents='" + contents + '\'' +
+                ", deleted=" + deleted +
+                '}';
     }
 }

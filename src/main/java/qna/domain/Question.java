@@ -1,6 +1,11 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
+import qna.exception.type.QuestionExceptionType;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,8 +23,11 @@ public class Question extends BaseTimeEntity {
     private String contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
+
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -42,12 +50,12 @@ public class Question extends BaseTimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -62,8 +70,37 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void deleted() {
+        this.deleted = true;
+    }
+    public List<DeleteHistory> delete(User loginUser) {
+        validCheckDeleteQuestion(loginUser);
+        deleted();
+
+        return deleteHistories(this, loginUser);
+    }
+
+    private List<DeleteHistory> deleteHistories(Question question, User loginUser) {
+        return makeCombineHistories(
+                answers.delete(loginUser),
+                DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
+    }
+
+    private List<DeleteHistory> makeCombineHistories(List<DeleteHistory> deleteHistories, DeleteHistory deleteHistory) {
+        List<DeleteHistory> combineHistory = new ArrayList<>();
+        combineHistory.add(deleteHistory);
+        combineHistory.addAll(deleteHistories);
+        return combineHistory;
+    }
+
+    private void validCheckDeleteQuestion(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(QuestionExceptionType.NOT_OWNER_LOGIN_USER.getMessage());
+        }
+
+        if (isDeleted()) {
+            throw new CannotDeleteException(QuestionExceptionType.ALREADY_DELETE_QUESTION.getMessage());
+        }
     }
 
     @Override

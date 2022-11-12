@@ -28,7 +28,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory save() 테스트를 진행한다")
     void saveHistory() {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        DeleteHistory history = new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now());
+        DeleteHistory history = DeleteHistory.ofQuestion(1L, user);
 
         DeleteHistory result = deleteHistoryRepository.save(history);
 
@@ -40,7 +40,7 @@ class DeleteHistoryRepositoryTest {
     void saveHistoryAndFind() {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         DeleteHistory history = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now()));
+                DeleteHistory.ofQuestion(1L, user));
 
         Optional<DeleteHistory> result = deleteHistoryRepository.findById(history.getId());
 
@@ -52,10 +52,8 @@ class DeleteHistoryRepositoryTest {
     void allHistory() {
         User userA = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         User userB = userRepository.save(new User(2L, "javajigi2", "password2", "name2", "javajigi@slipp.com"));
-        DeleteHistory historyA = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.QUESTION, 1L, userA, LocalDateTime.now()));
-        DeleteHistory historyB = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.QUESTION, 2L, userB, LocalDateTime.now()));
+        DeleteHistory historyA = deleteHistoryRepository.save(DeleteHistory.ofQuestion(1L, userA));
+        DeleteHistory historyB = deleteHistoryRepository.save(DeleteHistory.ofQuestion(2L, userB));
 
         List<DeleteHistory> result = deleteHistoryRepository.findAll();
 
@@ -67,8 +65,7 @@ class DeleteHistoryRepositoryTest {
     @DisplayName("삭제 이력 삭제 확인")
     void deleteHistory() {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
-        DeleteHistory history = deleteHistoryRepository.save(
-                new DeleteHistory(ContentType.QUESTION, 1L, user, LocalDateTime.now()));
+        DeleteHistory history = deleteHistoryRepository.save(DeleteHistory.ofQuestion(1L, user));
 
         deleteHistoryRepository.delete(history);
 
