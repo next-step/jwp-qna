@@ -36,47 +36,42 @@ public class AnswerTest {
 
     User writer;
     Question question;
+    Answer answer;
 
     @BeforeEach
     void setUp() {
         writer = users.save(new User("userId", "password", "name", "email"));
         question = questions.save(new Question("Hello", "Why??"));
+        answer = answers.save(new Answer(writer, question, "What?!"));
     }
 
     @Test
     void save_테스트() {
-        Answer answer = new Answer(writer, question, "What?!");
-        Answer saved = answers.save(answer);
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getCreatedAt()).isNotNull();
-        assertThat(saved.getContents()).isEqualTo("What?!");
+        assertThat(answer.getId()).isNotNull();
+        assertThat(answer.getCreatedAt()).isNotNull();
+        assertThat(answer.getContents()).isEqualTo("What?!");
     }
 
     @Test
     void save_후_findById_테스트() {
-        Answer answer = new Answer(writer, question, "What?!");
-        Answer saved = answers.save(answer);
-        Optional<Answer> maybe = answers.findById(saved.getId());
+        Optional<Answer> maybe = answers.findById(answer.getId());
         assertThat(maybe.isPresent()).isTrue();
+        assertThat(maybe.get()).isEqualTo(answer);
     }
 
     @Test
     void save_후_update_테스트() {
-        Answer answer = new Answer(writer, question, "What?!");
-        Answer saved = answers.save(answer);
-        Answer modifiedAnswer = answers.findById(saved.getId()).get();
+        Answer modifiedAnswer = answers.findById(answer.getId()).get();
         String contents = modifiedAnswer.getContents();
         modifiedAnswer.setContents("허억!!");
-        Answer checkAnswer = answers.findById(saved.getId()).get();
+        Answer checkAnswer = answers.findById(answer.getId()).get();
         assertThat(contents).isNotEqualTo(checkAnswer.getContents());
     }
 
     @Test
     void save_후_delete_테스트() {
-        Answer answer = new Answer(writer, question, "What?!");
-        Answer saved = answers.save(answer);
-        answers.delete(saved);
-        Optional<Answer> maybe = answers.findById(saved.getId());
+        answers.delete(answer);
+        Optional<Answer> maybe = answers.findById(answer.getId());
         assertThat(maybe.isPresent()).isFalse();
     }
 
