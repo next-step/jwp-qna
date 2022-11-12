@@ -39,7 +39,7 @@ public class Question extends BaseDateTimeEntity {
     @AttributeOverride(name = "deleted", column = @Column(name = "deleted", nullable = false))
     private DeleteFlag deleted = DeleteFlag.notDeleted();
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private Set<Answer> answers = new HashSet<>();
 
     public Question(Title title, Contents contents) {
