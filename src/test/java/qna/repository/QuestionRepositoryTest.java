@@ -92,8 +92,6 @@ public class QuestionRepositoryTest {
     @Test
     @DisplayName("동일한 유저 아닌경우 예외발생")
     void question_delete_user_valid() {
-        saveQuestion.delete(writer);
-        Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
         assertThatThrownBy(() -> saveQuestion.delete(User.GUEST_USER))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessageContaining("삭제할 권한");

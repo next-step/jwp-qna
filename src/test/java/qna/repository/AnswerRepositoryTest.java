@@ -8,13 +8,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
+import qna.domain.TestFixture;
 import qna.domain.User;
 import qna.domain.UserTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -82,6 +85,15 @@ public class AnswerRepositoryTest {
 
         assertThat(answerTest.isDeleted()).isTrue();
         assertThat(deleteHistoryRepository.findByDeletedBy(answer.getWriter())).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("다른사람이 작성한 경우 예외발생")
+    void answer_delete_user_valid() {
+        Answer answerTest = TestFixture.createAnswer(UserTest.JAVAJIGI, question);
+        assertThatThrownBy(() -> answerTest.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람");
     }
 
     void flush() {

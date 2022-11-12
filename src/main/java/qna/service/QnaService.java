@@ -8,7 +8,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.*;
 
-import java.util.List;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
@@ -35,14 +34,6 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
         Question question = findQuestionById(questionId);
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-
         deleteHistoryService.saveAll(question.delete(loginUser).getList());
     }
 }
