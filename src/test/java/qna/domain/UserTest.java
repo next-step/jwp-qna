@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 public class UserTest {
@@ -29,8 +30,8 @@ public class UserTest {
         User javajigi = userRepository.findById(1L).get();
         User sanjigi = userRepository.findById(2L).get();
         assertAll(
-                () -> assertThat(javajigi.getUserId()).isEqualTo("javajigi"),
-                () -> assertThat(sanjigi.getUserId()).isEqualTo("sanjigi")
+                () -> assertTrue(javajigi.isSame(JAVAJIGI)),
+                () -> assertThat(sanjigi.isSame(SANJIGI))
         );
     }
 

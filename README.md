@@ -129,4 +129,4 @@ alter table question
 - [ ] 생성자에서 validate외 다른 로직은 없는 것이 좋다는 의견에 대한 고민
 - [x] 주석 코드나 사용되지 않는 코드는 삭제
 - [ ] Question.addAnswer에서 ```answer.toQuestion(this)``` 부분이 필요한 지 재검토
-- [ ] 개체 비교하는 패턴 적용(isSame(), assertTrue 사용 권장)
+- [x] 개체 비교하는 패턴 적용(isSame(), assertTrue 사용 권장)

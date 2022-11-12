@@ -66,6 +66,10 @@ public class User extends BaseDateTimeEntity {
                 email.equals(target.email);
     }
 
+    public boolean isSame(User javajigi) {
+        return this.userId == javajigi.userId;
+    }
+
     public boolean isGuestUser() {
         return false;
     }
