@@ -5,10 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.domain.entity.Question;
-import qna.domain.entity.QuestionTest;
-import qna.domain.entity.User;
-import qna.domain.entity.UserTest;
+import qna.domain.entity.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,17 +25,36 @@ class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questions;
 
+    @Autowired
+    private AnswerRepository answers;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @BeforeEach
     void setUp() {
-        Question question = QuestionTest.Q1;
+        User savedUser = users.save(UserTest.JAVAJIGI);
 
-        questions.save(question);
+        Question question = QuestionTest.Q1;
+        question.setUser(savedUser);
+        Question savedQuestion = questions.save(question);
+
+        Answer savedAnswer = AnswerTest.A1;
+        savedAnswer.setUser(savedUser);
+        savedAnswer.setQuestion(savedQuestion);
+        answers.save(savedAnswer);
+
+        answers.flush();
+        users.flush();
+        questions.flush();
     }
 
     @Test
     @DisplayName("question테이블 save 테스트")
     void save() {
+        User savedUser = users.save(UserTest.SANJIGI);
         Question expected = QuestionTest.Q2;
+        expected.setUser(savedUser);
         Question actual = questions.save(expected);
 
         assertAll(
@@ -72,6 +93,9 @@ class QuestionRepositoryTest {
     void delete() {
         Question expected = questions.findByTitle("title1")
                 .get();
+
+        answers.delete(AnswerTest.A1);
+        entityManager.flush();
         questions.delete(expected);
 
         assertThat(questions.findByTitle("title1").isPresent()).isFalse();
@@ -80,7 +104,7 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("user연관관계 매핑 테스트")
     void getUserTest() {
-        User actual = users.save(UserTest.JAVAJIGI);
+        User actual = users.save(UserTest.SANJIGI);
         Question question = questions.findByTitle("title1")
                 .get();
 
@@ -108,5 +132,16 @@ class QuestionRepositoryTest {
                 .get();
 
         assertThatNoException().isThrownBy(() -> question.toString());
+    }
+
+    @Test
+    @DisplayName("answer 연관관계 테스트")
+    void answer_relation_Test() {
+        entityManager.clear();
+
+        Question expected = questions.findByTitle("title1")
+                .get();
+
+        assertThat(expected.getAnswers().size()).isEqualTo(1);
     }
 }

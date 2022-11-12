@@ -5,8 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.util.ArrayList;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -29,22 +27,8 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("답변을 가질 경우 에러를 발생시키는 테스트")
-    void has_exist_answer_delete_test() {
-        User user = UserTest.JAVAJIGI;
-        Question expected = Q1;
-        ArrayList answers = new ArrayList();
-
-        answers.add(AnswerTest.A1);
-        expected.setAnswers(answers);
-
-        assertThatThrownBy(() -> Q1.delete(user))
-                .isInstanceOf(CannotDeleteException.class).hasMessage("답변이 달려있으므로, 삭제할수 없습니다.");
-    }
-
-    @Test
     @DisplayName("삭제가 성공해서, 삭제 상태값이 변경되는 테스트")
-    void success_delete_test() throws CannotDeleteException {
+    void success_question_delete_test() throws CannotDeleteException {
         Question expected = QuestionTest.Q1;
 
         expected.delete(UserTest.JAVAJIGI);

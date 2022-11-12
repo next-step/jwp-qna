@@ -108,6 +108,10 @@ class AnswerRepositoryTest {
     @DisplayName("answer연관관계 매핑 테스트( question )")
     void getQuestionTest() {
         Answer answer = answers.findByContents("Answers Contents1").get();
+        User savedUser = users.save(UserTest.SANJIGI);
+        Question question = QuestionTest.Q2;
+        question.setUser(savedUser);
+
         Question actual = questions.save(QuestionTest.Q2);
 
         Answer savedAnswer = saveQuestionInfo(answer, actual);

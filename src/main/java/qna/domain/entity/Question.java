@@ -26,14 +26,13 @@ public class Question extends BaseTime {
     @JoinColumn(name = "writer_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
     public Question() {
-
     }
 
     public Question(String title, String contents) {
@@ -57,6 +56,7 @@ public class Question extends BaseTime {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -91,14 +91,6 @@ public class Question extends BaseTime {
         this.user = user;
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
@@ -111,9 +103,18 @@ public class Question extends BaseTime {
         return this.deleted;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Answers answers) {
+        this.answers = answers;
+    }
+
     public void delete(User loginUser) throws CannotDeleteException {
         validCheckOwner(loginUser);
-        validCheckExistAnswer();
+
+        this.answers.delete(loginUser);
 
         setDeleted(true);
     }
@@ -122,20 +123,6 @@ public class Question extends BaseTime {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-    }
-
-    private void validCheckExistAnswer() throws CannotDeleteException {
-        if (isExistAnswer()) {
-            throw new CannotDeleteException("답변이 달려있으므로, 삭제할수 없습니다.");
-        }
-    }
-
-    private boolean isExistAnswer() {
-        if (this.answers.size() > 0) {
-            return true;
-        }
-
-        return false;
     }
 
     @Override
