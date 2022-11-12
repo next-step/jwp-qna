@@ -28,7 +28,7 @@ public class User extends BaseTime {
     @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
