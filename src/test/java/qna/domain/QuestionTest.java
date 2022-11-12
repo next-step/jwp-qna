@@ -2,8 +2,10 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
@@ -19,5 +21,14 @@ public class QuestionTest {
         Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
         assertThat(Q1.getAnswers().size()).isEqualTo(2);
         assertThat(Q1.getAnswers()).containsExactly(A1, A2);
+    }
+
+    @Test
+    @DisplayName("로그인한 사용자의 것이 아닌 질문글을 삭제할 때 validate 오류")
+    public void validateDelete() {
+        assertThatThrownBy(() -> {
+            Q1.validateDelete(UserTest.SANJIGI);
+        }).isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("질문을 삭제할 권한이 없습니다.");
     }
 }

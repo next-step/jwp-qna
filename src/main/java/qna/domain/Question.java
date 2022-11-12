@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -53,7 +55,13 @@ public class Question extends DateEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    public void validateDelete(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
