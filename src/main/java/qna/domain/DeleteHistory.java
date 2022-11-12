@@ -25,7 +25,8 @@ public class DeleteHistory {
     @CreatedDate
     private LocalDateTime createDate = LocalDateTime.now();
 
-    protected DeleteHistory() {}
+    protected DeleteHistory() {
+    }
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime now) {
         this.contentType = contentType;
@@ -40,8 +41,11 @@ public class DeleteHistory {
         this.deletedBy = deletedBy;
     }
 
-    public static DeleteHistory of(ContentType type, Question question) {
-        return new DeleteHistory(type, question.getId(), question.getWriter());
+    public static DeleteHistory ofAnswer(Long questionId, User deletedBy) {
+        return new DeleteHistory(ContentType.ANSWER, questionId, deletedBy);
+    }
+    public static DeleteHistory ofQuestion(Long questionId, User deletedBy) {
+        return new DeleteHistory(ContentType.QUESTION, questionId, deletedBy);
     }
 
     public Long getId() {

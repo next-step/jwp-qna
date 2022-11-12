@@ -39,7 +39,6 @@ class QuestionRepositoryTest {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = new Question("title1", "contents1").writeBy(user);
         Question saveQuestion = questionRepository.save(question);
-        saveQuestion.deleted();
         Optional<Question> result = questionRepository.findByIdAndDeletedFalse(saveQuestion.getId());
 
         assertThat(result).get().isEqualTo(question);

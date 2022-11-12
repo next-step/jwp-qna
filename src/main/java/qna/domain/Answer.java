@@ -52,14 +52,12 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-
     protected Answer() {
     }
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
-
 
     public Long getId() {
         return id;
@@ -85,7 +83,7 @@ public class Answer extends BaseTimeEntity {
         validCheckDifferentUserAnswerPresent(loginUser);
         deleted();
 
-        return DeleteHistory.of(ContentType.ANSWER, this.question);
+        return DeleteHistory.ofAnswer(question.getId(), question.getWriter());
     }
 
     private void validCheckDifferentUserAnswerPresent(User loginUser) {

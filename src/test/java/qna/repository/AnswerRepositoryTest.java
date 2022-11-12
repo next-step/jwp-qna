@@ -39,7 +39,6 @@ class AnswerRepositoryTest {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
         Answer saveAnswer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
-        saveAnswer.deleted();
 
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(saveAnswer.getId());
 
@@ -80,10 +79,8 @@ class AnswerRepositoryTest {
         User user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         Question question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
         Answer answerA = answerRepository.save(new Answer(user, question, "Answers Contents1"));
-        answerA.deleted();
 
         Answer answerB = answerRepository.save(new Answer(user, question, "Answers Contents1"));
-        answerB.deleted();
 
         List<Answer> result = answerRepository.findByQuestionAndDeletedFalse(answerB.getQuestion());
 

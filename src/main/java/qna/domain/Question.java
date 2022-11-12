@@ -83,8 +83,7 @@ public class Question extends BaseTimeEntity {
     private List<DeleteHistory> deleteHistories(Question question, User loginUser) {
         return makeCombineHistories(
                 answers.delete(loginUser),
-                DeleteHistory.of(ContentType.QUESTION, question)
-        );
+                DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
     }
 
     private List<DeleteHistory> makeCombineHistories(List<DeleteHistory> deleteHistories, DeleteHistory deleteHistory) {
