@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-import qna.config.TruncateConfig;
 
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
 @EnableJpaAuditing
-public class AnswerTest extends TruncateConfig {
+public class AnswerTest {
     private static final String ANSWERS_CONTENTS_1 = "Answers Contents1";
     private static final String ANSWERS_CONTENTS_2 = "Answers Contents2";
 
@@ -35,48 +34,50 @@ public class AnswerTest extends TruncateConfig {
     @Autowired
     UserRepository users;
 
-    private Answer answer1;
-    private Answer answer2;
+    User writer;
+    Question question;
 
     @BeforeEach
     void setUp() {
-        User javajigi = users.save(JAVAJIGI);
-        User sanjigi = users.save(SANJIGI);
-        Question question = questions.save(Q1);
-        answer1 = answers.save(new Answer(javajigi, question, ANSWERS_CONTENTS_1));
-        answer2 = answers.save(new Answer(sanjigi, question, ANSWERS_CONTENTS_2));
+        writer = users.save(new User("userId", "password", "name", "email"));
+        question = questions.save(new Question("Hello", "Why??"));
     }
 
     @Test
     void save_테스트() {
-        assertThat(answer1.getCreatedAt()).isNotNull();
-        assertThat(answer2.getCreatedAt()).isNotNull();
+        Answer answer = new Answer(writer, question, "What?!");
+        Answer saved = answers.save(answer);
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getCreatedAt()).isNotNull();
+        assertThat(saved.getContents()).isEqualTo("What?!");
     }
 
     @Test
     void save_후_findById_테스트() {
-        Optional<Answer> maybe1 = answers.findById(answer1.getId());
-        Optional<Answer> maybe2 = answers.findById(answer2.getId());
-        assertThat(maybe1.isPresent()).isTrue();
-        assertThat(maybe2.isPresent()).isTrue();
+        Answer answer = new Answer(writer, question, "What?!");
+        Answer saved = answers.save(answer);
+        Optional<Answer> maybe = answers.findById(saved.getId());
+        assertThat(maybe.isPresent()).isTrue();
     }
 
     @Test
     void save_후_update_테스트() {
-        String contents = answer1.getContents();
-        answer1.setContents("허억!!");
-        Answer answer2 = answers.findById(answer1.getId()).get();
-        assertThat(contents).isNotEqualTo(answer2.getContents());
+        Answer answer = new Answer(writer, question, "What?!");
+        Answer saved = answers.save(answer);
+        Answer modifiedAnswer = answers.findById(saved.getId()).get();
+        String contents = modifiedAnswer.getContents();
+        modifiedAnswer.setContents("허억!!");
+        Answer checkAnswer = answers.findById(saved.getId()).get();
+        assertThat(contents).isNotEqualTo(checkAnswer.getContents());
     }
 
     @Test
     void save_후_delete_테스트() {
-        answers.delete(answer1);
-        answers.delete(answer2);
-        Optional<Answer> maybe1 = answers.findById(answer1.getId());
-        Optional<Answer> maybe2 = answers.findById(answer2.getId());
-        assertThat(maybe1.isPresent()).isFalse();
-        assertThat(maybe2.isPresent()).isFalse();
+        Answer answer = new Answer(writer, question, "What?!");
+        Answer saved = answers.save(answer);
+        answers.delete(saved);
+        Optional<Answer> maybe = answers.findById(saved.getId());
+        assertThat(maybe.isPresent()).isFalse();
     }
 
     @Test
