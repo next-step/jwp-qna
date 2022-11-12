@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
 import qna.domain.*;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +47,8 @@ class QnaServiceTest {
 
     @Test
     public void delete_성공() throws Exception {
-        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+        Mockito.lenient().when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
+        Mockito.lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
@@ -68,7 +68,7 @@ class QnaServiceTest {
     @Test
     public void delete_성공_질문자_답변자_같음() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
+        Mockito.lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
 
@@ -83,7 +83,7 @@ class QnaServiceTest {
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
+        Mockito.lenient().when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
@@ -91,8 +91,8 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI, LocalDateTime.now()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), UserTest.JAVAJIGI, LocalDateTime.now())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), UserTest.JAVAJIGI),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), UserTest.JAVAJIGI)
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
