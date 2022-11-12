@@ -51,22 +51,6 @@ public class DeleteHistory {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(whoDeleted, that.whoDeleted);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, contentType, contentId, whoDeleted);
-    }
-
-    @Override
     public String toString() {
         return "DeleteHistory{" +
                 "id=" + id +
