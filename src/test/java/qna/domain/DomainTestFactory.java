@@ -1,7 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
-
 public class DomainTestFactory {
 
     public static Answer createAnswer(User user, Question question) {
@@ -17,6 +15,6 @@ public class DomainTestFactory {
     }
 
     public static DeleteHistory createDeleteHistory(ContentType contentType, Long contentId, User user) {
-        return new DeleteHistory(contentType, contentId, user, LocalDateTime.now());
+        return new DeleteHistory(contentType, contentId, user);
     }
 }

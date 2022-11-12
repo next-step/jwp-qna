@@ -1,12 +1,15 @@
 package qna.domain;
 
 import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "delete_history")
 public class DeleteHistory {
 
@@ -19,18 +22,26 @@ public class DeleteHistory {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
-    private User deletedById;
-    private LocalDateTime createDate = LocalDateTime.now();
+    private User deletedBy;
+
+    @CreatedDate
+    private LocalDateTime createDate;
 
     protected DeleteHistory() {
-
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
-        this.createDate = createDate;
+        this.deletedBy = deletedBy;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
     @Override
@@ -52,8 +63,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
+                ", deletedBy=" + deletedBy +
                 '}';
     }
 }
