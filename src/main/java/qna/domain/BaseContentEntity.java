@@ -85,10 +85,6 @@ public abstract class BaseContentEntity extends BaseDateTimeEntity {
         this.deleted = deleted;
     }
 
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
-
     @Override
     public String toString() {
         return "BaseContentEntity{" +
