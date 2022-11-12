@@ -123,14 +123,36 @@ alter table question
 ```
 
 ### TODO
-- [ ] question entity 수정
-- [ ] answer entity 수정
-- [ ] delete_history entity 수정
-- [ ] 해당 TestCodes수정
-- [ ] (Optional) 필요하다면 해당 ServiceCode , Test수정
+- [x] Apply Step1 Feedback
+	- [x] Renameing TestClass Names to XXRepoTest
+- [x] Question entity 수정
+- [x] QuestionRepositoryTest수정
+- [x] DeleteHistory Entity수정
+- [x] Answer entity 수정
+- [x] Answer Repository  Test수정
+	- [x] 새로 추가한 메서드두 테스트
+- [x] User Repository Test수정
+- [x] (Optional) 필요하다면 해당 ServiceCode , Test수정
+- [x] (Optional) FK 붙이기
 
+- [x] TestFixture고치기
+	- [x] JPA 테스트에서 테스트 대상을 static으로 만들어놓고 재사용하게 되면 여러가지 문제가 될 것을 고려하여,  컨텍스트 격리를 고려한 테스트 픽스처 작성
+
+- [x] QnA서비스수정
+- [x] QnA서비스테스트가 영향없는 것 확인
+
+- [x] 더이상 쓰이지 않는 코드들 + 테스트 코드 삭제(아이디관련한 메서드들)
+
+- [x] DB 스키마는 변경 안된 것 확인
+
+---
+### 고려사항
+- [x] 먼저 단방향으로 설계 끝내기
+- LAZY의 이점과, 고려할점 을 확인하기까지는,  LAZY걸지 않고 설계하기.
+- 굳이 양방향으로 만들 필요 있나 모든 설계 끝나고 재 확인
+	- 필요하다면 편의 메서드 만들기 for Testing
+	- 무한루프 가능성 체크하기(toString(), lombok, JSON생성)
 ### Note
-
 * JPA는, ID기반.
 * JPA는, Dynamic Proxy기반?으로 생성하기에, default constructor필요.
 * CLOB = Character Large OBject
@@ -148,7 +170,7 @@ alter table question
 
 ##### Q: Generation Type attributes?
 
-##### Q: 무조건 다 @Column속성 지정해야 하나?
+##### Fixed : 무조건 다 @Column속성 지정해야 하나?
 ->  NO
 ```java
 /**
@@ -181,11 +203,10 @@ alter table question
  */ 
 ```
 
-##### Q : sql.TimeStamp vs Date vs LocalDateTime?
+##### Fixed : sql.TimeStamp vs Date vs LocalDateTime?
 - Data : 모호한 설계 와 가변성/ 시간을 MS초로 표현 /1900년 시작 Offset / 0으로 시작하는 달 인덱스 / 중앙유럽시간
 - LocalDateTime (from Java8) : 불변/ NS까지 표현가능 /. No Offset / 1로 시작하는 달 인덱스
 - TimeStamp : NS까지 표현 가능
-
 
 ##### Q: How to set Unique Constraints in JPA?
 - Unique key is a set of single or multiple columns of a table that uniquely identify a record in a database table
@@ -194,20 +215,31 @@ alter table question
 - Table Constraints -> @UniqueConstraint. 
 - Refer : https://www.baeldung.com/jpa-unique-constraints
 
-##### Q : JPA Buddy plug in으로 무엇이 가능한지?
+##### Fixed : JPA Buddy plug in으로 무엇이 가능한지?
 - Refer : https://www.jpa-buddy.com/?utm_source=baeldung&utm_medium=display&utm_campaign=npi
 
 ##### Q : 	BaseTimeEntity를 상속한 엔티티클래스에서, Super 생성자를 부르지 않는데,  어떻게 컴파일이 되는건지? @MappedSuperclass 동작 확인
 
-##### Q : Entity의 ID 필드를 논리 동치성(동등성) 계산시 포함해야 하나?
+##### Fixed : Entity의 ID 필드를 논리 동치성(동등성) 계산시 포함해야 하나?
 - 만약 포함한다면, DB보존 전후로, equals()를 통한 동등성 계산에 실패하게 된다.
 	- 개체 생성시 ID가 존재 하지 않는 개체는 , JPA통해 save후에는 ID가 존재하게 되므로.
-	- 이게 맞나?
-	- 굳이 지금 요구사항을 모르는데, 섣부르게 동등성 판단을 하려고 하는게 아닌가?
-	- Step1에서는 동등성 계산 보류.
+	- 결론 : PK를 가지고 구현. 이 경우 영속화되기 전의 객체는  equals, hashcode 가 제대로 동작하지 않을 가능성이 있지만, 컨벤션을 통해 보완하기.
 
 ##### Q : save전후로 참조 요소가 달라지는건, ID속성이 NULL일때만 아니었나? 
 
 
 ##### Q : LAZY의 성능 이점 이외의 Pros과 Consideration
 - LazyInitializationException, N+1 query, fetch join, @BatchSize, entity graph 키워드를 순서대로 찾아서 학습
+- 고려Case : LAZY로 연관관계가 설정된 객체를, 트랜잭션 범위 밖(커넥션이 없는 상태)에서 toString 이 호출할 경우 생기는 문제
+
+##### Fixed : Can’t connect to H2 v2.1.214 from IntelliJ
+- Cause : IntelliJ tries to fetch the table names, using the statement
+SELECT CATALOG_NAME FROM INFORMATION_SCHEMA.CATALOGS
+which is only supported for H2 1.4.200 and older.
+- Solution : As workaround to use IntelliJ with newer H2 drivers the old behavior can be activated by adding OLD_INFORMATION_SCHEMA=TRUE to the connect string.
+- Refer : https://github.com/JetBrains/jetbrains_guide/issues/215
+
+##### Fixed : 42001 Syntax error when create table user
+- Cause : Needed to add Identifier
+- ASIS : ```create table user```
+- TOBE : ```create table "USER"```
