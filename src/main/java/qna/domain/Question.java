@@ -1,11 +1,27 @@
 package qna.domain;
 
-public class Question {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+
+@Entity
+public class Question extends Timestamped {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
+    @Lob
     private String contents;
-    private Long writerId;
     private boolean deleted = false;
+    @Column(length = 100, nullable = false)
+    private String title;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -17,13 +33,16 @@ public class Question {
         this.contents = contents;
     }
 
+    public Question() {
+    }
+
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return getWriterId().equals(writer.getId());
     }
 
     public void addAnswer(Answer answer) {
@@ -55,11 +74,11 @@ public class Question {
     }
 
     public Long getWriterId() {
-        return writerId;
+        return writer.getId();
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public boolean isDeleted() {
@@ -73,11 +92,11 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", contents='" + contents + '\'' +
+            ", writerId=" + getWriterId() +
+            ", deleted=" + deleted +
+            '}';
     }
 }
