@@ -8,4 +8,4 @@
   - [x] UserRepository 구현
   - [x] QuestionRepository 구현
   - [x] DeleteHistoryRepository 구현
-  - [ ] AnswerRepository 구현
+  - [x] AnswerRepository 구현
