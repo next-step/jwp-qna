@@ -16,7 +16,7 @@ class UserRepositoryTest {
     void 유저_저장() {
         User actual = new User("userId", "password", "name", "email");
         User expected = userRepository.save(actual);
-        assertThat(actual).isEqualTo(expected);
+        assertThat(expected).isEqualTo(actual);
     }
 
     @Test
