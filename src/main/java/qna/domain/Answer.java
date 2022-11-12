@@ -60,6 +60,7 @@ public class Answer extends BaseTimeEntity {
         return this.writer.equals(writer);
     }
 
+
     public Long getId() {
         return id;
     }
