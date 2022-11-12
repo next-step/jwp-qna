@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.AnswerRepository;
-import qna.domain.DeleteHistoryMaker;
+import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
 import qna.domain.User;
@@ -38,6 +38,6 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         question.softDeleteBy(loginUser);
         questionRepository.save(question);
-        deleteHistoryService.saveAll(DeleteHistoryMaker.fromQuestion(question));
+        deleteHistoryService.saveAll(DeleteHistory.listFromQuestion(question));
     }
 }
