@@ -1,18 +1,25 @@
 package qna.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue
+    @Column(name = "question_id")
     private Long id;
     @Column(nullable = false)
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
+    private User writer;
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -31,15 +38,16 @@ public class Question extends BaseEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -55,15 +63,19 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
-    }
-
     public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public User getWriter() {
+        return this.writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
     }
 }

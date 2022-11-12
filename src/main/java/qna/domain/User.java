@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
@@ -21,7 +20,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String name;
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String userId;
 
     protected User() {
