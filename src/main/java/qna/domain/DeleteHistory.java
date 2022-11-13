@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -41,17 +43,19 @@ public class DeleteHistory {
     @Column(name = "created_date")
     private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    public static DeleteHistory fromQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory fromAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+    }
+
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
-    }
-
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
-        this.contentType = contentType;
-        this.contentId = contentId;
-        this.deletedByUser = deletedByUser;
     }
 
     protected DeleteHistory() {
@@ -59,6 +63,10 @@ public class DeleteHistory {
 
     public void toDeletedUser(User user) {
         this.deletedByUser = user;
+    }
+
+    public Long getContentId() {
+        return contentId;
     }
 
     @Override
@@ -91,6 +99,15 @@ public class DeleteHistory {
                 ", deletedById=" + deletedByUser.getUserId() +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    public static List<DeleteHistory> listFromQuestion(Question question) {
+        final List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteHistoryList.add(fromQuestion(question));
+        for (Answer answer : question.getAnswers()) {
+            deleteHistoryList.add(fromAnswer(answer));
+        }
+        return deleteHistoryList;
     }
 }
 

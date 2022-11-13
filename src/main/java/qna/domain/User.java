@@ -4,15 +4,11 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,7 +16,6 @@ import java.util.Objects;
         @UniqueConstraint(columnNames = { "user_id" })
 })
 public class User extends BaseDateTimeEntity {
-    public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +28,6 @@ public class User extends BaseDateTimeEntity {
     private String name;
     @Column(name = "email", length = 50)
     private String email;
-
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
-    private final List<Answer> answerList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
-    private final List<Question> questionList = new ArrayList<>();
 
     protected User() {
 
@@ -128,23 +117,6 @@ public class User extends BaseDateTimeEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void addQuestion(Question question) {
-        if (!questionList.contains(question)) {
-            questionList.add(question.writeBy(this));
-        }
-    }
-
-    public void addAnswer(Answer answer) {
-        if (!answerList.contains(answer)) {
-            answerList.add(answer);
-            answer.setWriter(this);
-        }
-    }
-
-    public List<Question> getQuestionList() {
-        return questionList;
     }
 
     @Override

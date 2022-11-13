@@ -1,18 +1,22 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
@@ -20,31 +24,35 @@ public class Question extends BaseDateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title", length = 100, nullable = false)
-    private String title;
-    @Lob
-    @Column(name = "contents")
-    private String contents;
+
+    @Embedded
+    @AttributeOverride(name = "name", column = @Column(name = "title", length = 100, nullable = false))
+    private Title title;
+
+    @Embedded
+    @AttributeOverride(name = "content", column = @Column(name = "contents"))
+    private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
-    @Column(name = "deleted", nullable = false)
-    private boolean deleted = false;
+    @Embedded
+    @AttributeOverride(name = "deleted", column = @Column(name = "deleted", nullable = false))
+    private DeleteFlag deleted = DeleteFlag.notDeleted();
 
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answerList;
+    private Set<Answer> answers = new HashSet<>();
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
         this.title = title;
         this.contents = contents;
     }
 
-    public Question(Long id, String title, String contents, LocalDateTime createdAt) {
+    public Question(Long id, Title title, Contents contents, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -59,18 +67,13 @@ public class Question extends BaseDateTimeEntity {
         return this;
     }
 
-    public void toWriter(User user) {
-    }
-
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        if (!answerList.contains(answer)) {
-            answerList.add(answer);
-            answer.toQuestion(this);
-        }
+        this.answers.add(answer);
+        answer.toQuestion(this);
     }
 
     public Long getId() {
@@ -81,19 +84,19 @@ public class Question extends BaseDateTimeEntity {
         this.id = id;
     }
 
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(Title title) {
         this.title = title;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void updateContents(Contents contents) {
         this.contents = contents;
     }
 
@@ -106,15 +109,28 @@ public class Question extends BaseDateTimeEntity {
     }
 
     public boolean isDeleted() {
-        return deleted;
+        return deleted.getDeleted();
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(DeleteFlag deleted) {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswerList() {
-        return answerList;
+    public void softDeleteBy(User loginUser) throws CannotDeleteException {
+        checkDeleteableOwner(loginUser);
+        checkAnswersOwner();
+        if (!answers.isEmpty()) {
+            answers.forEach(answer -> answer.deleteStatus(DeleteFlag.deleted()));
+        }
+        deleted = DeleteFlag.deleted();
+    }
+
+    public void updateAnswers(Set<Answer> answers) {
+        this.answers = answers;
+    }
+
+    public Set<Answer> getAnswers() {
+        return answers;
     }
 
     @Override
@@ -143,5 +159,20 @@ public class Question extends BaseDateTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    private void checkDeleteableOwner(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void checkAnswersOwner() throws CannotDeleteException {
+        boolean isAllOwner = answers.stream()
+                .filter(answer -> !answer.isDeleted())
+                .allMatch(answer -> answer.isOwner(writer));
+        if (!isAllOwner) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }
