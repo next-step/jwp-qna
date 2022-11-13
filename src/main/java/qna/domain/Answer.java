@@ -47,6 +47,19 @@ public class Answer extends BaseEntity {
         this.contents = contents;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return id.equals(answer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }

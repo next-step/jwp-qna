@@ -91,5 +91,8 @@ public class Question extends BaseEntity {
             }
         }
         this.deleted = true;
+        for (Answer answer : this.answers) {
+            answer.setDeleted(true);
+        }
     }
 }
