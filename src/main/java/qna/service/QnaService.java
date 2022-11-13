@@ -34,6 +34,7 @@ public class QnaService {
         Answers answers = new Answers(findByQuestionIdAndDeletedFalse(questionId, loginUser));
 
         DeleteHistories deleteHistories = new DeleteHistories();
+        question.setDeleted();
         deleteHistories.addQuestionDeleteHistory(question, loginUser);
         deleteHistories.addAnswersDeleteHistory(answers, loginUser);
 

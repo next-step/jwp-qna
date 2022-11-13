@@ -16,7 +16,6 @@ public class DeleteHistories {
     }
 
     public void addQuestionDeleteHistory(Question question, User loginUser) {
-        question.setDeleted();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, question.getId(), loginUser));
     }
 
