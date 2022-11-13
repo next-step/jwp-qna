@@ -7,11 +7,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 public class AnswerTest {
@@ -86,6 +87,21 @@ public class AnswerTest {
         //then
         assertThat(answers.findById(answer.getId()).orElse(null)).isNull();
         assertThat(deleteHistory).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("유저에게 정상 삭제권한이 있는 경우 테스트")
+    void checkDeleteAnswer_validate_test() {
+        assertThatCode(() -> A1.checkDeleteAuth(UserTest.JAVAJIGI))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("삭제권한이 없는 유저가 삭제 테스트")
+    void checkDeleteAnswer_invalidate_test() {
+        assertThatThrownBy(() -> A1.checkDeleteAuth(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 
 }
