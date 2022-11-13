@@ -99,7 +99,7 @@ public class Answer extends BaseEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writer=" + writer +
-                ", question=" + question +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
