@@ -42,6 +42,10 @@ public class Answers {
         return answers.size();
     }
 
+    public void isOwner(User loginUser) {
+        answers.forEach(answer -> answer.isOwner(loginUser));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -30,8 +30,10 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
-        Question question = findQuestionById(questionId, loginUser);
-        Answers answers = new Answers(findByQuestionIdAndDeletedFalse(questionId, loginUser));
+        Question question = findQuestionById(questionId);
+        question.isOwner(loginUser);
+        Answers answers = new Answers(findByQuestionIdAndDeletedFalse(questionId));
+        answers.isOwner(loginUser);
 
         DeleteHistories deleteHistories = new DeleteHistories();
         question.setDeleted();
@@ -42,16 +44,12 @@ public class QnaService {
     }
 
     @Transactional(readOnly = true)
-    public Question findQuestionById(Long id, User loginUser) {
-        Question question = questionRepository.findByIdAndDeletedFalse(id).orElseThrow(NotFoundException::new);
-        question.isOwner(loginUser);
-        return question;
+    public Question findQuestionById(Long questionId) {
+        return questionRepository.findByIdAndDeletedFalse(questionId).orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)
-    public List<Answer> findByQuestionIdAndDeletedFalse(Long id, User loginUser){
-        List<Answer> answers = answerRepository.findByQuestion_IdAndDeletedFalse(id);
-        answers.forEach(answer -> answer.isOwner(loginUser));
-        return answers;
+    public List<Answer> findByQuestionIdAndDeletedFalse(Long questionId){
+        return answerRepository.findByQuestion_IdAndDeletedFalse(questionId);
     }
 }
