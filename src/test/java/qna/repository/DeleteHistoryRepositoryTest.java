@@ -62,7 +62,6 @@ class DeleteHistoryRepositoryTest {
                 () -> assertThat(findDeleteHistory.getDeletedById()).isNotNull());
     }
 
-
     @DisplayName("삭제 내역 리스트 저장.")
     @Test
     void add() {
