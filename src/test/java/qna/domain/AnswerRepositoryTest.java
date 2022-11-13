@@ -30,8 +30,7 @@ class AnswerRepositoryTest {
             "contents");
         Answer saved = answerRepository.save(actual);
         Optional<Answer> expected = answerRepository.findByIdAndDeletedFalse(saved.getId());
-        assertThat(expected).isPresent();
-        assertThat(expected).contains(actual);
+        assertThat(expected).hasValue(actual);
     }
 
     @Test
@@ -42,7 +41,6 @@ class AnswerRepositoryTest {
             "contents");
         Answer saved = answerRepository.save(actual);
         Optional<Answer> expected = answerRepository.findByIdAndDeletedFalse(saved.getId());
-        assertThat(expected).isPresent();
-        assertThat(expected).contains(actual);
+        assertThat(expected).hasValue(actual);
     }
 }

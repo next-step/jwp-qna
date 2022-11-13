@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,15 +26,16 @@ class QuestionRepositoryTest {
         Question actual = new Question("title", "contents");
         questionRepository.save(actual);
         Optional<Question> expected = questionRepository.findById(1L);
-        assertThat(expected).isPresent();
-        assertThat(expected.get()).isEqualTo(actual);
+        assertThat(expected).hasValue(actual);
     }
 
     @Test
     void findByDeletedFalse() {
         Question actual = questionRepository.save(new Question("title", "contents"));
         List<Question> expected = questionRepository.findAllByDeletedFalse();
-        assertThat(expected).hasSize(1);
-        assertThat(expected).contains(actual);
+        assertAll(
+            () -> assertThat(expected).hasSize(1),
+            () -> assertThat(expected).contains(actual)
+        );
     }
 }
