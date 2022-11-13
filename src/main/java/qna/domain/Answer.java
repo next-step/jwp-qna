@@ -84,11 +84,11 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public Question getQuestion() {
         return this.question;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

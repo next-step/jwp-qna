@@ -68,10 +68,6 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public User getWriter() {
         return this.writer;
     }

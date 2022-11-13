@@ -20,7 +20,7 @@ public class Answers {
     public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
         validateWriters(loginUser);
         for (Answer answer : this.answers) {
-            answer.setDeleted(true);
+            answer.delete();
         }
         return createDeleteHistories(loginUser);
     }

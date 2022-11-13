@@ -85,12 +85,13 @@ class QuestionRepositoryTest {
 
     @DisplayName("삭제_성공")
     @Test
-    void delete() {
+    void delete() throws CannotDeleteException {
 
-        Question question = createQuestion(createUser(UserTest.JAVAJIGI), QUESTION_1);
+        User javajigi = createUser(UserTest.JAVAJIGI);
+        Question question = createQuestion(javajigi, QUESTION_1);
         assertThat(question).isNotNull();
 
-        question.setDeleted(true);
+        question.delete(javajigi);
 
         questionRepository.save(question);
 

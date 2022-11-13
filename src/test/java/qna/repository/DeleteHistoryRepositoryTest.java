@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.*;
 
 import java.util.List;
@@ -45,17 +46,16 @@ class DeleteHistoryRepositoryTest {
 
     @DisplayName("조회_성공")
     @Test
-    void find() {
+    void find() throws CannotDeleteException {
 
         User javajigi = createUser(UserTest.JAVAJIGI);
-        Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
-
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
-
-        DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId()).orElse(null);
+        List<DeleteHistory> deleteHistories = deleteHistoryRepository.saveAll(createQuestion(javajigi, QuestionTest.QUESTION_1).delete(javajigi).getDeleteHistories());
+        Long deleteHistoryId = deleteHistories.get(0).getId();
+        
+        DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(deleteHistoryId).orElse(null);
 
         assertAll(
-                () -> assertThat(findDeleteHistory.getId()).isEqualTo(deleteHistory.getId()),
+                () -> assertThat(findDeleteHistory.getId()).isEqualTo(deleteHistoryId),
                 () -> assertThat(findDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION),
                 () -> assertThat(findDeleteHistory.getContentId()).isNotNull(),
                 () -> assertThat(findDeleteHistory.getCreateDate()).isNotNull(),
