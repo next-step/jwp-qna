@@ -16,7 +16,7 @@ public class Answer extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_user"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -67,12 +67,13 @@ public class Answer extends BaseEntity {
         return this.writer;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isOwner(User owner) {
+        return this.writer.equals(owner);
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         this.deleted = true;
+        return DeleteHistory.ofAnswer(this);
     }
 
     public boolean isDeleted() {
@@ -80,7 +81,11 @@ public class Answer extends BaseEntity {
     }
 
     public void toQuestion(Question question) {
+        if(question.equals(this.question)) {
+            return;
+        }
         this.question = question;
+        question.addAnswer(this);
     }
 
     @Override

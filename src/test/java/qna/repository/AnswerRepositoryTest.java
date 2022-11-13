@@ -55,21 +55,6 @@ class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("주어진 질문의 ID로 다수 조회한다.")
-    void find_answers_with_question_id_test() {
-        Answer answer = new Answer(writer, question, "content");
-        answerRepository.saveAll(Arrays.asList(
-                answer,
-                new Answer(writer, question, "content2"),
-                new Answer(writer, question, "content3")
-        ));
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
-
-        assertThat(answers).contains(answer);
-    }
-
-    @Test
     @DisplayName("주어진 작성자로 다수 조회한다.")
     void find_answers_with_writer() {
         answerRepository.saveAll(Arrays.asList(
