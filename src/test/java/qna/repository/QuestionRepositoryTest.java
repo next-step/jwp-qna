@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.Question;
@@ -87,20 +86,24 @@ class QuestionRepositoryTest {
     @Test
     void delete() throws CannotDeleteException {
 
+        // Given
         User javajigi = createUser(UserTest.JAVAJIGI);
         Question question = createQuestion(javajigi, QUESTION_1);
         assertThat(question).isNotNull();
-
         question.delete(javajigi);
 
+        // When
         questionRepository.save(question);
 
+        // Then
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).isNotPresent();
     }
 
     @DisplayName("답변이 있으면 삭제할 수 없다.")
     @Test
     void delete_fail_exist_question() {
+
+        // Given
         User javajigi = createUser(UserTest.JAVAJIGI);
         User sanjigi = createUser(UserTest.SANJIGI);
         Question question = createQuestion(javajigi, QUESTION_1);
@@ -108,6 +111,7 @@ class QuestionRepositoryTest {
         assertThat(question).isNotNull();
         assertThat(question.getAnswers()).hasSize(1);
 
+        // When And Then
         assertThatThrownBy(() -> question.delete(javajigi))
                 .isInstanceOf(CannotDeleteException.class);
     }

@@ -51,7 +51,7 @@ class DeleteHistoryRepositoryTest {
         User javajigi = createUser(UserTest.JAVAJIGI);
         List<DeleteHistory> deleteHistories = deleteHistoryRepository.saveAll(createQuestion(javajigi, QuestionTest.QUESTION_1).delete(javajigi).getDeleteHistories());
         Long deleteHistoryId = deleteHistories.get(0).getId();
-        
+
         DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(deleteHistoryId).orElse(null);
 
         assertAll(
@@ -64,19 +64,14 @@ class DeleteHistoryRepositoryTest {
 
     @DisplayName("삭제 내역 리스트 저장.")
     @Test
-    void add() {
+    void add() throws CannotDeleteException {
 
         User javajigi = createUser(UserTest.JAVAJIGI);
         Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
 
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
+        List<DeleteHistory> deleteHistories = deleteHistoryRepository.saveAll(question.delete(javajigi).getDeleteHistories());
 
-        DeleteHistories deleteHistories = new DeleteHistories();
-        deleteHistories.add(deleteHistory);
-
-        List<DeleteHistory> histories = deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistories());
-
-        assertThat(histories.size()).isEqualTo(1);
+        assertThat(deleteHistories).hasSize(1);
     }
 
     private User createUser(User user) {
