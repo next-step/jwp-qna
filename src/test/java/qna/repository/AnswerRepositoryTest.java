@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import qna.config.JpaAuditConfig;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
@@ -17,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(JpaAuditConfig.class)
 @DataJpaTest
 class AnswerRepositoryTest {
 
