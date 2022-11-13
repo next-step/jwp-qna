@@ -1,14 +1,10 @@
 package qna.domain;
 
-import org.hibernate.annotations.Where;
 import qna.NotFoundException;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -26,9 +22,8 @@ public class  Question extends TimeEntity {
     private User writer;
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question")
-    @Where(clause = "deleted = false")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -58,7 +53,7 @@ public class  Question extends TimeEntity {
             throw new NotFoundException();
         }
         answer.toQuestion(this);
-        this.answers.add(answer);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -111,17 +106,13 @@ public class  Question extends TimeEntity {
                 '}';
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 
     public void deleteAnswer(Answer deletedAnswer) {
-        getAnswers().stream()
-            .filter(deletedAnswer::equals)
-            .forEach(answer -> answer.setDeleted(true));
-        this.answers = getAnswers().stream()
-            .filter(answer -> !answer.isDeleted())
-            .collect(Collectors.toList());
+        answers.deleteAnswer(deletedAnswer);
+        answers.refreshAnswerWithoutDelete();
     }
 
     public User getWriter() {
