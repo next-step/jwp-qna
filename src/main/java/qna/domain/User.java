@@ -1,12 +1,11 @@
 package qna.domain;
 
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
+import qna.UnAuthorizedException;
 
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
-
+    
     private Long id;
     private String userId;
     private String password;

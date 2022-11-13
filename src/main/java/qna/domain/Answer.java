@@ -1,9 +1,8 @@
 package qna.domain;
 
+import java.util.Objects;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
-
-import java.util.Objects;
 
 public class Answer {
     private Long id;
