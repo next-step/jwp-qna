@@ -85,7 +85,7 @@ public class Answer extends DateEntity {
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
         validateDelete(loginUser);
-        setDeleted(true);
+        this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, getWriter(), LocalDateTime.now());
     }
 
@@ -100,10 +100,6 @@ public class Answer extends DateEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

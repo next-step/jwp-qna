@@ -46,10 +46,6 @@ public class Question extends DateEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -57,7 +53,7 @@ public class Question extends DateEntity {
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
         validateDelete(loginUser);
-        setDeleted(true);
+        this.deleted = true;
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
         deleteHistories.add(answers.deleteAll(loginUser));
@@ -96,10 +92,6 @@ public class Question extends DateEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
