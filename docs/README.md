@@ -27,7 +27,7 @@
     - [x] delete_history 조회 테스트
 
 ## DeleteHistories
-- [ ] 삭제 내역을 추가한다.
+- [x] 삭제 내역을 추가한다.
 
 ## Question
 
