@@ -2,7 +2,6 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 
 import java.util.Arrays;
 
@@ -23,12 +22,13 @@ class DeleteHistoriesTest {
 
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(DeleteHistory.ofQuestion(question.getId(), javajigi));
+
         assertThat(deleteHistories.size()).isEqualTo(1);
     }
 
     @DisplayName("삭제 내역을 리스트를 추가한다.")
     @Test
-    void addAll() throws CannotDeleteException {
+    void addAll() {
 
         User javajigi = UserTest.JAVAJIGI_ID;
 
@@ -41,6 +41,7 @@ class DeleteHistoriesTest {
 
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.addAll(Arrays.asList(DeleteHistory.ofAnswer(answer1.getId(), javajigi), DeleteHistory.ofAnswer(answer2.getId(), javajigi)));
+
         assertThat(deleteHistories.size()).isEqualTo(2);
     }
 }
