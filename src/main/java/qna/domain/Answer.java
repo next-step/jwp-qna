@@ -12,10 +12,10 @@ public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
@@ -42,6 +42,7 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
+        question.addAnswer(this);
         this.question = question;
         this.contents = contents;
     }
@@ -74,9 +75,13 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-
     public void delete(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void setQuestion(Question question){
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
     @Override
