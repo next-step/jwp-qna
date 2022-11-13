@@ -30,7 +30,7 @@ class QuestionRepositoryTest {
     }
 
     @Test
-    void findByDeletedFalse() {
+    void 삭제된_질문조회() {
         Question actual = questionRepository.save(new Question("title", "contents"));
         List<Question> expected = questionRepository.findAllByDeletedFalse();
         assertAll(
