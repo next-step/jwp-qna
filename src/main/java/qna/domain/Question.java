@@ -4,10 +4,12 @@ import qna.NotFoundException;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class Question extends TimeEntity {
+public class  Question extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -15,9 +17,13 @@ public class Question extends TimeEntity {
     private String title;
     @Lob
     private String contents;
-    private Long writerId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
     @Column(nullable = false, columnDefinition = "bit")
     private boolean deleted = false;
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -34,12 +40,12 @@ public class Question extends TimeEntity {
     }
 
     public Question writeBy(User writer) {
-        this.writerId = writer.getId();
+        this.writer = writer;
         return this;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -47,6 +53,7 @@ public class Question extends TimeEntity {
             throw new NotFoundException();
         }
         answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -74,11 +81,10 @@ public class Question extends TimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        if (Objects.isNull(writer)) {
+            return null;
+        }
+        return writer.getId();
     }
 
     public boolean isDeleted() {
@@ -95,8 +101,21 @@ public class Question extends TimeEntity {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writer=" + writer.toString() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Answers getAnswers() {
+        return this.answers;
+    }
+
+    public void deleteAnswer(Answer deletedAnswer) {
+        answers.deleteAnswer(deletedAnswer);
+        answers.refreshAnswerWithoutDelete();
+    }
+
+    public User getWriter() {
+        return this.writer;
     }
 }

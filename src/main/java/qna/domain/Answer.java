@@ -13,8 +13,12 @@ public class Answer extends TimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Long writerId;
-    private Long questionId;
+    @ManyToOne
+    @JoinColumn(name = "writer_id")
+    private User writer;
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false, columnDefinition = "bit")
@@ -35,8 +39,8 @@ public class Answer extends TimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
@@ -45,11 +49,11 @@ public class Answer extends TimeEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -61,19 +65,17 @@ public class Answer extends TimeEntity {
     }
 
     public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+        if (Objects.isNull(writer)) {
+            return null;
+        }
+        return writer.getId();
     }
 
     public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+        if (Objects.isNull(question)) {
+            return null;
+        }
+        return question.getId();
     }
 
     public String getContents() {
@@ -93,26 +95,17 @@ public class Answer extends TimeEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Answer answer = (Answer) o;
-        return Objects.equals(id, answer.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writer=" + writer.toString() +
+                ", question=" + question.toString() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public User getWriter() {
+        return this.writer;
     }
 }

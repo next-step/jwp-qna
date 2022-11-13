@@ -1,67 +1,79 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.context.annotation.Import;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.config.JpaAuditingConfiguration;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.domain.QuestionTest.Q1;
+import static qna.domain.UserTest.JAVAJIGI;
+import static qna.domain.UserTest.SANJIGI;
 
 @DataJpaTest
-@EnableJpaAuditing
+@Import(JpaAuditingConfiguration.class)
 public class AnswerTest {
     private static final String ANSWERS_CONTENTS_1 = "Answers Contents1";
     private static final String ANSWERS_CONTENTS_2 = "Answers Contents2";
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, ANSWERS_CONTENTS_1);
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, ANSWERS_CONTENTS_2);
+    public static final Answer A1 = new Answer(JAVAJIGI, Q1, ANSWERS_CONTENTS_1);
+    public static final Answer A2 = new Answer(SANJIGI, Q1, ANSWERS_CONTENTS_2);
 
     @Autowired
     AnswerRepository answers;
 
-    @ParameterizedTest(name = "save_테스트")
-    @MethodSource("answerTestFixture")
-    void save_테스트(Answer answer) {
-        Answer saved = answers.save(answer);
-        assertThat(saved.getContents()).isEqualTo(answer.getContents());
-        assertThat(saved.getCreatedAt()).isNotNull();
+    @Autowired
+    QuestionRepository questions;
+
+    @Autowired
+    UserRepository users;
+
+    User writer;
+    Question question;
+    Answer answer;
+
+    @BeforeEach
+    void setUp() {
+        writer = users.save(new User("userId", "password", "name", "email"));
+        question = questions.save(new Question("Hello", "Why??"));
+        answer = answers.save(new Answer(writer, question, "What?!"));
     }
 
-    @ParameterizedTest(name = "save_후_findById_테스트")
-    @MethodSource("answerTestFixture")
-    void save_후_findById_테스트(Answer answer) {
-        Answer answer1 = answers.save(answer);
-        Answer answer2 = answers.findById(answer1.getId()).get();
-        assertThat(answer1).isEqualTo(answer2);
-        assertThat(answer1.getContents()).isEqualTo(answer2.getContents());
+    @Test
+    void save_테스트() {
+        assertThat(answer.getId()).isNotNull();
+        assertThat(answer.getCreatedAt()).isNotNull();
+        assertThat(answer.getContents()).isEqualTo("What?!");
     }
 
-    @ParameterizedTest(name = "save_후_update_테스트")
-    @MethodSource("answerTestFixture")
-    void save_후_update_테스트(Answer answer) {
-        Answer answer1 = answers.save(answer);
-        String original = answer1.getContents();
-        answer1.setContents("허억!!");
-        Answer answer2 = answers.findById(answer1.getId()).get();
-        assertThat(answer1).isEqualTo(answer2);
-        assertThat(original).isNotEqualTo(answer2.getContents());
+    @Test
+    void save_후_findById_테스트() {
+        Optional<Answer> maybe = answers.findById(answer.getId());
+        assertThat(maybe.isPresent()).isTrue();
+        assertThat(maybe.get()).isEqualTo(answer);
     }
 
-    @ParameterizedTest(name = "save_후_delete_테스트")
-    @MethodSource("answerTestFixture")
-    void save_후_delete_테스트(Answer answer) {
-        Answer saved = answers.save(answer);
-        answers.delete(saved);
-        Optional<Answer> answersById = answers.findById(answer.getId());
-        assertThat(answersById.isPresent()).isFalse();
+    @Test
+    void save_후_update_테스트() {
+        Answer modifiedAnswer = answers.findById(answer.getId()).get();
+        String contents = modifiedAnswer.getContents();
+        modifiedAnswer.setContents("허억!!");
+        Answer checkAnswer = answers.findById(answer.getId()).get();
+        assertThat(contents).isNotEqualTo(checkAnswer.getContents());
+    }
+
+    @Test
+    void save_후_delete_테스트() {
+        answers.delete(answer);
+        Optional<Answer> maybe = answers.findById(answer.getId());
+        assertThat(maybe.isPresent()).isFalse();
     }
 
     @Test
@@ -75,9 +87,5 @@ public class AnswerTest {
         assertThatThrownBy(() ->
             new Answer(new User("victor-jo", "password", "victor", "mail"), null, "Jun"))
             .isInstanceOf(NotFoundException.class);
-    }
-
-    static Stream<Answer> answerTestFixture() {
-        return Stream.of(A1, A2);
     }
 }

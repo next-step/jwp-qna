@@ -20,19 +20,21 @@ public class DeleteHistory {
     @Column
     private ContentType contentType;
     private Long contentId;
-    private Long deletedById;
+    @ManyToOne
+    @JoinColumn(name = "deleted_by_id")
+    private User whoDeleted;
     @CreatedDate
     private LocalDateTime createDate;
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
-        this(null, contentType, contentId, deletedById, createDate);
+    public DeleteHistory(ContentType contentType, Long contentId, User whoDeleted, LocalDateTime createDate) {
+        this(null, contentType, contentId, whoDeleted, createDate);
     }
 
-    public DeleteHistory(Long id, ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(Long id, ContentType contentType, Long contentId, User whoDeleted, LocalDateTime createDate) {
         this.id = id;
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.whoDeleted = whoDeleted;
         this.createDate = createDate;
     }
 
@@ -49,29 +51,26 @@ public class DeleteHistory {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
-    }
-
-    @Override
     public String toString() {
         return "DeleteHistory{" +
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", whoDeleted=" + whoDeleted.toString() +
                 ", createDate=" + createDate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DeleteHistory history = (DeleteHistory) o;
+        return contentType == history.contentType && Objects.equals(contentId, history.contentId) && Objects.equals(whoDeleted, history.whoDeleted);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contentType, contentId, whoDeleted);
     }
 }
