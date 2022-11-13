@@ -17,10 +17,10 @@ public class Answer extends BaseTimeEntity{
     private String contents;
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
 
