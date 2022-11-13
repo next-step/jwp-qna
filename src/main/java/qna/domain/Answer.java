@@ -48,7 +48,7 @@ public class Answer extends Timestamped {
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
     }
 
     public boolean isOwner(User writer) {

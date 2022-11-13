@@ -36,7 +36,7 @@ public class User extends Timestamped {
         this.email = email;
     }
 
-    public User() {
+    protected User() {
     }
 
     public void update(User loginUser, User target) {
