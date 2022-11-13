@@ -4,6 +4,10 @@
   - [x] Question 구현
   - [x] DeleteHistory 구현
   - [x] Answer 구현
+  - [ ] DeleteHistory <-> User 연관관계 설정
+  - [ ] Question <-> Answer 연관관계 설정
+  - [ ] Question <-> User 연관관계 설정
+  - [ ] Answer <-> User 연관관계 설정
 - 리포지토리
   - [x] UserRepository 구현
   - [x] QuestionRepository 구현
