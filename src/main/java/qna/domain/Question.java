@@ -1,6 +1,7 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 import qna.CannotDeleteException;
@@ -46,6 +47,7 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answer.toQuestion(this);
         answers.addAnswer(answer);
     }
 
@@ -70,14 +72,11 @@ public class Question extends BaseEntity {
             this.answers.removeAnswer(answer);
         }
     }
-
-    public DeleteHistories delete(User loginUser) throws Exception {
+    public List<DeleteHistory> delete(User loginUser) throws Exception {
         validateUser(loginUser);
         this.deleted = true;
-        DeleteHistories deleteHistories = new DeleteHistories(new DeleteHistory(ContentType.QUESTION, id, loginUser));
-        deleteHistories.addAll(answers.delete(loginUser));
-
-        return deleteHistories;
+        DeleteHistories deleteHistories = answers.delete(loginUser);
+        return deleteHistories.addQueue(new DeleteHistory(ContentType.QUESTION, id, loginUser));
     }
 
     private void validateUser(User loginUser) throws Exception {

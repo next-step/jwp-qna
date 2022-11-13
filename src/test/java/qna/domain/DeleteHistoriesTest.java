@@ -27,7 +27,7 @@ public class DeleteHistoriesTest {
         DeleteHistory deleteHistory = new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter());
 
         //when
-        deleteHistories.add(deleteHistory);
+        deleteHistories.addQueue(deleteHistory);
 
         //then
         assertThat(deleteHistories.contains(deleteHistory)).isTrue();

@@ -33,6 +33,6 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws Exception {
         Question question = findQuestionById(questionId);
-        deleteHistoryService.saveAll(question.delete(loginUser).getList());
+        deleteHistoryService.saveAll(question.delete(loginUser));
     }
 }
