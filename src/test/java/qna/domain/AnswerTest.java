@@ -1,5 +1,6 @@
 package qna.domain;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,13 +20,21 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Autowired
-    AnswerRepository answers;
+    private AnswerRepository answers;
     @Autowired
-    DeleteHistoryRepository deletes;
+    private DeleteHistoryRepository deletes;
     @Autowired
-    QuestionRepository questions;
+    private QuestionRepository questions;
     @Autowired
-    UserRepository users;
+    private UserRepository users;
+
+    @BeforeAll
+    private static void init(@Autowired UserRepository users, @Autowired QuestionRepository questions) {
+        users.save(UserTest.JAVAJIGI);
+        users.save(UserTest.SANJIGI);
+        questions.save(QuestionTest.Q1);
+        questions.save(QuestionTest.Q2);
+    }
 
     private static Stream<Answer> save_entity_and_find_test() {
         return Stream.of(A1,A2);
@@ -35,7 +44,7 @@ public class AnswerTest {
     @DisplayName("엔티티 저장 후 찾기 테스트")
     @MethodSource
     void save_entity_and_find_test(Answer input) {
-        Answer answer = answers.save(input);
+        final Answer answer = answers.save(input);
         assertThat(answers.findById(answer.getId()).get()).isEqualTo(answer);
     }
 
@@ -43,13 +52,13 @@ public class AnswerTest {
     @DisplayName("엔티티 저장 후 수정 테스트")
     void save_entity_and_update_test() {
         //given
-        User user = users.save(UserTest.JAVAJIGI);
-        Question question = questions.save(QuestionTest.Q1);
-        Answer answer = answers.save(new Answer(user, question, "답변테스트"));
-        Long id = answer.getId();
+        final User user = users.save(UserTest.JAVAJIGI);
+        final Question question = questions.save(QuestionTest.Q1);
+        final Answer answer = answers.save(new Answer(user, question, "답변테스트"));
+        final Long id = answer.getId();
         //when
-        Answer searchResult = answers.findById(id).get();
-        String updateContents = "수정된 컨텐츠";
+        final Answer searchResult = answers.findById(id).get();
+        final String updateContents = "수정된 컨텐츠";
         answers.save(new Answer(searchResult.getId(),
                     users.findById(searchResult.getWriterId()).get(),
                     questions.findById(searchResult.getQuestionId()).get(),
@@ -68,12 +77,12 @@ public class AnswerTest {
     @MethodSource
     void save_entity_and_delete_test(Answer input) {
         //given
-        Answer answer = answers.save(input);
-        DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER,
-                answer.getId(), answer.getId(), LocalDateTime.now());
+        final Answer answer = answers.save(input);
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER,
+                input.getId(), input.getWriter(), LocalDateTime.now());
         //when
         answers.deleteById(answer.getId());
-        DeleteHistory expected = deletes.save(deleteHistory);
+        final DeleteHistory expected = deletes.save(deleteHistory);
         //then
         assertThat(answers.findById(answer.getId()).orElse(null)).isNull();
         assertThat(deleteHistory).isEqualTo(expected);
