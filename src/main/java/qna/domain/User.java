@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class User extends DefaultTime{
+public class User extends BaseDateTimeEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,48 +66,24 @@ public class User extends DefaultTime{
                 email.equals(target.email);
     }
 
+    public boolean isSame(User javajigi) {
+        return this.userId == javajigi.userId;
+    }
+
     public boolean isGuestUser() {
         return false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
