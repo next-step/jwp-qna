@@ -4,14 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+@DataJpaTest
 public class AnswersTest {
-    public static Answer answer;
-    @BeforeAll
-    static void beforeAll() {
+    public Answer answer;
+    @BeforeEach
+    void setUp() {
         answer = TestFixture.createAnswer();
     }
 

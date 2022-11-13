@@ -30,7 +30,7 @@ public class Answers {
         answers.remove(answer);
     }
 
-    public DeleteHistories delete(User loginUser) {
+    public DeleteHistories delete(User loginUser) throws Exception {
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
         for (Answer answer : answers) {
             deleteHistoryList.add(answer.delete(loginUser));

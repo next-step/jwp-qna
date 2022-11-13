@@ -15,7 +15,7 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
@@ -80,18 +80,13 @@ public class Answer extends BaseEntity {
         return question;
     }
 
-    public DeleteHistory delete() {
-        this.deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, id, this.writer);
-    }
-
-    public DeleteHistory delete(User loginUser) {
+    public DeleteHistory delete(User loginUser) throws Exception {
         validateUser(loginUser);
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, loginUser);
     }
 
-    private void validateUser(User loginUser) {
+    private void validateUser(User loginUser) throws Exception {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }

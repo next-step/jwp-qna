@@ -18,7 +18,7 @@ public class DeleteHistoriesTest {
     }
 
     @Test
-    void history_Add() {
+    void history_Add() throws Exception {
         //given
         Answer answer1 = new Answer(1L, writer, question, "test1");
         Answer answer2 = new Answer(2L, writer, question, "test2");

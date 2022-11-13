@@ -72,7 +72,7 @@ public class QuestionRepositoryTest {
 
     @DisplayName("질문삭제시 답변도 삭제 검증")
     @Test
-    void deleted_test() {
+    void deleted_test() throws Exception {
         new Answer(writer, saveQuestion, "Answers test1");
         new Answer(writer, saveQuestion, "Answers test2");
         questionRepository.save(saveQuestion);
@@ -84,7 +84,7 @@ public class QuestionRepositoryTest {
 
     @Test
     @DisplayName("question 삭제 상태변경 검증")
-    void question_set_delete() {
+    void question_set_delete() throws Exception {
         saveQuestion.delete(writer);
         Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
     }

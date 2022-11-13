@@ -78,9 +78,9 @@ public class AnswerRepositoryTest {
 
     @Test
     @DisplayName("answer 삭제 상태변경 검증")
-    void answer_set_delete() {
+    void answer_set_delete() throws Exception {
         Answer answerTest = answerRepository.save(answer);
-        DeleteHistory deleteHistory = answerTest.delete();
+        DeleteHistory deleteHistory = answerTest.delete(answer.getWriter());
         deleteHistoryRepository.save(deleteHistory);
 
         assertThat(answerTest.isDeleted()).isTrue();
