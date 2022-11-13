@@ -2,55 +2,49 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
-import qna.config.JpaAuditingConfiguration;
-
-import java.util.Optional;
+import qna.UnAuthorizedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest
-@Import(value = {JpaAuditingConfiguration.class})
 public class UserTest {
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
 
-    @Autowired
-    UserRepository userRepository;
-
     @Test
-    @DisplayName("null 값 저장시 예외 테스트")
-    public void save() {
-        assertThatThrownBy(() -> userRepository.save(new User(3L, "javajigi", null, "name", "test@test.test")))
-                .isInstanceOf(DataIntegrityViolationException.class);
+    @DisplayName("유저아이디 다를 경우 예외 처리 테스트")
+    public void updateTest() {
+        User user = new User("DEVELOPYO", "1234", "ljp", "test@test.com");
+        User user2 = new User("TESTID", "1111", "ljp", "test@test.com");
+        assertThatThrownBy(() -> user.update(user, user2)).isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
-    @DisplayName("unique 값 저장시 예외 테스트")
-    public void uniqueTest() {
-        User user1 = userRepository.save(JAVAJIGI);
-        User user2 = userRepository.save(SANJIGI);
-        user2.setUserId(user1.getUserId());
-        assertThatThrownBy(() -> userRepository.flush()).isInstanceOf(DataIntegrityViolationException.class);
+    @DisplayName("유저패스워드 다를 경우 예외 처리 테스트")
+    public void updateTest2() {
+        User user = new User("DEVELOPYO", "1234", "ljp", "test@test.com");
+        User user2 = new User("DEVELOPYO", "1111", "ljp", "test@test.com");
+        assertThatThrownBy(() -> user.update(user, user2)).isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
-    @DisplayName("존재하지 않는 데이터 조회 테스트")
-    public void findByUserIdTestNotExists() {
-        userRepository.save(JAVAJIGI);
-        Optional<User> byUserId = userRepository.findByUserId(SANJIGI.getUserId());
-        assertThat(byUserId).isEmpty();
+    @DisplayName("유저 이름 혹은 이메일이 다른 경우 테스트")
+    public void equalsNameAndEmailTest() {
+        User user = new User("DEVELOPYO", "1234", "ljp", "ljp@test.com");
+        User user2 = new User("DEVELOPYO", "1111", "ljp", "test@test.com");
+        User user3 = new User("DEVELOPYO", "1111", "yhs", "test@test.com");
+
+        assertThat(user.equalsNameAndEmail(user2)).isFalse();
+        assertThat(user2.equalsNameAndEmail(user3)).isFalse();
     }
 
     @Test
-    @DisplayName("존재하는 데이터 조회 테스트")
-    public void findByUserIdTestExists() {
-        userRepository.save(JAVAJIGI);
-        Optional<User> byUserId = userRepository.findByUserId(JAVAJIGI.getUserId());
-        assertThat(byUserId).isNotEmpty();
+    @DisplayName("유저 이름과 이메일이 같은 경우 테스트")
+    public void equalsNameAndEmailTest2() {
+        User user = new User("DEVELOPYO", "1234", "ljp", "ljp@test.com");
+        User user2 = new User("DEVELOPYO", "1111", "ljp", "ljp@test.com");
+
+        assertThat(user.equalsNameAndEmail(user2)).isTrue();
     }
+
 }

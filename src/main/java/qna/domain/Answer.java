@@ -12,11 +12,15 @@ public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
     @Lob
     private String contents;
     private boolean deleted = false;
-    private Long questionId;
-    private Long writerId;
 
     protected Answer() {
     }
@@ -36,17 +40,20 @@ public class Answer extends BaseTimeEntity {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        toQuestion(question);
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return Objects.equals(this.writer, writer);
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        if (!question.getAnswers().contains(this)) {
+            question.getAnswers().add(this);
+        }
+        this.question = question;
     }
 
     public Long getId() {
@@ -57,20 +64,20 @@ public class Answer extends BaseTimeEntity {
         this.id = id;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
-    public Long getQuestionId() {
-        return questionId;
+    public User getWriter() {
+        return writer;
     }
 
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
+    public void setWriter(User writer) {
+        this.writer = writer;
     }
 
     public String getContents() {
@@ -93,10 +100,10 @@ public class Answer extends BaseTimeEntity {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
+                ", question=" + question +
+                ", writer=" + writer +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
-                ", questionId=" + questionId +
-                ", writerId=" + writerId +
                 '}';
     }
 }
