@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,8 +19,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -78,27 +77,25 @@ public class Question extends BaseEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return this.answers.getAnswers();
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+        this.deleted = true;
+        return createDeleteHistories(loginUser);
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        for (Answer answer : this.answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
-        }
-        this.deleted = true;
-        for (Answer answer : this.answers) {
-            answer.setDeleted(true);
-        }
+    }
+
+    private DeleteHistories createDeleteHistories(User loginUser) throws CannotDeleteException {
         DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(DeleteHistory.ofQuestion(this.getId(), loginUser));
-        for (Answer answer : this.answers) {
-            deleteHistories.add(DeleteHistory.ofAnswer(answer.getId(), loginUser));
-        }
+        deleteHistories.addAll(this.answers.delete(loginUser));
         return deleteHistories;
     }
 }

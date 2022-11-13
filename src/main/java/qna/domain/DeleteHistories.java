@@ -18,4 +18,8 @@ public class DeleteHistories {
     public List<DeleteHistory> getDeleteHistories() {
         return this.deleteHistories;
     }
+
+    public void addAll(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories.addAll(deleteHistories);
+    }
 }

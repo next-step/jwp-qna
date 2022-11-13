@@ -17,6 +17,7 @@
     - [x] answer 삭제 테스트
 
 ## Answers
+- [ ] 답변을 추가한다.
 
 ## DeleteHistory
 
@@ -29,6 +30,7 @@
 ## DeleteHistories
 
 - [x] 삭제 내역을 추가한다.
+- [ ] 삭제 내역 리스트를 추가한다.
 
 ## Question
 

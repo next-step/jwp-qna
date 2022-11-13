@@ -4,8 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
-import qna.domain.*;
+import qna.domain.Answer;
+import qna.domain.Question;
+import qna.domain.User;
+import qna.domain.UserTest;
 
 import java.util.List;
 
@@ -14,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.ANSWERS_CONTENTS_2;
 import static qna.domain.QuestionTest.QUESTION_1;
-import static qna.domain.QuestionTest.QUESTION_2;
 
 @DataJpaTest
 @DisplayName("질문 Repository")
@@ -49,8 +52,11 @@ class QuestionRepositoryTest {
     @Test
     void findByDeletedFalse() {
 
-        Question question1 = createQuestion(createUser(UserTest.JAVAJIGI), QUESTION_1);
-        Question question2 = createQuestion(createUser(UserTest.SANJIGI), QUESTION_2);
+        User javajigi = createUser(UserTest.JAVAJIGI);
+        User sangjigi = createUser(UserTest.SANJIGI);
+
+        Question question1 = createQuestion(javajigi, new Question("title1", "contents1").writeBy(javajigi));
+        Question question2 = createQuestion(sangjigi, new Question("title2", "contents2").writeBy(sangjigi));
 
         List<Question> questions = questionRepository.findByDeletedFalse();
 
