@@ -1,11 +1,14 @@
 package qna.domain;
 
+import qna.message.DeleteHistoryMessage;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DeleteHistory {
 
     @Id
@@ -18,7 +21,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_user"))
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleter;
 
     private LocalDateTime createDate = LocalDateTime.now();
@@ -28,9 +31,16 @@ public class DeleteHistory {
     }
 
     private DeleteHistory(ContentType contentType, Long contentId, User deleter) {
+        validateContentId(contentId);
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleter = deleter;
+    }
+
+    private void validateContentId(Long contentId) {
+        if (Objects.isNull(contentId)) {
+            throw new IllegalArgumentException(DeleteHistoryMessage.ERROR_CONTENT_ID_SHOULD_BE_NOT_NULL.message());
+        }
     }
 
     public static DeleteHistory ofQuestion(Question question) {
