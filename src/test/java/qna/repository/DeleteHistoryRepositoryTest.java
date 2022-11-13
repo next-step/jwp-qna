@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.ANSWERS_CONTENTS_2;
@@ -33,7 +31,7 @@ class DeleteHistoryRepositoryTest {
         Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
         Answer answer = createAnswer(javajigi, question);
 
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.of(ContentType.ANSWER, answer.getId(), javajigi, LocalDateTime.now()));
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.ofAnswer(answer.getId(), javajigi));
 
         assertAll(
                 () -> assertThat(deleteHistory.getId()).isNotNull(),
@@ -50,7 +48,7 @@ class DeleteHistoryRepositoryTest {
         User javajigi = createUser(UserTest.JAVAJIGI);
         Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
 
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.of(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
 
         DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId()).orElse(null);
 
