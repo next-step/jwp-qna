@@ -2,36 +2,34 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository users;
 
-    private static Stream<User> testFixtureProvider() {
-        return Stream.of(JAVAJIGI, SANJIGI);
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
     }
 
-    @ParameterizedTest
-    @MethodSource("testFixtureProvider")
-    void find(final User user) {
+    @Test
+    void find() {
         final User saved = users.save(user);
         final User actual = users.findById(saved.getId()).get();
         assertThat(actual).isEqualTo(saved);
         assertThat(actual).isSameAs(saved);
     }
 
-    @ParameterizedTest
-    @MethodSource("testFixtureProvider")
-    void update(final User user) {
+    @Test
+    void update() {
         final User saved = users.save(user);
 
         // Update name and email
@@ -43,9 +41,8 @@ public class UserTest {
         assertThat(actual.getEmail()).isEqualTo("wbg");
     }
 
-    @ParameterizedTest
-    @MethodSource("testFixtureProvider")
-    void delete(final User user) {
+    @Test
+    void delete() {
         final User saved = users.save(user);
 
         users.deleteById(saved.getId());
