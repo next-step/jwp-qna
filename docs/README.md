@@ -16,6 +16,8 @@
     - [x] findByIdAndDeletedFalse 조회 테스트
     - [x] answer 삭제 테스트
 
+## Answers
+
 ## DeleteHistory
 
 - [x] 삭제 내역을 생성한다.
@@ -23,6 +25,10 @@
 - [x] delete_history 테이블의 레파지토리 클래스를 작성한다.
     - [x] delete_history 저장 테스트
     - [x] delete_history 조회 테스트
+
+## DeleteHistories
+- [ ] DeleteHistories 생성한다.
+- [ ] 삭제 내역을 추가한다.
 
 ## Question
 
@@ -41,13 +47,6 @@
 - [x] user 테이블의 레파지토리 클래스를 작성한다.
     - [x] user 저장 테스트
     - [x] findByUserId 조회 테스트
-
-# 연관관계 매핑
-
-- [x] 유저 - 질문 연관관계 매핑
-- [x] 유저 - 답변 연관관계 매핑
-- [x] 유저 - 삭제내역 연관관계 매핑
-- [x] 질문 - 답변 연관관계 매핑
 
 # 질문 삭제하기 리팩터링
 
