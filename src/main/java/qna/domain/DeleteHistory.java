@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "delete_history")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DeleteHistory {
 
     @Id
