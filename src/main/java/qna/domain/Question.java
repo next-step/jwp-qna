@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
 import qna.message.QuestionMessage;
 
 import javax.persistence.*;
@@ -20,11 +21,14 @@ public class Question {
     private String contents;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_user"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @Column(columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @Embedded
+    private Answers answers = Answers.empty();
 
     protected Question() {
 
@@ -73,11 +77,23 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
-    public void delete() {
+    public DeleteHistories delete(User owner) throws CannotDeleteException {
+        validateOwner(owner);
         this.deleted = true;
+        DeleteHistories deleteHistories = DeleteHistories.of(this);
+        DeleteHistories answersDeleteHistories = this.answers.deleteAll(owner);
+        deleteHistories.addAll(answersDeleteHistories);
+        return deleteHistories;
+    }
+
+    private void validateOwner(User owner) throws CannotDeleteException {
+        if (!this.isOwner(owner)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean isDeleted() {
