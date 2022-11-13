@@ -57,8 +57,8 @@ public class Answer extends DateEntity {
             throw new NotFoundException();
         }
 
-        this.writer = writer;
         question.addAnswer(this);
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
@@ -69,6 +69,10 @@ public class Answer extends DateEntity {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public void toQuestion(Question question) {
+        this.question = question;
     }
 
     public User getWriter() {

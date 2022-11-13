@@ -71,6 +71,9 @@ public class Question extends DateEntity {
     }
 
     public void addAnswer(Answer answer) {
+        if (answer.getQuestion() == null) {
+            answer.toQuestion(this);
+        }
         answers.add(answer);
     }
 
