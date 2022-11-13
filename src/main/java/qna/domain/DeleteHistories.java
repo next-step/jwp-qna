@@ -14,4 +14,8 @@ public class DeleteHistories {
     public int size() {
         return this.deleteHistories.size();
     }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return this.deleteHistories;
+    }
 }

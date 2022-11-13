@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.*;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static qna.domain.AnswerTest.ANSWERS_CONTENTS_2;
@@ -58,6 +60,24 @@ class DeleteHistoryRepositoryTest {
                 () -> assertThat(findDeleteHistory.getContentId()).isNotNull(),
                 () -> assertThat(findDeleteHistory.getCreateDate()).isNotNull(),
                 () -> assertThat(findDeleteHistory.getDeletedById()).isNotNull());
+    }
+
+
+    @DisplayName("삭제 내역 리스트 저장.")
+    @Test
+    void add() {
+
+        User javajigi = createUser(UserTest.JAVAJIGI);
+        Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
+
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.ofQuestion(question.getId(), question.getWriter()));
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(deleteHistory);
+
+        List<DeleteHistory> histories = deleteHistoryRepository.saveAll(deleteHistories.getDeleteHistories());
+
+        assertThat(histories.size()).isEqualTo(1);
     }
 
     private User createUser(User user) {
