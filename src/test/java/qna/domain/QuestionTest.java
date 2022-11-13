@@ -35,8 +35,8 @@ public class QuestionTest {
     @Test
     @DisplayName("삭제 성공")
     public void delete() throws CannotDeleteException {
-        Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-        DeleteHistories deleteHistories = Q1.delete(UserTest.JAVAJIGI);
+        new Answer(UserTest.SANJIGI, QuestionTest.Q2, "Answers Contents1");
+        DeleteHistories deleteHistories = Q2.delete(UserTest.SANJIGI);
 
         assertThat(deleteHistories).isNotNull();
         assertThat(deleteHistories.get().size()).isEqualTo(2);
