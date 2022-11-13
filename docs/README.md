@@ -27,6 +27,7 @@
     - [x] delete_history 조회 테스트
 
 ## DeleteHistories
+
 - [x] 삭제 내역을 추가한다.
 
 ## Question
@@ -35,7 +36,8 @@
 - [x] question 테이블의 엔티티 클래스를 작성한다.
 - [x] question 테이블의 레파지토리 클래스를 작성한다.
     - [x] question 저장 테스트
-    - [x] question 삭제 테스트
+    - [x] question 삭제한다.
+        - [x] 삭제 시 삭제 내역을 반환한다.
     - [x] findByDeletedFalse 조회 테스트
     - [x] findByIdAndDeletedFalse 조회 테스트
 
