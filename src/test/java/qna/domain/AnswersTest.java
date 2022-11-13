@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,12 +26,12 @@ public class AnswersTest {
         final Answers answers = new Answers(Arrays.asList(AnswerTest.A1));
         assertThatThrownBy(() -> answers.checkDeleteAuth(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .hasMessage(ErrorMessage.CANNOT_DELETE_ANSWER_EXCEPTION.getMessage());
         //two user answer delete test
         Answers answers2 = new Answers(Arrays.asList(AnswerTest.A1, AnswerTest.A2));
         assertThatThrownBy(() -> answers2.checkDeleteAuth(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .hasMessage(ErrorMessage.CANNOT_DELETE_ANSWER_EXCEPTION.getMessage());
     }
 
     @Test

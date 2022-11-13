@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.CannotDeleteException;
 
-import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -100,7 +99,7 @@ public class AnswerTest {
     void checkDeleteAnswer_invalidate_test() {
         assertThatThrownBy(() -> A1.checkDeleteAuth(UserTest.SANJIGI))
                 .isInstanceOf(CannotDeleteException.class)
-                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+                .hasMessage(ErrorMessage.CANNOT_DELETE_ANSWER_EXCEPTION.getMessage());
     }
 
 }
