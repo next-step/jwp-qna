@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,13 +31,8 @@ public class Question extends BaseTimeEntity {
 
     private Long writerId;
 
-    @OneToMany(
-        mappedBy = "question",
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.REMOVE,
-        orphanRemoval = true
-    )
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -66,6 +62,7 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -82,10 +79,6 @@ public class Question extends BaseTimeEntity {
 
     public Long getWriterId() {
         return writerId;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     public boolean isDeleted() {

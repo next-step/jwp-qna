@@ -23,4 +23,12 @@ public class AnswersTest {
         answers.addDeleteHistory(deleteHistories, UserTest.JAVAJIGI);
         assertThat(deleteHistories.size()).isEqualTo(2);
     }
+
+    @Test
+    void Answer_추가() {
+        Answers answers = new Answers();
+        Answer answer = new Answer();
+        answers.addAnswer(answer);
+        assertThat(answers.size()).isEqualTo(1);
+    }
 }
