@@ -12,7 +12,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Question extends Timestamped {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import qna.UnAuthorizedException;
 
 @Entity
-public class User extends Timestamped {
+public class User extends BaseEntity {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id

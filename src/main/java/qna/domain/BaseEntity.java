@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Timestamped {
+public abstract class BaseEntity {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createAt;
