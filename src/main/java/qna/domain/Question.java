@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,5 +79,14 @@ public class Question extends BaseEntity {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public void delete() throws CannotDeleteException {
+        for (Answer answer : this.answers) {
+            if (!answer.isOwner(this.writer)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+        this.deleted = true;
     }
 }

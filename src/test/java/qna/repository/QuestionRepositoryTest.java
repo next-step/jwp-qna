@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
 import qna.domain.UserTest;
@@ -11,7 +13,9 @@ import qna.domain.UserTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static qna.domain.AnswerTest.ANSWERS_CONTENTS_2;
 import static qna.domain.QuestionTest.QUESTION_1;
 import static qna.domain.QuestionTest.QUESTION_2;
 
@@ -23,6 +27,9 @@ class QuestionRepositoryTest {
     private QuestionRepository questionRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @DisplayName("저장_성공")
     @Test
@@ -87,11 +94,31 @@ class QuestionRepositoryTest {
         assertThat(questionRepository.findByIdAndDeletedFalse(question.getId())).isNotPresent();
     }
 
+    @DisplayName("답변이 있으면 삭제할 수 없다.")
+    @Test
+    void delete_fail_exist_question() {
+        User javajigi = createUser(UserTest.JAVAJIGI);
+        User sanjigi = createUser(UserTest.SANJIGI);
+        Question question = createQuestion(javajigi, QUESTION_1);
+        createAnswer(sanjigi, question);
+        assertThat(question).isNotNull();
+        assertThat(question.getAnswers()).hasSize(1);
+
+        assertThatThrownBy(question::delete)
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
     private User createUser(User user) {
         return userRepository.save(user);
     }
 
     private Question createQuestion(User user, Question question) {
         return questionRepository.save(question.writeBy(user));
+    }
+
+    private Answer createAnswer(User user, Question question) {
+        Answer answer = answerRepository.save(new Answer(user, question, ANSWERS_CONTENTS_2));
+        question.addAnswer(answer);
+        return answer;
     }
 }
