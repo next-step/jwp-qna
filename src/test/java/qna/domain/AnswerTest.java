@@ -79,8 +79,7 @@ public class AnswerTest {
     void save_entity_and_delete_test(Answer input) {
         //given
         final Answer answer = answers.save(input);
-        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER,
-                input.getId(), input.getWriter(), LocalDateTime.now());
+        final DeleteHistory deleteHistory = new DeleteHistory(ContentType.ANSWER, input.getId(), input.getWriter());
         //when
         answers.deleteById(answer.getId());
         final DeleteHistory expected = deletes.save(deleteHistory);

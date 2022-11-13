@@ -70,7 +70,7 @@ public class QuestionTest {
         final Question question = questions.save(input);
         final Long id = question.getId();
         final DeleteHistory deleteHistory = deletes
-                .save(new DeleteHistory(ContentType.QUESTION, id, input.getWriter(), LocalDateTime.now()));
+                .save(new DeleteHistory(ContentType.QUESTION, id, input.getWriter()));
         //when
         questions.deleteById(id);
         final DeleteHistory expected = deletes.save(deleteHistory);
@@ -120,7 +120,7 @@ public class QuestionTest {
         final List<DeleteHistory> deleteHistoriesNoAnswer = q1.deleteAndGetDeleteHistories();
         //list contain test
         assertThat(deleteHistoriesNoAnswer
-                .contains(new DeleteHistory(ContentType.QUESTION, q1.getId(), q1.getWriter(), LocalDateTime.now())))
+                .contains(new DeleteHistory(ContentType.QUESTION, q1.getId(), q1.getWriter())))
                 .isTrue();
         //list size test
         assertThat(deleteHistoriesNoAnswer.size()).isEqualTo(1);
@@ -137,7 +137,7 @@ public class QuestionTest {
         final List<DeleteHistory> deleteHistories = q1.deleteAndGetDeleteHistories();
         //list contain test
         assertThat(deleteHistories
-                .contains(new DeleteHistory(ContentType.ANSWER, a1.getId(), a1.getWriter(), LocalDateTime.now())))
+                .contains(new DeleteHistory(ContentType.ANSWER, a1.getId(), a1.getWriter())))
                 .isTrue();
         //list size test
         assertThat(deleteHistories.size()).isEqualTo(2);

@@ -44,8 +44,7 @@ public class AnswersTest {
         List<DeleteHistory> deleteHistories = answers.deleteAndGetDeleteHistories();
         //list contain test
         assertThat(deleteHistories
-                .contains(new DeleteHistory(ContentType.ANSWER, answer1.getId(),
-                        answer1.getWriter(), LocalDateTime.now())))
+                .contains(new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter())))
                 .isTrue();
         //list size test
         assertThat(deleteHistories.size()).isEqualTo(2);
