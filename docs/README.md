@@ -27,7 +27,6 @@
     - [x] delete_history 조회 테스트
 
 ## DeleteHistories
-- [ ] DeleteHistories 생성한다.
 - [ ] 삭제 내역을 추가한다.
 
 ## Question
