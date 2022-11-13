@@ -8,14 +8,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserTest {
-    public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name", "jajigi@slipp.net");
-    public static final User SANJIGI = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+
+    public static User userSample(Long id) {
+        return new User(id, "shshon", "password", "손상훈", "shshon@naver.com");
+    }
 
     @Test
     @DisplayName("유저를 생성한다")
     void create_user_test() {
-        User user = new User("shshon", "password", "손상훈", "shshon@naver.com");
-        assertThat(user).isEqualTo(new User("shshon", "password", "손상훈", "shshon@naver.com"));
+        User user = userSample(1L);
+        assertThat(user).isEqualTo(new User(1L, "shshon", "password", "손상훈", "shshon@naver.com"));
     }
 
     @Test
