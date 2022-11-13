@@ -1,7 +1,6 @@
 package qna.repository;
 
 import java.util.Optional;
-import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,17 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
-import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
-import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserRepository;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class QuestionRepositoryTest {
@@ -54,10 +49,10 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("저장한 question 와 조회한 question 이 같은지 동등성 테스트")
+    @DisplayName("저장한 question 와 id로 조회한 question 이 같은지 동등성 테스트")
     void read() {
-        Optional<Question> savedQuestion = questionRepository.findById(question.getId());
-        assertThat(question == savedQuestion.get()).isTrue();
+        Question findQuestion = questionRepository.findById(question.getId()).get();
+        assertThat(question).isEqualTo(findQuestion);
     }
 
 

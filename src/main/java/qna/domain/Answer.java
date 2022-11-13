@@ -79,11 +79,6 @@ public class Answer extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public void setQuestion(Question question){
-        this.question = question;
-        question.getAnswers().add(this);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
