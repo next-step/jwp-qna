@@ -22,7 +22,15 @@ public class QuestionTest {
     @Test
     void delete_fail_exist_answer() {
         QuestionTest.QUESTION_2.addAnswer(AnswerTest.ANSWER_1);
-        assertThatThrownBy(QuestionTest.QUESTION_2::delete)
+        assertThatThrownBy(() -> QuestionTest.QUESTION_2.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
+    }
+
+    @DisplayName("로그인 사용자와 질문한 사람이 다르면 삭제할 수 없다.")
+    @Test
+    void delete_fail_login_user() {
+        QuestionTest.QUESTION_2.addAnswer(AnswerTest.ANSWER_1);
+        assertThatThrownBy(() -> QuestionTest.QUESTION_2.delete(UserTest.JAVAJIGI))
                 .isInstanceOf(CannotDeleteException.class);
     }
 }

@@ -104,7 +104,7 @@ class QuestionRepositoryTest {
         assertThat(question).isNotNull();
         assertThat(question.getAnswers()).hasSize(1);
 
-        assertThatThrownBy(question::delete)
+        assertThatThrownBy(() -> question.delete(javajigi))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
