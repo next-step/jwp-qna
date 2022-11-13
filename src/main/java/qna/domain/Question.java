@@ -2,7 +2,7 @@ package qna.domain;
 
 import qna.CannotDeleteException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
 
@@ -24,8 +24,8 @@ public class Question extends DateEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -55,7 +55,16 @@ public class Question extends DateEntity {
         return this;
     }
 
-    public void validateDelete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        setDeleted(true);
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
+        deleteHistories.add(answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
@@ -82,7 +91,7 @@ public class Question extends DateEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.get();
     }
 
     public boolean isDeleted() {

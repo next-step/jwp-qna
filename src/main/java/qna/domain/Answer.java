@@ -10,9 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -78,6 +81,21 @@ public class Answer extends DateEntity {
 
     public String getContents() {
         return contents;
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, id, getWriter(), LocalDateTime.now());
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 제거된 문서는 제거할 수 없습니다.");
+        }
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean isDeleted() {
