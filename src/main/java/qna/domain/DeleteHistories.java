@@ -11,15 +11,15 @@ public class DeleteHistories {
         this.deleteHistories.add(ofQuestion);
     }
 
+    public void addAll(List<DeleteHistory> deleteHistories) {
+        this.deleteHistories.addAll(deleteHistories);
+    }
+
     public int size() {
         return this.deleteHistories.size();
     }
 
     public List<DeleteHistory> getDeleteHistories() {
         return this.deleteHistories;
-    }
-
-    public void addAll(List<DeleteHistory> deleteHistories) {
-        this.deleteHistories.addAll(deleteHistories);
     }
 }

@@ -25,14 +25,6 @@ public class Answers {
         return createDeleteHistories(loginUser);
     }
 
-    private List<DeleteHistory> createDeleteHistories(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : this.answers) {
-            deleteHistories.add(DeleteHistory.ofAnswer(answer.getId(), loginUser));
-        }
-        return deleteHistories;
-    }
-
     private void validateWriters(User loginUser) throws CannotDeleteException {
         for (Answer answer : this.answers) {
             validateWriter(loginUser, answer);
@@ -43,6 +35,14 @@ public class Answers {
         if (!answer.isOwner(loginUser)) {
             throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
+    }
+
+    private List<DeleteHistory> createDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (Answer answer : this.answers) {
+            deleteHistories.add(DeleteHistory.ofAnswer(answer.getId(), loginUser));
+        }
+        return deleteHistories;
     }
 
     public List<Answer> getAnswers() {

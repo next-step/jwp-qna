@@ -38,42 +38,9 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
         answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public User getWriter() {
-        return this.writer;
-    }
-
-    public List<Answer> getAnswers() {
-        return this.answers.getAnswers();
     }
 
     public DeleteHistories delete(User loginUser) throws CannotDeleteException {
@@ -93,5 +60,38 @@ public class Question extends BaseEntity {
         deleteHistories.add(DeleteHistory.ofQuestion(this.getId(), loginUser));
         deleteHistories.addAll(this.answers.delete(loginUser));
         return deleteHistories;
+    }
+
+    public Question writeBy(User writer) {
+        this.writer = writer;
+        return this;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public User getWriter() {
+        return this.writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return this.answers.getAnswers();
     }
 }

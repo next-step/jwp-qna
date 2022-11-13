@@ -68,6 +68,10 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
+    public void delete() {
+        this.deleted = true;
+    }
+
     public Long getId() {
         return id;
     }
@@ -86,9 +90,5 @@ public class Answer extends BaseEntity {
 
     public Question getQuestion() {
         return this.question;
-    }
-
-    public void delete() {
-        this.deleted = true;
     }
 }
