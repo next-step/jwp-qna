@@ -29,7 +29,7 @@ public class AnswerRepositoryTest {
     @BeforeEach
     void init() {
         user = userRepository.save(UserTest.JAVAJIGI);
-        question = questionRepository.save(QuestionTest.Q1);
+        question = questionRepository.save(new Question("title1", "contents1").writeBy(user));
     }
 
     @Test
