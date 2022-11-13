@@ -1,7 +1,9 @@
 package qna.domain.entity;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.domain.ContentType;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -27,6 +29,8 @@ public class Answer extends BaseTime {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    public Answer() {}
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -92,8 +96,21 @@ public class Answer extends BaseTime {
         return deleted;
     }
 
+    public boolean getDeleted() {
+        return this.deleted;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistory delete(User writer) throws CannotDeleteException {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+
+        setDeleted(true);
+        return new DeleteHistory(ContentType.ANSWER, id, user);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class User extends BaseTime {
     @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -42,7 +42,6 @@ public class User extends BaseTime {
         this.name = name;
         this.email = email;
     }
-
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
@@ -72,6 +71,18 @@ public class User extends BaseTime {
 
         return name.equals(target.name) &&
                 email.equals(target.email);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User that = (User) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(email, that.email);
     }
 
     public boolean isGuestUser() {
