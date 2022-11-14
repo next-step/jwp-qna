@@ -16,6 +16,10 @@ import java.util.Objects;
 @Entity
 public class DeleteHistory {
 
+    public static DeleteHistory create(ContentType answer, Long id, User writer) {
+        return new DeleteHistory(answer, id, writer, LocalDateTime.now());
+    }
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long contentId;

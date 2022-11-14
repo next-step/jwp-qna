@@ -8,10 +8,6 @@ import qna.domain.Answer;
 import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
-import qna.domain.TestAnswerFactory;
-import qna.domain.TestDeleteHistoryFactory;
-import qna.domain.TestQuestionFactory;
-import qna.domain.TestUserFactory;
 import qna.domain.User;
 
 import java.util.List;
@@ -32,10 +28,10 @@ class DeleteHistoryRepositoryTest {
     @Test
     void deleteHistory_save_test() {
         // given
-        User writer = TestUserFactory.create("javajigi");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
-        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        User writer = User.create("javajigi");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
+        DeleteHistory deleteHistory = DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         // when
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         // then
@@ -45,11 +41,11 @@ class DeleteHistoryRepositoryTest {
     @Test
     void retreive_deleteHistory_test() {
         // given
-        User writer = TestUserFactory.create("javajigi");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
-        DeleteHistory deleteHistory1 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
-        DeleteHistory deleteHistory2 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        User writer = User.create("javajigi");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
+        DeleteHistory deleteHistory1 = DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        DeleteHistory deleteHistory2 = DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         // when
         deleteHistoryRepository.save(deleteHistory1);
         deleteHistoryRepository.save(deleteHistory2);

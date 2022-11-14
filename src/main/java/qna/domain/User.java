@@ -21,6 +21,14 @@ public class User extends BaseDateEntity{
     private static final int PASSWORD_LENGTH = 20;
     private static final int USER_ID_LENGTH = 20;
 
+    public static User create(String userId) {
+        return new User(userId, "password", "name", userId + "@gmail.com");
+    }
+
+    public static User create(String userId, String password, String name) {
+        return new User(userId, password, name, userId + "gmail.com");
+    }
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = EMAIL_LENGTH)
@@ -46,13 +54,13 @@ public class User extends BaseDateEntity{
     }
 
     public User(Long id, String userId, String password, String name, String email) {
-        if (Objects.isNull(name)) {
+        if (Objects.isNull(name) || name.isEmpty()) {
             throw new ForbiddenException();
         }
-        if (Objects.isNull(password)) {
+        if (Objects.isNull(password) || password.isEmpty()) {
             throw new ForbiddenException();
         }
-        if (Objects.isNull(userId)) {
+        if (Objects.isNull(userId) || userId.isEmpty()) {
             throw new ForbiddenException();
         }
 

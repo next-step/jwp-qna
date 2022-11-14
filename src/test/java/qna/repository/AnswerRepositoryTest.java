@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.TestAnswerFactory;
-import qna.domain.TestQuestionFactory;
-import qna.domain.TestUserFactory;
 import qna.domain.User;
 
 import java.util.Optional;
@@ -35,9 +32,9 @@ class AnswerRepositoryTest {
     @DisplayName("answer 저장 테스트")
     void save() {
         // given
-        User writer = TestUserFactory.create("henderson");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
+        User writer = User.create("henderson");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
         // when
         Answer saverAnswer = answerRepository.save(answer);
         // then
@@ -51,13 +48,13 @@ class AnswerRepositoryTest {
     @DisplayName("answer 저장 후 조회 테스트")
     void findByIdAndDeletedFalse_test() {
         // given
-        User writer = TestUserFactory.create("henderson");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
+        User writer = User.create("henderson");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
 
-        User writer2 = TestUserFactory.create("tiago");
-        Question question2 = TestQuestionFactory.create(writer2);
-        Answer answer2 = TestAnswerFactory.create(writer2, question2);
+        User writer2 = User.create("tiago");
+        Question question2 = Question.create(writer2);
+        Answer answer2 = Answer.create(writer2, question2);
         // when
         answerRepository.save(answer);
         answerRepository.save(answer2);
@@ -75,9 +72,9 @@ class AnswerRepositoryTest {
     @DisplayName("answer 삭제 set 후 조회 시 미조회 테스트")
     void set_delete_find_test() {
         // given
-        User writer = TestUserFactory.create("henderson");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
+        User writer = User.create("henderson");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
         Long id = answer.getId();
         // when
         answer.setDeleted(true);
@@ -90,9 +87,9 @@ class AnswerRepositoryTest {
     @DisplayName("answer 삭제 후 조회 시 미조회 테스트")
     void delete_find_test() {
         // given
-        User writer = TestUserFactory.create("henderson");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
+        User writer = User.create("henderson");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
         Long id = answer.getId();
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // when
@@ -105,9 +102,9 @@ class AnswerRepositoryTest {
     @Test
     void cascade_remove_test() {
         // given
-        User writer = TestUserFactory.create("xavi");
-        Question question = TestQuestionFactory.create(writer);
-        Answer answer = TestAnswerFactory.create(writer, question);
+        User writer = User.create("xavi");
+        Question question = Question.create(writer);
+        Answer answer = Answer.create(writer, question);
         Answer saveAnswer = answerRepository.save(answer);
         Question saveQuestion = questionRepository.save(question);
 

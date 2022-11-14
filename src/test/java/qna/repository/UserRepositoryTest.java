@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import qna.domain.TestUserFactory;
 import qna.domain.User;
 
 import java.util.Optional;
@@ -27,7 +26,7 @@ class UserRepositoryTest {
 
     @Test
     void save() {
-        User writer = TestUserFactory.create("javajigi");
+        User writer = User.create("javajigi");
         User user = userRepository.save(writer);
         assertAll(
                 () -> assertThat(user.getUserId()).isEqualTo(writer.getUserId()),
@@ -38,7 +37,7 @@ class UserRepositoryTest {
     @Test
     void save_retreive_test() {
         // given
-        User writer = TestUserFactory.create("javajigi");
+        User writer = User.create("javajigi");
         User saveUser = userRepository.save(writer);
         // when
         Optional<User> findUser = userRepository.findByUserId(saveUser.getUserId());
@@ -52,9 +51,9 @@ class UserRepositoryTest {
 
     @Test
     void duplicate_userId_test() {
-        User writer = TestUserFactory.create("sagjigi");
+        User writer = User.create("sagjigi");
         userRepository.save(writer);
-        User dulpicateUser = TestUserFactory.create("sagjigi");
+        User dulpicateUser = User.create("sagjigi");
 
         assertThatExceptionOfType(DataIntegrityViolationException.class)
                 .isThrownBy(() -> userRepository.save(dulpicateUser)).withMessageContaining("constraint");
@@ -63,7 +62,7 @@ class UserRepositoryTest {
     @Test
     void user_auto_id_strategy_test() {
         // given
-        User user = TestUserFactory.create("deokmoon");
+        User user = User.create("deokmoon");
         // when
         User saveUser = userRepository.save(user);
         // then
@@ -73,7 +72,7 @@ class UserRepositoryTest {
     @Test
     void user_delete_test() {
         // given
-        User writer = TestUserFactory.create("sagjigi");
+        User writer = User.create("sagjigi");
         User saveUser = userRepository.save(writer);
         Long saveUserId = saveUser.getId();
         Optional<User> findUser = userRepository.findById(saveUserId);

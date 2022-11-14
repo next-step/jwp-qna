@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
-import qna.domain.TestQuestionFactory;
-import qna.domain.TestUserFactory;
 import qna.domain.User;
 
 import java.util.List;
@@ -28,8 +26,8 @@ class QuestionRepositoryTest {
 
     @Test
     void save() {
-        User writer = TestUserFactory.create("pepe");
-        Question question = TestQuestionFactory.create(writer);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
         Question saveQuestion = questionRepository.save(question);
         assertAll(
                 () -> assertThat(saveQuestion.getId()).isNotNull(),
@@ -41,10 +39,10 @@ class QuestionRepositoryTest {
     @Test
     void save_retreive_test() {
         // given
-        User writer = TestUserFactory.create("pepe");
-        Question question = TestQuestionFactory.create(writer);
-        User writer2 = TestUserFactory.create("modric");
-        Question question2 = TestQuestionFactory.create(writer2);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
+        User writer2 = User.create("modric");
+        Question question2 = Question.create(writer2);
         Question saveQuestion1 = questionRepository.save(question);
         Question saveQuestion2 = questionRepository.save(question2);
         // when
@@ -60,8 +58,8 @@ class QuestionRepositoryTest {
     @Test
     void save_setDelete_true_retreive_test() {
         // given
-        User writer = TestUserFactory.create("pepe");
-        Question question = TestQuestionFactory.create(writer);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
         Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
         // when
@@ -74,8 +72,8 @@ class QuestionRepositoryTest {
     @Test
     void save_delete_test() {
         // given
-        User writer = TestUserFactory.create("pepe");
-        Question question = TestQuestionFactory.create(writer);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
         Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);

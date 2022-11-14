@@ -17,6 +17,10 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseDateEntity{
+    public static Answer create(User writer, Question question) {
+        return new Answer(writer, question, "contents");
+    }
+
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,11 +37,11 @@ public class Answer extends BaseDateEntity{
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
+    private Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    private Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -52,6 +56,7 @@ public class Answer extends BaseDateEntity{
         this.writer = writer;
         addQuestion(question);
     }
+
 
     public void addQuestion(Question question) {
         if(this.question != null) {
