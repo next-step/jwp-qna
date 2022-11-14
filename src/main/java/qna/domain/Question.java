@@ -3,7 +3,6 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,7 +97,7 @@ public class Question extends BaseTimeEntity {
 
     public void checkDeleteAuth(User loginUser) throws CannotDeleteException {
         if (!this.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(ErrorMessage.CANNOT_DELETE_QUESTION_EXCEPTION.getMessage());
         }
         this.getAnswers().checkDeleteAuth(loginUser);
     }
@@ -106,7 +105,7 @@ public class Question extends BaseTimeEntity {
     public List<DeleteHistory> deleteAndGetDeleteHistories() {
         this.setDeleted(true);
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
         deleteHistories.addAll(this.getAnswers().deleteAndGetDeleteHistories());
         return deleteHistories;
     }

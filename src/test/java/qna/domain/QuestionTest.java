@@ -7,11 +7,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 public class QuestionTest {
@@ -68,12 +70,78 @@ public class QuestionTest {
         final Question question = questions.save(input);
         final Long id = question.getId();
         final DeleteHistory deleteHistory = deletes
-                .save(new DeleteHistory(ContentType.QUESTION, id, input.getWriter(), LocalDateTime.now()));
+                .save(new DeleteHistory(ContentType.QUESTION, id, input.getWriter()));
         //when
         questions.deleteById(id);
         final DeleteHistory expected = deletes.save(deleteHistory);
         //then
         assertThat(questions.findById(id).orElse(null)).isNull();
         assertThat(deleteHistory).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("정답이 안달려 있는 질문에 유저에게 정상 삭제권한이 있는 경우 오류가 발생하지 않는지 테스트")
+    void checkDeleteAnswer_no_answer_validate_test() {
+        assertThatCode(() -> Q1.checkDeleteAuth(UserTest.JAVAJIGI))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("정답이 달려 있는 질문에 유저에게 정상 삭제권한이 있는 경우 오류가 발생하지 않는지 테스트")
+    void checkDeleteAnswer_contain_answer_validate_test() {
+        final Question q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        q1.addAnswer(AnswerTest.A1);
+        assertThatCode(() -> q1.checkDeleteAuth(UserTest.JAVAJIGI))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("삭제권한이 없는 유저가 정답이 안달려 있는 질문을 삭제할 경우 오류가 발생하는지 테스트")
+    void checkDeleteAnswer_no_answer_invalidate_test() {
+        assertThatThrownBy(() -> Q1.checkDeleteAuth(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorMessage.CANNOT_DELETE_QUESTION_EXCEPTION.getMessage());
+    }
+
+    @Test
+    @DisplayName("삭제권한이 없는 유저가 정답이 달려있는 질문을 삭제할 경우 오류가 발생하는지 테스트")
+    void checkDeleteAnswer_contain_answer_invalidate_test() {
+        final Question q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        q1.addAnswer(AnswerTest.A2);
+        assertThatThrownBy(() -> q1.checkDeleteAuth(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage(ErrorMessage.CANNOT_DELETE_ANSWER_EXCEPTION.getMessage());
+    }
+
+    @Test
+    @DisplayName("질문만 있는 경우 저장할 삭제목록 생성 테스트")
+    void deleteAndGetDeleteHistories_no_answer_test() {
+        final Question q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        final List<DeleteHistory> deleteHistoriesNoAnswer = q1.deleteAndGetDeleteHistories();
+        //list contain test
+        assertThat(deleteHistoriesNoAnswer
+                .contains(new DeleteHistory(ContentType.QUESTION, q1.getId(), q1.getWriter())))
+                .isTrue();
+        //list size test
+        assertThat(deleteHistoriesNoAnswer.size()).isEqualTo(1);
+        //delete flag test
+        assertThat(q1.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("질문에 정답이 같이 있는 경우 저장할 삭제목록 생성 테스트")
+    void deleteAndGetDeleteHistories_contain_answer_test() {
+        final Question q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
+        final Answer a1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        q1.addAnswer(a1);
+        final List<DeleteHistory> deleteHistories = q1.deleteAndGetDeleteHistories();
+        //list contain test
+        assertThat(deleteHistories
+                .contains(new DeleteHistory(ContentType.ANSWER, a1.getId(), a1.getWriter())))
+                .isTrue();
+        //list size test
+        assertThat(deleteHistories.size()).isEqualTo(2);
+        //delete flag test
+        assertThat(a1.isDeleted()).isTrue();
     }
 }
