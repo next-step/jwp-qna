@@ -1,7 +1,6 @@
 package qna.repository;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -36,7 +35,7 @@ class DeleteHistoryRepositoryTest {
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
-        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getUser());
+        DeleteHistory deleteHistory = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         // when
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
         // then
@@ -49,8 +48,8 @@ class DeleteHistoryRepositoryTest {
         User writer = TestUserFactory.create("javajigi");
         Question question = TestQuestionFactory.create(writer);
         Answer answer = TestAnswerFactory.create(writer, question);
-        DeleteHistory deleteHistory1 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getUser());
-        DeleteHistory deleteHistory2 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getUser());
+        DeleteHistory deleteHistory1 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
+        DeleteHistory deleteHistory2 = TestDeleteHistoryFactory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         // when
         deleteHistoryRepository.save(deleteHistory1);
         deleteHistoryRepository.save(deleteHistory2);
