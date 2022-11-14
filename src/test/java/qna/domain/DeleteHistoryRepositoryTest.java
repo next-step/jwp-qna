@@ -1,8 +1,8 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +15,21 @@ class DeleteHistoryRepositoryTest {
 
     @Test
     void 삭제이력_저장() {
-        DeleteHistory actual = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        User user = new User("userId", "password", "name", "email");
+        DeleteHistory actual = new DeleteHistory(ContentType.QUESTION, 1L, user);
         DeleteHistory expected = deleteHistoryRepository.save(actual);
         assertThat(expected).isEqualTo(actual);
     }
 
     @Test
     void 모든삭제이력_조회() {
-        DeleteHistory actual = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
+        User user = new User("userId", "password", "name", "email");
+        DeleteHistory actual = new DeleteHistory(ContentType.QUESTION, 1L, user);
         deleteHistoryRepository.save(actual);
         List<DeleteHistory> expected = deleteHistoryRepository.findAll();
-        assertThat(expected).hasSize(1);
-        assertThat(expected).contains(actual);
+        assertAll(
+            () -> assertThat(expected).hasSize(1),
+            () -> assertThat(expected).contains(actual)
+        );
     }
 }

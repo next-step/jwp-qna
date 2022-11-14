@@ -14,13 +14,13 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 @Entity
-public class Answer extends Timestamped {
+public class Answer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="writer_id")
-    private User user;
+    private User writer;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private Question question;
@@ -43,16 +43,16 @@ public class Answer extends Timestamped {
             throw new NotFoundException();
         }
 
-        this.user = writer;
+        this.writer = writer;
         this.question = question;
         this.contents = contents;
     }
 
-    public Answer() {
+    protected Answer() {
     }
 
     public boolean isOwner(User writer) {
-        return getWriterId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -65,14 +65,6 @@ public class Answer extends Timestamped {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getWriterId() {
-        return user.getId();
-    }
-
-    public Long getQuestionId() {
-        return question.getId();
     }
 
     public String getContents() {
@@ -91,12 +83,28 @@ public class Answer extends Timestamped {
         this.deleted = deleted;
     }
 
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User user) {
+        this.writer = user;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
             "id=" + id +
-            ", writerId=" + getWriterId() +
-            ", questionId=" + getQuestionId() +
+            ", user=" + writer +
+            ", question=" + question +
             ", contents='" + contents + '\'' +
             ", deleted=" + deleted +
             '}';
@@ -112,12 +120,12 @@ public class Answer extends Timestamped {
         }
         Answer answer = (Answer) o;
         return deleted == answer.deleted && Objects.equals(id, answer.id)
-            && Objects.equals(user, answer.user) && Objects.equals(question,
+            && Objects.equals(writer, answer.writer) && Objects.equals(question,
             answer.question) && Objects.equals(contents, answer.contents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, question, contents, deleted);
+        return Objects.hash(id, writer, question, contents, deleted);
     }
 }

@@ -24,7 +24,6 @@ class UserRepositoryTest {
         User actual = new User("userId", "password", "name", "email");
         userRepository.save(actual);
         Optional<User> expected = userRepository.findByUserId("userId");
-        assertThat(expected).isPresent();
-        assertThat(expected.get()).isEqualTo(actual);
+        assertThat(expected).hasValue(actual);
     }
 }

@@ -1,6 +1,11 @@
 package qna.domain;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
-public class Question extends Timestamped {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,21 +27,30 @@ public class Question extends Timestamped {
     private boolean deleted = false;
     @Column(length = 100, nullable = false)
     private String title;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "writer_id")
     private User writer;
-
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     public Question(Long id, String title, String contents) {
+        this(id, title, contents, null);
+    }
+
+    public Question(String title, String contents) {
+        this(null, title, contents, null);
+    }
+
+    public Question(Long id, String title, String contents, List<Answer> answers) {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        if (answers != null) {
+            this.answers = answers;
+        }
     }
 
-    public Question() {
+    protected Question() {
     }
 
     public Question writeBy(User writer) {
@@ -44,11 +59,11 @@ public class Question extends Timestamped {
     }
 
     public boolean isOwner(User writer) {
-        return getWriterId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        this.answers.add(answer);
     }
 
     public Long getId() {
@@ -75,8 +90,8 @@ public class Question extends Timestamped {
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writer.getId();
+    public User getWriter() {
+        return writer;
     }
 
     public void setWriter(User writer) {
@@ -91,13 +106,21 @@ public class Question extends Timestamped {
         this.deleted = deleted;
     }
 
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
             "id=" + id +
             ", title='" + title + '\'' +
             ", contents='" + contents + '\'' +
-            ", writerId=" + getWriterId() +
+            ", writer=" + writer +
             ", deleted=" + deleted +
             '}';
     }
