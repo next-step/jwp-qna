@@ -13,11 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -34,7 +29,7 @@ public class Answer extends BaseDateEntity{
     private Question question;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "WRITER_ID")
-    private User user;
+    private User writer;
 
     protected Answer() {}
 
@@ -54,17 +49,20 @@ public class Answer extends BaseDateEntity{
         }
 
         this.contents = contents;
-        this.user = writer;
+        this.writer = writer;
         addQuestion(question);
     }
 
     public void addQuestion(Question question) {
+        if(this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
         this.question = question;
         question.getAnswers().add(this);
     }
 
     public boolean isOwner(User loginUser) {
-        return this.user.equals(loginUser);
+        return this.writer.equals(loginUser);
     }
 
 
@@ -96,24 +94,20 @@ public class Answer extends BaseDateEntity{
         return question;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
+    public User getWriter() {
+        return writer;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setWriter(User user) {
+        this.writer = user;
     }
 
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + user +
-                ", questionId=" + question +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
