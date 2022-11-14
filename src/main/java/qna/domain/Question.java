@@ -1,17 +1,12 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import qna.common.base.BaseTimeEntity;
 import qna.common.exception.CannotDeleteException;
@@ -85,8 +80,22 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted() {
+    void setDeleted() {
         this.deleted = true;
+    }
+
+    public DeleteHistories delete(User loginUser) {
+        validateDeleteAuthority(loginUser);
+        setDeleted();
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.addQuestionDeleteHistory(this, loginUser);
+        deleteHistories.addAnswersDeleteHistory(this.answers, loginUser);
+        return deleteHistories;
+    }
+
+    private void validateDeleteAuthority(User loginUser){
+        isOwner(loginUser);
+        answers.isOwner(loginUser);
     }
 
     @Override
