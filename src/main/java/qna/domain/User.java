@@ -21,12 +21,16 @@ public class User extends BaseDateEntity{
     private static final int PASSWORD_LENGTH = 20;
     private static final int USER_ID_LENGTH = 20;
 
+    // test용
     public static User create(String userId) {
         return new User(userId, "password", "name", userId + "@gmail.com");
     }
-
+    // test용
     public static User create(String userId, String password, String name) {
         return new User(userId, password, name, userId + "gmail.com");
+    }
+    public static User create(String userId, String password, String name, String email) {
+        return new User(userId, password, name, email);
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,11 +53,11 @@ public class User extends BaseDateEntity{
 
     protected User() {}
 
-    public User(String userId, String password, String name, String email) {
+    private User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    private User(Long id, String userId, String password, String name, String email) {
         if (Objects.isNull(name) || name.isEmpty()) {
             throw new ForbiddenException();
         }

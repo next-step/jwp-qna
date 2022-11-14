@@ -19,6 +19,9 @@ public class DeleteHistory {
     public static DeleteHistory create(ContentType answer, Long id, User writer) {
         return new DeleteHistory(answer, id, writer, LocalDateTime.now());
     }
+    public static DeleteHistory create(ContentType answer, Long id, User writer, LocalDateTime localDateTime) {
+        return new DeleteHistory(answer, id, writer, localDateTime);
+    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,7 +35,7 @@ public class DeleteHistory {
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.createDate = createDate;

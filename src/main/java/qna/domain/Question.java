@@ -22,8 +22,15 @@ import java.util.Objects;
 public class Question extends BaseDateEntity{
     private static final int TITLE_LENGTH = 100;
 
+    // test용
     public static Question create(User writer) {
         return new Question("title", "contents", writer);
+    }
+    public static Question create(String title, String contents) {
+        return new Question(null, title, contents);
+    }
+    public static Question create(String title, String contents, User writer) {
+        return new Question(null, title, contents, writer);
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +49,15 @@ public class Question extends BaseDateEntity{
 
     protected Question() {}
 
-    public Question(String title, String contents) {
+    private Question(String title, String contents) {
         this(null, title, contents);
     }
 
-    public Question(String title, String contents, User writer) {
+    private Question(String title, String contents, User writer) {
         this(null, title, contents, writer);
     }
 
-    public Question(Long id, String title, String contents) {
+    private Question(Long id, String title, String contents) {
         if (Objects.isNull(title) || title.isEmpty()) {
             throw new ForbiddenException();
         }
