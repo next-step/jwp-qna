@@ -1,18 +1,20 @@
 package qna.repository;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
 import qna.domain.Question;
-import qna.domain.QuestionTest;
 import qna.domain.User;
 import qna.domain.UserTest;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,13 +27,15 @@ public class QuestionRepositoryTest {
     UserRepository userRepository;
     @Autowired
     AnswerRepository answerRepository;
+    @Autowired
+    EntityManager entityManager;
     public User writer;
     public Question saveQuestion;
 
     @BeforeEach
     void setUp() {
-        writer = userRepository.save(UserTest.JAVAJIGI);
-        Question question = QuestionTest.Q1.writeBy(writer);
+        writer = userRepository.save(UserTest.TESTER);
+        Question question = new Question("title", "contents").writeBy(writer);
         saveQuestion = questionRepository.save(question);
     }
 
@@ -61,20 +65,41 @@ public class QuestionRepositoryTest {
         Question updateQuestion = saveQuestion.writeBy(otherWriter);
         assertAll(
                 () -> assertEquals(updateQuestion.getWriter(), otherWriter),
-                () -> assertEquals(questionRepository.findById(updateQuestion.getId()).orElse(null).getWriter(), otherWriter)
+                () -> assertEquals(questionRepository.findById(updateQuestion.getId()).orElse(null).getWriter(),
+                        otherWriter)
         );
     }
 
     @DisplayName("질문삭제시 답변도 삭제 검증")
     @Test
-    void deleted_test() {
-        User tester = userRepository.save(UserTest.TESTER);
-        Question question = questionRepository.save(QuestionTest.testerQuestion);
-        Answer answer = answerRepository.save(new Answer(1L,tester, question, "Answers test"));
-        question.addAnswer(answer);
+    void deleted_test() throws Exception {
+        new Answer(writer, saveQuestion, "Answers test1");
+        new Answer(writer, saveQuestion, "Answers test2");
+        questionRepository.save(saveQuestion);
+        flush();
 
-        questionRepository.delete(question);
+        saveQuestion.delete(writer);
         assertThat(answerRepository.findById(1L)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("question 삭제 상태변경 검증")
+    void question_set_delete() throws Exception {
+        saveQuestion.delete(writer);
+        Assertions.assertThat(saveQuestion.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("동일한 유저 아닌경우 예외발생")
+    void question_delete_user_valid() {
+        assertThatThrownBy(() -> saveQuestion.delete(User.GUEST_USER))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("삭제할 권한");
+    }
+
+    void flush() {
+        entityManager.flush();
+        entityManager.clear();
     }
 
 }

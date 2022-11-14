@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -12,10 +13,10 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
     private Question question;
     @Lob
     private String contents;
@@ -41,16 +42,24 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        this.question = question;
         this.contents = contents;
+        setQuestion(question);
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    private void setQuestion(Question question) {
+        if (Objects.nonNull(this.question)) {
+            question.removeAnswer(this);
+        }
+        question.addAnswer(this);
+        this.question = question;
     }
 
     public void toQuestion(Question question) {
         this.question = question;
+    }
+
+    public boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
@@ -72,6 +81,19 @@ public class Answer extends BaseEntity {
     public Question getQuestion() {
         return question;
     }
+
+    public DeleteHistory delete(User loginUser) throws Exception {
+        validateUser(loginUser);
+        this.deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser);
+    }
+
+    private void validateUser(User loginUser) throws Exception {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
@@ -101,4 +123,6 @@ public class Answer extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
     }
+
+
 }

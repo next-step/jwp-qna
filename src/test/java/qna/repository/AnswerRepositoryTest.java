@@ -8,14 +8,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.Answer;
+import qna.domain.DeleteHistory;
 import qna.domain.Question;
+import qna.domain.TestFixture;
 import qna.domain.User;
 import qna.domain.UserTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class AnswerRepositoryTest {
@@ -25,6 +28,8 @@ public class AnswerRepositoryTest {
     QuestionRepository questionRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DeleteHistoryRepository deleteHistoryRepository;
     @Autowired
     EntityManager entityManager;
 
@@ -39,17 +44,12 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("Answer 저장한 엔티티의 id로 조회한 경우 동등성 테스트")
+    @DisplayName("Answer 저장한 및 조회 테스트")
     void find() {
         answerRepository.save(answer);
         flush();
         Answer findAnswer = answerRepository.findById(answer.getId()).orElse(null);
-
-        assertAll(
-                () -> assertEquals(findAnswer.getQuestion(), answer.getQuestion()),
-                () -> assertEquals(findAnswer.getWriter(), answer.getWriter()),
-                () -> assertEquals(findAnswer, answer)
-        );
+        assertThat(findAnswer).isNotNull();
     }
 
     @DisplayName("findByQuestionIdAndDeletedFalse 검증")
@@ -76,7 +76,27 @@ public class AnswerRepositoryTest {
         assertThat(Hibernate.isInitialized(dbQuestion)).isFalse();
     }
 
-    void flush(){
+    @Test
+    @DisplayName("answer 삭제 상태변경 검증")
+    void answer_set_delete() throws Exception {
+        Answer answerTest = answerRepository.save(answer);
+        DeleteHistory deleteHistory = answerTest.delete(answer.getWriter());
+        deleteHistoryRepository.save(deleteHistory);
+
+        assertThat(answerTest.isDeleted()).isTrue();
+        assertThat(deleteHistoryRepository.findByDeletedBy(answer.getWriter())).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("다른사람이 작성한 경우 예외발생")
+    void answer_delete_user_valid() {
+        Answer answerTest = TestFixture.createAnswer(UserTest.JAVAJIGI, question);
+        assertThatThrownBy(() -> answerTest.delete(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessageContaining("다른 사람");
+    }
+
+    void flush() {
         entityManager.flush();
         entityManager.clear();
     }

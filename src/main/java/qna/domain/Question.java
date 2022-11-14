@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -17,8 +18,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers;
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -33,6 +34,7 @@ public class Question extends BaseEntity {
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers(new ArrayList<>());
     }
 
     public Question writeBy(User writer) {
@@ -45,8 +47,8 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
         answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
@@ -65,6 +67,23 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public void removeAnswer(Answer answer) {
+        if (answers.contains(answer)) {
+            this.answers.removeAnswer(answer);
+        }
+    }
+    public List<DeleteHistory> delete(User loginUser) throws Exception {
+        validateUser(loginUser);
+        this.deleted = true;
+        DeleteHistories deleteHistories = answers.delete(loginUser);
+        return deleteHistories.addQueue(new DeleteHistory(ContentType.QUESTION, id, loginUser));
+    }
+
+    private void validateUser(User loginUser) throws Exception {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
     @Override
     public String toString() {
         return "Question{" +
@@ -94,4 +113,5 @@ public class Question extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id, title, contents, writer, deleted);
     }
+
 }
