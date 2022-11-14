@@ -4,9 +4,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 import qna.domain.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -33,7 +34,7 @@ class DeleteHistoryRepositoryTest {
         Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
         Answer answer = createAnswer(javajigi, question);
 
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.of(ContentType.ANSWER, answer.getId(), javajigi, LocalDateTime.now()));
+        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.ofAnswer(answer.getId(), javajigi));
 
         assertAll(
                 () -> assertThat(deleteHistory.getId()).isNotNull(),
@@ -45,21 +46,32 @@ class DeleteHistoryRepositoryTest {
 
     @DisplayName("조회_성공")
     @Test
-    void find() {
+    void find() throws CannotDeleteException {
 
         User javajigi = createUser(UserTest.JAVAJIGI);
-        Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
+        List<DeleteHistory> deleteHistories = deleteHistoryRepository.saveAll(createQuestion(javajigi, QuestionTest.QUESTION_1).delete(javajigi).getDeleteHistories());
+        Long deleteHistoryId = deleteHistories.get(0).getId();
 
-        DeleteHistory deleteHistory = deleteHistoryRepository.save(DeleteHistory.of(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()));
-
-        DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(deleteHistory.getId()).orElse(null);
+        DeleteHistory findDeleteHistory = deleteHistoryRepository.findById(deleteHistoryId).orElse(null);
 
         assertAll(
-                () -> assertThat(findDeleteHistory.getId()).isEqualTo(deleteHistory.getId()),
+                () -> assertThat(findDeleteHistory.getId()).isEqualTo(deleteHistoryId),
                 () -> assertThat(findDeleteHistory.getContentType()).isEqualTo(ContentType.QUESTION),
                 () -> assertThat(findDeleteHistory.getContentId()).isNotNull(),
                 () -> assertThat(findDeleteHistory.getCreateDate()).isNotNull(),
                 () -> assertThat(findDeleteHistory.getDeletedById()).isNotNull());
+    }
+
+    @DisplayName("삭제 내역 리스트 저장.")
+    @Test
+    void add() throws CannotDeleteException {
+
+        User javajigi = createUser(UserTest.JAVAJIGI);
+        Question question = createQuestion(javajigi, QuestionTest.QUESTION_1);
+
+        List<DeleteHistory> deleteHistories = deleteHistoryRepository.saveAll(question.delete(javajigi).getDeleteHistories());
+
+        assertThat(deleteHistories).hasSize(1);
     }
 
     private User createUser(User user) {

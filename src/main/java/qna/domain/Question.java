@@ -1,7 +1,8 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,8 +19,8 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
     @Column(nullable = false)
     private boolean deleted = false;
 
@@ -37,6 +38,30 @@ public class Question extends BaseEntity {
         this.contents = contents;
     }
 
+    public void addAnswer(Answer answer) {
+        this.answers.add(answer);
+        answer.toQuestion(this);
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateOwner(loginUser);
+        this.deleted = true;
+        return createDeleteHistories(loginUser);
+    }
+
+    private void validateOwner(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private DeleteHistories createDeleteHistories(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.ofQuestion(this.getId(), loginUser));
+        deleteHistories.addAll(this.answers.delete(loginUser));
+        return deleteHistories;
+    }
+
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
@@ -46,9 +71,8 @@ public class Question extends BaseEntity {
         return this.writer.equals(writer);
     }
 
-    public void addAnswer(Answer answer) {
-        this.answers.add(answer);
-        answer.toQuestion(this);
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public Long getId() {
@@ -63,19 +87,11 @@ public class Question extends BaseEntity {
         return contents;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public User getWriter() {
         return this.writer;
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return this.answers.getAnswers();
     }
 }
