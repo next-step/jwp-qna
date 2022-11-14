@@ -33,9 +33,9 @@ references user
 > - [x] 5.user 맵핑
 
 ## 2단계 요구사항 정리
-> - [ ] 1.Question <-> Answer 연관관계 맵핑
-> - [ ] 2.User <-> Answer 연관관계 맵핑
-> - [ ] 3.User <->Delete_history 연관관계 맵핑
-> - [ ] 4.User <-> Question 연관관계 맵핑
+> - [x] 1.Question <-> Answer 연관관계 맵핑
+> - [x] 2.User <-> Answer 연관관계 맵핑
+> - [x] 3.User <->Delete_history 연관관계 맵핑
+> - [x] 4.User <-> Question 연관관계 맵핑
 
 
