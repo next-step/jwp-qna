@@ -15,13 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class DeleteHistoryRepositoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
+    @Autowired
+    private UserRepository userRepository;
 
+    private User user;
     private DeleteHistory deleteHistory;
 
     @BeforeEach
     public void setUp() {
-        deleteHistory = new DeleteHistory(ContentType.QUESTION, 1L, 1L, LocalDateTime.now());
-        deleteHistory = deleteHistoryRepository.save(deleteHistory);
+        user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        deleteHistory = deleteHistoryRepository.save(new DeleteHistory(ContentType.ANSWER, 1L, user, LocalDateTime.now()));
     }
 
     @Test
