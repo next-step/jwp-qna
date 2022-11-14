@@ -18,14 +18,19 @@ class AnswerRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Answer answer;
     private Question question;
+    private User user;
     private List<Answer> answers;
 
     @BeforeEach
     void setUp() {
+        user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
         question = questionRepository.save(new Question("title1", "contents1"));
-        answer = answerRepository.save(new Answer(UserTest.JAVAJIGI, question, "Answers Contents1"));
+        answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
     }
 
     @Test
