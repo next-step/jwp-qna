@@ -95,16 +95,22 @@ public class Answer extends BaseEntity {
 
         Answer answer = (Answer) o;
 
-        if (!Objects.equals(id, answer.id)) return false;
-        if (!Objects.equals(writer, answer.writer)) return false;
-        return Objects.equals(question, answer.question);
+        return Objects.equals(id, answer.id);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (writer != null ? writer.hashCode() : 0);
-        result = 31 * result + (question != null ? question.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", writer=" + writer +
+                ", question=" + question +
+                ", contents='" + contents + '\'' +
+                ", deleted=" + deleted +
+                '}';
     }
 }
