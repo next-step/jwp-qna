@@ -29,7 +29,7 @@ public class Question {
     @Column(columnDefinition = "boolean default false")
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
     private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
@@ -109,12 +109,25 @@ public class Question {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Question question = (Question) o;
-        return Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(writer, question.writer);
+
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, writer);
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", writer=" + writer +
+                ", deleted=" + deleted +
+                '}';
     }
 }
