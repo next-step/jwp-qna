@@ -63,7 +63,10 @@ public class Question extends BaseTimeEntity {
 
     public void delete(User loginUser) throws CannotDeleteException {
         checkWriter(loginUser);
-        this.deleted = true;
+
+        if (answers.isEmpty()) {
+            this.deleted = true;
+        }
     }
 
     public void checkWriter(User loginUser) throws CannotDeleteException {

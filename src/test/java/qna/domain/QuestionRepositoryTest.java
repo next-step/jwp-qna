@@ -104,4 +104,14 @@ public class QuestionRepositoryTest {
                 () -> question.checkWriter(UserTest.SANJIGI)
         ).isInstanceOf(CannotDeleteException.class);
     }
+
+    @Test
+    @DisplayName("답변이 없는 경우 질문 정상 삭제 테스트")
+    void delete_question_with_empty_answer_test() throws CannotDeleteException {
+        Question question = questions.findByIdAndDeletedFalse(QuestionTest.Q1.getId()).get();
+
+        question.delete(UserTest.JAVAJIGI);
+
+        assertThat(question.isDeleted()).isTrue();
+    }
 }
