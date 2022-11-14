@@ -3,10 +3,12 @@ package qna.domain;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -93,4 +95,13 @@ public class QuestionRepositoryTest {
 
     }
 
+    @Test
+    @DisplayName("로그인 유저와 question 작성자 일치 확인 테스트")
+    void check_question_writer_test() {
+        Question question = questions.findByIdAndDeletedFalse(QuestionTest.Q1.getId()).get();
+
+        assertThatThrownBy(
+                () -> question.checkWriter(UserTest.SANJIGI)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
 }

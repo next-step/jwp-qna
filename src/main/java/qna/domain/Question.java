@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -57,6 +59,17 @@ public class Question extends BaseTimeEntity {
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
         answers.add(answer);
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        checkWriter(loginUser);
+        this.deleted = true;
+    }
+
+    public void checkWriter(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public Long getId() {
