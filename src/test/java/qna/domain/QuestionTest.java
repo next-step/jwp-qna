@@ -6,11 +6,8 @@ import org.junit.jupiter.api.Test;
 import qna.exception.CannotDeleteException;
 import qna.message.QuestionMessage;
 
-import java.util.Arrays;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class QuestionTest {
 
@@ -60,22 +57,10 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("질문을 삭제하면 답변을 함께 삭제하고, (답변 삭제 이력 포함) 삭제 이력을 반환한다")
+    @DisplayName("질문을 삭제하면 논리 삭제 처리한다")
     void delete_question_test() throws CannotDeleteException {
         Question question = questionSample(1L, writer);
-        Answer answer = AnswerTest.answerSample(1L, writer, question);
-        Answer answer2 = AnswerTest.answerSample(2L, writer, question);
-        DeleteHistories expectedDeleteHistories = new DeleteHistories(Arrays.asList(
-                DeleteHistory.ofQuestion(question),
-                DeleteHistory.ofAnswer(answer),
-                DeleteHistory.ofAnswer(answer2)
-        ));
-
-        DeleteHistories deleteHistories = question.delete(writer);
-
-        assertAll(
-                () -> assertThat(question.isDeleted()).isTrue(),
-                () -> assertThat(deleteHistories).isEqualTo(expectedDeleteHistories)
-        );
+        question.delete(writer);
+        assertThat(question.isDeleted()).isTrue();
     }
 }

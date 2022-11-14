@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.Question;
 import qna.domain.User;
+import qna.domain.UserTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("shshon", "password", "손상훈", "shshon@naver.com");
+        writer = UserTest.userSample(null);
         em.persist(writer);
     }
 

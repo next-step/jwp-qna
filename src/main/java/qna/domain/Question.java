@@ -4,6 +4,8 @@ import qna.exception.CannotDeleteException;
 import qna.message.QuestionMessage;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,8 +29,8 @@ public class Question {
     @Column(columnDefinition = "boolean default false")
     private boolean deleted = false;
 
-    @Embedded
-    private Answers answers = Answers.empty();
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
 
@@ -77,17 +79,20 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
+        if(this.answers.contains(answer)) {
+            return;
+        }
         this.answers.add(answer);
         answer.toQuestion(this);
     }
 
-    public DeleteHistories delete(User owner) throws CannotDeleteException {
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
+    public void delete(User owner) throws CannotDeleteException {
         validateOwner(owner);
         this.deleted = true;
-        DeleteHistories deleteHistories = DeleteHistories.of(this);
-        DeleteHistories answersDeleteHistories = this.answers.deleteAll(owner);
-        deleteHistories.addAll(answersDeleteHistories);
-        return deleteHistories;
     }
 
     private void validateOwner(User owner) throws CannotDeleteException {
