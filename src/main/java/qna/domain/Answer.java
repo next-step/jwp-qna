@@ -58,6 +58,10 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
+    public void delete() {
+        deleted = true;
+    }
+
     public Long getId() {
         return id;
     }

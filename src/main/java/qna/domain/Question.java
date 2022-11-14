@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,12 +62,24 @@ public class Question extends BaseTimeEntity {
         answers.add(answer);
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
+
         checkWriter(loginUser);
 
         if (answers.isEmpty()) {
             this.deleted = true;
+            deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+            return deleteHistories;
         }
+
+        if (answers.isIdenticalWriter(loginUser)) {
+            this.deleted = true;
+            deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+            deleteHistories = answers.delete(deleteHistories);
+        }
+
+        return deleteHistories;
     }
 
     public void checkWriter(User loginUser) throws CannotDeleteException {
