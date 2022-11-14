@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import qna.domain.Answer;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,10 +28,10 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("shshon", "password", "손상훈", "shshon@naver.com");
+        writer = UserTest.userSample(null);
         em.persist(writer);
 
-        question = new Question("title", "content").writeBy(writer);
+        question = QuestionTest.questionSample(null, writer);
         em.persist(question);
     }
 
@@ -48,9 +46,9 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("주어진 답변 ID로 조회한다")
     void find_answer_with_id_test() {
-        Answer expectedAnswer = new Answer(writer, question, "content");
-        expectedAnswer = answerRepository.save(expectedAnswer);
-        Answer answer = answerRepository.findByIdAndDeletedFalse(question.getId()).get();
+        Answer answer = AnswerTest.answerSample(1L, writer, question);
+        answer = answerRepository.save(answer);
+        Answer expectedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
         assertThat(answer).isEqualTo(expectedAnswer);
     }
 
