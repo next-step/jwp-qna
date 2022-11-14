@@ -22,8 +22,8 @@ public class AnswerTest {
 
     @BeforeEach
     void setUp() {
-        writer = UserTest.userSample(1L);
-        question = QuestionTest.questionSample(1L, writer);
+        writer = UserTest.userSample(null);
+        question = QuestionTest.questionSample(null, writer);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AnswerTest {
     @DisplayName("주어진 owner와 답변 owner를 비교하여 동일 여부를 반환한다 ")
     void is_match_owner_with_other_owner() {
         User owner = UserTest.userSample(1L);
-        Answer answer = AnswerTest.answerSample(1L, writer, question);
+        Answer answer = AnswerTest.answerSample(1L, owner, question);
 
         boolean isEqualOwner = answer.isOwner(owner);
 

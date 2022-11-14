@@ -38,7 +38,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("주어진 답변을 영속화한다")
     void save_question_test() {
-        Answer answer = new Answer(writer, question, "content");
+        Answer answer = AnswerTest.answerSample(null, writer, question);
         answerRepository.save(answer);
         assertThat(answer.getId()).isNotNull();
     }
@@ -46,7 +46,7 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("주어진 답변 ID로 조회한다")
     void find_answer_with_id_test() {
-        Answer answer = AnswerTest.answerSample(1L, writer, question);
+        Answer answer = AnswerTest.answerSample(null, writer, question);
         answer = answerRepository.save(answer);
         Answer expectedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
         assertThat(answer).isEqualTo(expectedAnswer);
