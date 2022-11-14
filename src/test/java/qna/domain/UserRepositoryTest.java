@@ -104,19 +104,16 @@ public class UserRepositoryTest {
     @DisplayName("게스트 유저가 아닌 경우 테스트")
     void check_not_guest_user_test() {
 
-        final User javajigi = users.save(UserTest.JAVAJIGI);
-
-        assertThat(javajigi.isGuestUser()).isFalse();
+        assertThat(UserTest.JAVAJIGI.isGuestUser()).isFalse();
     }
 
     @Test
     @DisplayName("게스트 유저 확인 테스트")
     void check_guest_user_test() {
 
-        final User javajigi = users.save(UserTest.JAVAJIGI);
-        final User guestUeser = javajigi.GUEST_USER;
+        final User guestUser = UserTest.JAVAJIGI.GUEST_USER;
 
-        assertThat(guestUeser.isGuestUser()).isTrue();
+        assertThat(guestUser.isGuestUser()).isTrue();
     }
 
 
