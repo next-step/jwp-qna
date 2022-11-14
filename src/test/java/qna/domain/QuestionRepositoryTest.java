@@ -89,7 +89,7 @@ public class QuestionRepositoryTest {
         question.addAnswer(answers.save(AnswerTest.A1));
         question.addAnswer(answers.save(AnswerTest.A2.writeBy(UserTest.JAVAJIGI)));
 
-        assertThat(question.getAnswers()).hasSize(2);
+        assertThat(question.getAnswers().getSize()).isEqualTo(2);
 
     }
 

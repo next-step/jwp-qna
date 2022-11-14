@@ -24,8 +24,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
@@ -41,7 +41,7 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 
