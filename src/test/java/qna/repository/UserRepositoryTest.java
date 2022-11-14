@@ -2,13 +2,16 @@ package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import qna.domain.User;
 
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
 public class UserRepositoryTest {
     private static final User userTest = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");

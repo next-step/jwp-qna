@@ -34,11 +34,10 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
-        this.createDate = createDate;
     }
 
     public Long getId() {
@@ -71,8 +70,8 @@ public class DeleteHistory {
         }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(
-                contentId, that.contentId) && Objects.equals(deletedBy, that.deletedBy) && Objects.equals(
-                createDate, that.createDate);
+                contentId, that.contentId) && Objects.equals(deletedBy, that.deletedBy)
+                && Objects.equals(createDate, that.createDate);
     }
 
     @Override

@@ -2,21 +2,23 @@ package qna.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import qna.domain.Answer;
 import qna.domain.Question;
 import qna.domain.User;
-import qna.domain.UserTest;
 
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @DataJpaTest
 public class AnswerRepositoryTest {
     private static final User userTest = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-    private static final Question questionTest = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
+    private static final Question questionTest = Question.of("title1", "contents1").writeBy(1L);
     private static final Answer answerTest = new Answer(userTest.getId(), questionTest, "contents test");
     @Autowired
     private AnswerRepository answerRepository;
@@ -34,7 +36,7 @@ public class AnswerRepositoryTest {
 
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(questionTest);
+        final List<Answer> answers = answerRepository.findByQuestion_IdAndDeletedFalse(1L);
         assertAll(
                 () -> assertThat(answers).isNotEmpty(),
                 () -> assertThat(answers.get(0).getQuestionId()).isEqualTo(questionTest.getId()),
