@@ -6,16 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import qna.config.JpaAuditConfig;
-import qna.domain.Answer;
-import qna.domain.DeleteHistory;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(JpaAuditConfig.class)
 @DataJpaTest
 class DeleteHistoryRepositoryTest {
 
@@ -33,13 +27,13 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("shshon", "password", "손상훈", "shshon@naver.com");
+        writer = UserTest.userSample(null);
         em.persist(writer);
 
-        question = new Question("title", "content").writeBy(writer);
+        question = QuestionTest.questionSample(null, writer);
         em.persist(question);
 
-        answer = new Answer(writer, question, "content");
+        answer = AnswerTest.answerSample(null, writer, question);
         em.persist(answer);
     }
 

@@ -6,17 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import qna.config.JpaAuditConfig;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(JpaAuditConfig.class)
 @DataJpaTest
 class QuestionRepositoryTest {
 
@@ -30,7 +26,7 @@ class QuestionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("shshon", "password", "손상훈", "shshon@naver.com");
+        writer = UserTest.userSample(null);
         em.persist(writer);
     }
 
@@ -57,9 +53,21 @@ class QuestionRepositoryTest {
     @Test
     @DisplayName("주어진 ID 값으로 질문을 조회한다")
     void find_with_question_id_test() {
-        Question expectedQuestion = new Question("title1", "contents1").writeBy(writer);
+        Question expectedQuestion = QuestionTest.questionSample(null, writer);
         expectedQuestion = questionRepository.save(expectedQuestion);
         Question question = questionRepository.findByIdAndDeletedFalse(expectedQuestion.getId()).get();
         assertThat(question).isEqualTo(expectedQuestion);
+    }
+
+    @Test
+    @DisplayName("주어진 답변을 질문에 추가한다")
+    void add_answer_to_question_test() {
+        Question question = QuestionTest.questionSample(null, writer);
+        Answer answer = AnswerTest.answerSample(null, writer, question);
+        question.addAnswer(answer);
+
+        questionRepository.save(question);
+
+        assertThat(question.getAnswers().size()).isEqualTo(1);
     }
 }

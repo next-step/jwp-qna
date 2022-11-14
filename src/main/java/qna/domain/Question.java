@@ -1,8 +1,11 @@
 package qna.domain;
 
+import qna.exception.CannotDeleteException;
 import qna.message.QuestionMessage;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,11 +23,14 @@ public class Question {
     private String contents;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_user"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
     @Column(columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    private List<Answer> answers = new ArrayList<>();
 
     protected Question() {
 
@@ -73,11 +79,26 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
+        if(this.answers.contains(answer)) {
+            return;
+        }
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
 
-    public void delete() {
+    public List<Answer> getAnswers() {
+        return this.answers;
+    }
+
+    public void delete(User owner) throws CannotDeleteException {
+        validateOwner(owner);
         this.deleted = true;
+    }
+
+    private void validateOwner(User owner) throws CannotDeleteException {
+        if (!this.isOwner(owner)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 
     public boolean isDeleted() {
@@ -88,12 +109,25 @@ public class Question {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Question question = (Question) o;
-        return Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(writer, question.writer);
+
+        return Objects.equals(id, question.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, writer);
+        return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", writer=" + writer +
+                ", deleted=" + deleted +
+                '}';
     }
 }

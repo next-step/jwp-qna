@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.message.DeleteHistoryMessage;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,7 +20,7 @@ public class DeleteHistory {
     private Long contentId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_user"))
+    @JoinColumn(name = "deleted_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deleter;
 
     private LocalDateTime createDate = LocalDateTime.now();
@@ -28,9 +30,16 @@ public class DeleteHistory {
     }
 
     private DeleteHistory(ContentType contentType, Long contentId, User deleter) {
+        validateContentId(contentId);
         this.contentType = contentType;
         this.contentId = contentId;
         this.deleter = deleter;
+    }
+
+    private void validateContentId(Long contentId) {
+        if (Objects.isNull(contentId)) {
+            throw new IllegalArgumentException(DeleteHistoryMessage.ERROR_CONTENT_ID_SHOULD_BE_NOT_NULL.message());
+        }
     }
 
     public static DeleteHistory ofQuestion(Question question) {
@@ -45,17 +54,20 @@ public class DeleteHistory {
         return this.id;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) && contentType == that.contentType && Objects.equals(contentId, that.contentId) && Objects.equals(deleter, that.deleter);
+
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deleter);
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override

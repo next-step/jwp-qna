@@ -6,18 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import qna.config.JpaAuditConfig;
-import qna.domain.Answer;
-import qna.domain.Question;
-import qna.domain.User;
+import qna.domain.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(JpaAuditConfig.class)
 @DataJpaTest
 class AnswerRepositoryTest {
 
@@ -33,17 +28,17 @@ class AnswerRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = new User("shshon", "password", "손상훈", "shshon@naver.com");
+        writer = UserTest.userSample(null);
         em.persist(writer);
 
-        question = new Question("title", "content").writeBy(writer);
+        question = QuestionTest.questionSample(null, writer);
         em.persist(question);
     }
 
     @Test
     @DisplayName("주어진 답변을 영속화한다")
     void save_question_test() {
-        Answer answer = new Answer(writer, question, "content");
+        Answer answer = AnswerTest.answerSample(null, writer, question);
         answerRepository.save(answer);
         assertThat(answer.getId()).isNotNull();
     }
@@ -51,25 +46,10 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("주어진 답변 ID로 조회한다")
     void find_answer_with_id_test() {
-        Answer expectedAnswer = new Answer(writer, question, "content");
-        expectedAnswer = answerRepository.save(expectedAnswer);
-        Answer answer = answerRepository.findByIdAndDeletedFalse(question.getId()).get();
+        Answer answer = AnswerTest.answerSample(null, writer, question);
+        answer = answerRepository.save(answer);
+        Answer expectedAnswer = answerRepository.findByIdAndDeletedFalse(answer.getId()).get();
         assertThat(answer).isEqualTo(expectedAnswer);
-    }
-
-    @Test
-    @DisplayName("주어진 질문의 ID로 다수 조회한다.")
-    void find_answers_with_question_id_test() {
-        Answer answer = new Answer(writer, question, "content");
-        answerRepository.saveAll(Arrays.asList(
-                answer,
-                new Answer(writer, question, "content2"),
-                new Answer(writer, question, "content3")
-        ));
-
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(question.getId());
-
-        assertThat(answers).contains(answer);
     }
 
     @Test
