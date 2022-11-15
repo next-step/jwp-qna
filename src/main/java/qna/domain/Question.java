@@ -1,11 +1,11 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +14,9 @@ import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class  Question extends TimeEntity {
+    private static final String CANT_DELETE_QUESTION = "질문을 삭제할 권한이 없습니다.";
+    private static final String CANT_DELETE_OTHER_PERSON = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -128,11 +131,20 @@ public class  Question extends TimeEntity {
         return new DeleteHistory(QUESTION, getId(), getWriter(), LocalDateTime.now());
     }
 
-    public boolean isAllOwnerAnswers(User owner) {
+    private boolean isAllOwnerAnswers(User owner) {
         return this.answers.allOwner(owner);
     }
 
     public List<DeleteHistory> deleteAnswersAndGetHistory() {
         return this.answers.allDeleteAndGetHistory();
+    }
+
+    public void validateDelete(User owner) throws CannotDeleteException {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException(CANT_DELETE_QUESTION);
+        }
+        if (!isAllOwnerAnswers(owner)) {
+            throw new CannotDeleteException(CANT_DELETE_OTHER_PERSON);
+        }
     }
 }
