@@ -6,11 +6,11 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
 
 - 아래의 DDL(Data Definition Language)을 보고 유추하여 엔티티 클래스와 리포지토리 클래스를 작성해 본다.
     - [ ] 사용자(User)
-        - [ ] DDL에 맞게 Entity 클래스 애노테이션 추가
-        - [ ] id 생성 테스트
+        - [x] DDL에 맞게 Entity 클래스 애노테이션 추가
+        - [x] id 생성 테스트
         - [ ] 길이 제약조건 테스트
         - [ ] null 제약조건 테스트
-        - [ ] unique 제약조건 테스트
+        - [x] unique 제약조건 테스트
     - [ ] 질문(Question)
         - [ ] DDL에 맞게 Entity 클래스 애노테이션 추가
         - [ ] id 생성 테스트
