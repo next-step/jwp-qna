@@ -45,6 +45,7 @@ public class Question extends BaseTimeEntity{
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -73,13 +74,19 @@ public class Question extends BaseTimeEntity{
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 '}';
     }
 
-    public void checkQuestionOwnerSameLoginUser(User loginUser) throws CannotDeleteException {
+    private void checkQuestionOwnerSameLoginUser(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
 
+    public void delete(User loginUser) throws CannotDeleteException {
+        checkQuestionOwnerSameLoginUser(loginUser);
+        answers.deleteAnswers(loginUser);
+        deleted = true;
+    }
 }

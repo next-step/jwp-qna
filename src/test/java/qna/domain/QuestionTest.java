@@ -24,7 +24,7 @@ public class QuestionTest {
     @Test
     @DisplayName("Question 질문자와 loginUser 동일할 경우, Error 발생 테스트")
     void Question_작성자_loginUser_Error_발생() {
-        assertThrows(CannotDeleteException.class, () -> Q1.checkQuestionOwnerSameLoginUser(UserTest.SANJIGI));
+        assertThrows(CannotDeleteException.class, () -> Q1.delete(UserTest.SANJIGI));
     }
 
 }

@@ -107,7 +107,7 @@ public class User extends BaseTimeEntity{
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof User)) {
+        if (!(o instanceof User)) {
             return false;
         }
         return ((User)o).getId() == id;
