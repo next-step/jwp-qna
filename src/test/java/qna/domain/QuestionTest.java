@@ -6,12 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.config.JpaAuditingConfiguration;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static qna.domain.ContentType.ANSWER;
+import static qna.domain.ContentType.QUESTION;
+import static qna.domain.Question.CANT_DELETE_OTHER_PERSON;
+import static qna.domain.Question.CANT_DELETE_QUESTION;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -89,5 +98,34 @@ public class QuestionTest {
         Answer additionalAnswer = answers.save(new Answer(writer, question, "추가 답변드립니다."));
         Assertions.assertThatThrownBy(() -> question.addAnswer(additionalAnswer))
             .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 삭제전_질문과_답변_작성자가_일치하는지_검증한다() {
+        assertThatNoException()
+            .isThrownBy(() -> question.validateDelete(writer));
+
+        User other = users.save(new User("crawal", "password", "name", "esesmail"));
+        assertThatThrownBy(() -> question.validateDelete(other))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessage(CANT_DELETE_QUESTION);
+
+
+        Answer otherAnswer = answers.save(new Answer(other, question, "Other Answers"));
+        question.addAnswer(otherAnswer);
+        assertThatThrownBy(() -> question.validateDelete(writer))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessage(CANT_DELETE_OTHER_PERSON);
+    }
+
+    @Test
+    void 질문과_답변을_모두_삭제한다() {
+        List<DeleteHistory> deleteHistories = question.delete();
+        assertThat(deleteHistories).hasSize(3);
+        assertThat(deleteHistories).isEqualTo(Arrays.asList(
+            new DeleteHistory(QUESTION, question.getId(), writer, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, answerEntityList.get(0).getId(), writer, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, answerEntityList.get(1).getId(), writer, LocalDateTime.now())
+        ));
     }
 }
