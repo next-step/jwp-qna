@@ -66,7 +66,7 @@ public class AnswerTest {
     void save_후_update_테스트() {
         Answer modifiedAnswer = answers.findById(answer.getId()).get();
         String contents = modifiedAnswer.getContents();
-        modifiedAnswer.setContents("허억!!");
+        modifiedAnswer.modify("허억!!");
         Answer checkAnswer = answers.findById(answer.getId()).get();
         assertThat(contents).isNotEqualTo(checkAnswer.getContents());
     }

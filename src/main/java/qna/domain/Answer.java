@@ -66,7 +66,7 @@ public class Answer extends TimeEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void modify(String contents) {
         this.contents = contents;
     }
 
