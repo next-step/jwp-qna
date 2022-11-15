@@ -81,7 +81,7 @@ public class QuestionTest {
 
     @Test
     void 삭제된_질문에_답변을_달수_없다() {
-        question.setDeleted(true);
+        question.delete();
         Assertions.assertThatThrownBy(() -> question.addAnswer(new Answer(writer, question, "추가 답변드립니다.")))
             .isInstanceOf(NotFoundException.class);
     }

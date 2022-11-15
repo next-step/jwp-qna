@@ -99,10 +99,6 @@ public class  Question extends TimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public String toString() {
         return "Question{" +
@@ -127,10 +123,10 @@ public class  Question extends TimeEntity {
         return this.writer;
     }
 
-    public List<DeleteHistory> deleteAndGetHistory() {
+    public List<DeleteHistory> delete() {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(deleteQuestionAndGetHistory());
-        deleteHistories.addAll(deleteAnswersAndGetHistory());
+        deleteHistories.add(deleteQuestion());
+        deleteHistories.addAll(deleteAnswers());
         return deleteHistories;
     }
 
@@ -138,13 +134,13 @@ public class  Question extends TimeEntity {
         return this.answers.allOwner(owner);
     }
 
-    private DeleteHistory deleteQuestionAndGetHistory() {
-        setDeleted(true);
+    private DeleteHistory deleteQuestion() {
+        this.deleted = true;
         return new DeleteHistory(QUESTION, getId(), getWriter(), LocalDateTime.now());
     }
 
-    private List<DeleteHistory> deleteAnswersAndGetHistory() {
-        return this.answers.allDeleteAndGetHistory();
+    private List<DeleteHistory> deleteAnswers() {
+        return this.answers.delete();
     }
 
     public void validateDelete(User owner) throws CannotDeleteException {

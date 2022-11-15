@@ -21,7 +21,7 @@ public class Answers {
         this.answers
             .stream()
             .filter(deletedAnswer::equals)
-            .forEach(answer -> answer.setDeleted(true));
+            .forEach(Answer::delete);
     }
 
     public void refreshAnswerWithoutDelete() {
@@ -40,9 +40,9 @@ public class Answers {
             .allMatch(answer -> answer.isOwner(owner));
     }
 
-    public List<DeleteHistory> allDeleteAndGetHistory() {
+    public List<DeleteHistory> delete() {
         return answers.stream()
-            .map(Answer::deleteAndGetHistory)
+            .map(Answer::delete)
             .collect(Collectors.toList());
     }
 

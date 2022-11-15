@@ -62,38 +62,12 @@ public class Answer extends TimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        if (Objects.isNull(writer)) {
-            return null;
-        }
-        return writer.getId();
-    }
-
-    public Long getQuestionId() {
-        if (Objects.isNull(question)) {
-            return null;
-        }
-        return question.getId();
-    }
-
     public String getContents() {
         return contents;
     }
 
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -111,8 +85,12 @@ public class Answer extends TimeEntity {
         return this.writer;
     }
 
-    public DeleteHistory deleteAndGetHistory() {
-        setDeleted(true);
+    public DeleteHistory delete() {
+        this.deleted = true;
         return new DeleteHistory(ANSWER, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }
