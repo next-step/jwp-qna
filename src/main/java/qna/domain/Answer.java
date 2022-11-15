@@ -1,9 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.view.Messages;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -58,6 +61,20 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
+    public DeleteHistory delete(User loginUser) {
+        validateWriter(loginUser);
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+    
+    private void validateWriter(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            String errorMsg = String.format(Messages.WRITER_DOES_NOT_MATCH.getMsg(),
+                    id, writer.getUserId(), loginUser.getUserId());
+            throw new CannotDeleteException(errorMsg);
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -87,16 +104,8 @@ public class Answer extends BaseTimeEntity {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

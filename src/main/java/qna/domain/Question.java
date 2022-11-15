@@ -1,9 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.view.Messages;
+
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -24,8 +25,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
@@ -41,7 +42,7 @@ public class Question extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return this.answers;
     }
 
@@ -59,44 +60,45 @@ public class Question extends BaseTimeEntity {
         answers.add(answer);
     }
 
-    public Long getId() {
-        return id;
+    public DeleteHistories delete(User loginUser) {
+        DeleteHistories deleteHistories = new DeleteHistories();
+
+        checkWriter(loginUser);
+        checkAnswersWriter(loginUser);
+
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete(loginUser));
+        this.deleted = true;
+
+        return deleteHistories;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    private void checkWriter(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException(Messages.INVALID_AUTHORIZATION.getMsg());
+        }
+    }
+
+    private void checkAnswersWriter(User loginUser) {
+        if (!answers.isEmpty() && !answers.isIdenticalWriter(loginUser)) {
+            throw new CannotDeleteException(Messages.CONTAINS_ANSWER_WRITTEN_ANOTHER_USER.getMsg());
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return this.writer;
     }
 
-    public void setWriterId(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

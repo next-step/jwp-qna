@@ -57,3 +57,54 @@ create table user
 alter table user
     add constraint UK_a3imlf41l37utmxiquukk8ajc unique (user_id)
 ~~~
+
+## 2단계 - 연관 관계 매핑
+### 요구사항
+* 아래 DDL(Data Definition Language)을 보고 유추하여 Entity 간의 연간 관계 매핑
+
+~~~
+  alter table answer
+    add constraint fk_answer_to_question
+        foreign key (question_id)
+            references question
+
+alter table answer
+    add constraint fk_answer_writer
+        foreign key (writer_id)
+            references user
+
+alter table delete_history
+    add constraint fk_delete_history_to_user
+        foreign key (deleted_by_id)
+            references user
+
+alter table question
+    add constraint fk_question_writer
+        foreign key (writer_id)
+            references user
+~~~
+
+## 3단계 - 질문 삭제하기 리팩터링
+### 기능 요구사항
+* 데이터를 완전 삭제 하지 않고 데이터의 상태를 삭제 상태(deleted - boolean type)로 변경
+* 로그인 사용자와 질문한 사람이 같은 경우 삭제 가능
+* 질문에 답변이 없는 경우 삭제 가능
+* 질문 작성자와 해당 질문의 모든 답변 작성자가 같은 경우 삭제 가능
+* 질문 작성자와 답변자가 다른 경우 삭제 불가능
+* 질문 삭제 시 답변도 함께 삭제
+* 질문 혹은 답변 삭제 시 삭제 이력에 대한 정보 생성
+
+### 프로그래밍 요구사항
+* 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드에 대해 단위 테스트를 구현
+* 리팩터링을 완료한 후에도 src/test/java 디렉터리의 qna.service.QnaServiceTest의 모든 테스트가 통과
+* 자바 코드 컨벤션 지키기
+* indent(인덴트, 들여쓰기) depth는 1까지만 허용됨
+* 3항 연산자 사용 지양
+* else 예약어 사용 지양
+* 모든 기능을 TDD로 구현해 단위 테스트가 필요
+* 함수(또는 메서드)의 길이가 10라인을 넘어가지 않도록 구현
+* 일급 컬렉션 사용
+* 모든 원시 값과 문자열 포장
+* 축약 금지
+* 엔티티를 작게 유지
+* 3개 이상의 인스턴스 변수를 가진 클래스 금지

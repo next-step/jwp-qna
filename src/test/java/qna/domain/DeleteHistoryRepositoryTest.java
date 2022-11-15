@@ -25,12 +25,10 @@ public class DeleteHistoryRepositoryTest {
     @DisplayName("DeleteHistory 생성 및 저장 테스트")
     void DeleteHistory_save_test() {
 
-        final User user = users.save(UserTest.SANJIGI);
+        final User user1 = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
+        final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(user1));
 
-        final Question q1 = questions.save(QuestionTest.Q1);
-
-        final DeleteHistory deleted = new DeleteHistory(ContentType.QUESTION, q1.getId(), user, LocalDateTime.now());
-
+        final DeleteHistory deleted = new DeleteHistory(ContentType.QUESTION, question1.getId(), user1, LocalDateTime.now());
         final DeleteHistory result = deleteHistories.save(deleted);
 
         assertThat(result).isNotNull();
