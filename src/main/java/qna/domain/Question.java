@@ -1,9 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -75,14 +78,33 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    private void deleted() {
+        deleted = true;
     }
 
     public List<Answer> getNotDeletedAnswers() {
         return answers.stream()
                 .filter(answer -> !answer.isDeleted())
                 .collect(toList());
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        deleted();
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(DeleteHistory.ofQuestion(id, user));
+        addDeleteHistory(user, deleteHistories);
+
+        return deleteHistories;
+    }
+
+    private void addDeleteHistory(User user, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(user));
+        }
     }
 
     @Override
