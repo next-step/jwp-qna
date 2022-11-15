@@ -35,15 +35,13 @@ public class AnswerTest {
     @Test
     @DisplayName("isOwner 메소드 테스트")
     void isOwnerTest() {
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "testContent");
-        assertThat(answer.isOwner(UserTest.JAVAJIGI)).isTrue();
+        assertThat(A1.isOwner(UserTest.JAVAJIGI)).isTrue();
     }
     
     @Test
     @DisplayName("toQuestion 메소드 테스트")
     void toQuestionTest() {
-        Answer answer = new Answer(1L, UserTest.JAVAJIGI, QuestionTest.Q1, "testContent");
-        answer.toQuestion(QuestionTest.Q2);
-        assertThat(answer.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
+        A1.toQuestion(QuestionTest.Q2);
+        assertThat(A1.getQuestionId()).isEqualTo(QuestionTest.Q2.getId());
     }
 }
