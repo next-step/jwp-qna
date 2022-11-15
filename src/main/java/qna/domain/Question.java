@@ -6,6 +6,7 @@ import qna.NotFoundException;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -126,16 +127,23 @@ public class  Question extends TimeEntity {
         return this.writer;
     }
 
-    public DeleteHistory deleteAndGetHistory() {
-        setDeleted(true);
-        return new DeleteHistory(QUESTION, getId(), getWriter(), LocalDateTime.now());
+    public List<DeleteHistory> deleteAndGetHistory() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestionAndGetHistory());
+        deleteHistories.addAll(deleteAnswersAndGetHistory());
+        return deleteHistories;
     }
 
     private boolean isAllOwnerAnswers(User owner) {
         return this.answers.allOwner(owner);
     }
 
-    public List<DeleteHistory> deleteAnswersAndGetHistory() {
+    private DeleteHistory deleteQuestionAndGetHistory() {
+        setDeleted(true);
+        return new DeleteHistory(QUESTION, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    private List<DeleteHistory> deleteAnswersAndGetHistory() {
         return this.answers.allDeleteAndGetHistory();
     }
 
