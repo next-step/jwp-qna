@@ -4,9 +4,13 @@ import qna.NotFoundException;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class  Question extends TimeEntity {
@@ -117,5 +121,18 @@ public class  Question extends TimeEntity {
 
     public User getWriter() {
         return this.writer;
+    }
+
+    public DeleteHistory deleteAndGetHistory() {
+        setDeleted(true);
+        return new DeleteHistory(QUESTION, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    public boolean isAllOwnerAnswers(User owner) {
+        return this.answers.allOwner(owner);
+    }
+
+    public List<DeleteHistory> deleteAnswersAndGetHistory() {
+        return this.answers.allDeleteAndGetHistory();
     }
 }
