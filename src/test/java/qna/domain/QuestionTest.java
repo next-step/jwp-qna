@@ -39,14 +39,18 @@ public class QuestionTest {
 
     Question question;
     User writer;
-    Answer answer;
-
+    List<Answer> answerEntityList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         writer = users.save(new User("userId", "password", "name", "email"));
-        question = questions.save(new Question("제 질문은요", "80점입니다."));
-        answer = answers.save(new Answer(writer, question, "What?!"));
+        question = questions.save(new Question("제 질문은요", "80점입니다.").writeBy(writer));
+        answerEntityList.add(answers.save(new Answer(writer, question, "answer 1")));
+        answerEntityList.add(answers.save(new Answer(writer, question, "answer 2")));
+
+        for (Answer answer : answerEntityList) {
+            question.addAnswer(answer);
+        }
     }
 
     @Test
@@ -68,7 +72,7 @@ public class QuestionTest {
         Question modifiedQuestion = questions.findById(question.getId()).get();
         String contents = modifiedQuestion.getContents();
         modifiedQuestion.setContents("90점입니다.");
-        Answer checkQuestion = answers.findById(modifiedQuestion.getId()).get();
+        Question checkQuestion = questions.findById(modifiedQuestion.getId()).get();
         assertThat(contents).isNotEqualTo(checkQuestion.getContents());
     }
 
@@ -82,7 +86,8 @@ public class QuestionTest {
     @Test
     void 삭제된_질문에_답변을_달수_없다() {
         question.delete();
-        Assertions.assertThatThrownBy(() -> question.addAnswer(new Answer(writer, question, "추가 답변드립니다.")))
+        Answer additionalAnswer = answers.save(new Answer(writer, question, "추가 답변드립니다."));
+        Assertions.assertThatThrownBy(() -> question.addAnswer(additionalAnswer))
             .isInstanceOf(NotFoundException.class);
     }
 }
