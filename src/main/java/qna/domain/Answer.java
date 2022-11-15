@@ -4,6 +4,7 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -58,8 +59,9 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
-    public void delete() {
+    public DeleteHistory delete() {
         deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
     }
 
     public Long getId() {

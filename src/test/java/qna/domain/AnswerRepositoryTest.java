@@ -108,4 +108,17 @@ public class AnswerRepositoryTest {
 
         assertThat(writer).isEqualTo(answer1.getWriter());
     }
+
+    @Test
+    @DisplayName("Answer 삭제 시 상태 값 정상 변경 테스트")
+    void delete_answer_test() {
+        final User user1 = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
+        final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(user1));
+        final Answer answer1 = answers.save(new Answer(user1, question1, "TEST1"));
+
+        answer1.delete();
+
+        assertThat(answer1.isDeleted()).isTrue();
+
+    }
 }

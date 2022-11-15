@@ -4,10 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.CannotDeleteException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 public class AnswersTest {
@@ -42,15 +40,13 @@ public class AnswersTest {
     @Test
     @DisplayName("Answer writer 가 loginUser 가 아닌 경우 테스트")
     void check_answer_writer_test() {
-        final User user1 = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
-        final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(user1));
+        final User loginUser = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
+        final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(loginUser));
 
-        question1.addAnswer(AnswerTest.A1);
-        question1.addAnswer(AnswerTest.A2);
+        final User answerWriter = users.save(new User(2L, "user2", "qwerty", "P2", "P2@test.com"));
+        question1.addAnswer(new Answer(answerWriter, question1, "Answers Contents1"));
+        question1.addAnswer(new Answer(answerWriter, question1, "Answers Contents2"));
 
-        assertThatThrownBy(
-                () -> question1.getAnswers().isIdenticalWriter(UserTest.JAVAJIGI)
-        ).isInstanceOf(CannotDeleteException.class);
-
+        assertThat(question1.getAnswers().isIdenticalWriter(loginUser)).isFalse();
     }
 }

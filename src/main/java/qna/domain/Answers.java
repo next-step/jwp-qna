@@ -1,10 +1,8 @@
 package qna.domain;
 
-import qna.CannotDeleteException;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,27 +16,21 @@ public class Answers {
         answers = new ArrayList<>();
     }
 
-    public boolean isIdenticalWriter(User loginUser) throws CannotDeleteException {
-        for (Answer answer : answers) {
-            validateOwner(loginUser, answer);
-        }
+    public boolean isIdenticalWriter(User loginUser) {
 
-        return true;
+        long count = answers.stream()
+                .filter(answer -> !answer.isOwner(loginUser))
+                .count();
+
+        return count == 0;
     }
 
-    public void validateOwner(User loginUser, Answer answer) throws CannotDeleteException {
-        if (!answer.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
-    }
-
-    public DeleteHistories delete(DeleteHistories deleteHistories) {
+    public DeleteHistories delete() {
+        DeleteHistories answerDeleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
-            answer.delete();
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+            answerDeleteHistories.add(answer.delete());
         }
-
-        return deleteHistories;
+        return answerDeleteHistories;
     }
 
     public void add(Answer answer) {
