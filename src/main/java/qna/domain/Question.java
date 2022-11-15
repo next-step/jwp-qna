@@ -14,8 +14,8 @@ import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class  Question extends TimeEntity {
-    private static final String CANT_DELETE_QUESTION = "질문을 삭제할 권한이 없습니다.";
-    private static final String CANT_DELETE_OTHER_PERSON = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+    public static final String CANT_DELETE_QUESTION = "질문을 삭제할 권한이 없습니다.";
+    public static final String CANT_DELETE_OTHER_PERSON = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -49,10 +49,6 @@ public class  Question extends TimeEntity {
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
@@ -99,6 +95,10 @@ public class  Question extends TimeEntity {
         deleteHistories.add(deleteQuestion());
         deleteHistories.addAll(deleteAnswers());
         return deleteHistories;
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
     }
 
     private boolean isAllOwnerAnswers(User owner) {
