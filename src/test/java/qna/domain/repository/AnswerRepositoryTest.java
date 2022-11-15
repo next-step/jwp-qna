@@ -14,12 +14,12 @@ import qna.domain.AnswerTest;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
-    private Answer answer1, answer2;
+    private Answer savedAnswer1, savedAnswer2;
     
     @BeforeEach
     void saveAnswer() {
-        answer1 = answerRepository.save(AnswerTest.A1);
-        answer2 = answerRepository.save(AnswerTest.A2);
+        savedAnswer1 = answerRepository.save(AnswerTest.A1);
+        savedAnswer2 = answerRepository.save(AnswerTest.A2);
     }
     
     @Test
@@ -27,33 +27,33 @@ public class AnswerRepositoryTest {
     void saveTest() {
         assertAll(
             () -> assertThat(answerRepository.count()).isEqualTo(2),
-            () -> assertThat(AnswerTest.A1.getContents()).isEqualTo(answer1.getContents()),
-            () -> assertThat(AnswerTest.A2.getQuestionId()).isEqualTo(answer2.getQuestionId())
+            () -> assertThat(AnswerTest.A1.getContents()).isEqualTo(savedAnswer1.getContents()),
+            () -> assertThat(AnswerTest.A2.getQuestionId()).isEqualTo(savedAnswer2.getQuestionId())
         );
     }
     
     @Test
     @DisplayName("수정")
     void updateTest() {
-        answer1.setContents("updated_contents");
-        Answer selectedAnswer = answerRepository.findByIdAndDeletedFalse(answer1.getId()).get();
-        assertThat(selectedAnswer.getContents()).isEqualTo(answer1.getContents());
+        savedAnswer1.setContents("updated_contents");
+        Answer selectedAnswer = answerRepository.findByIdAndDeletedFalse(savedAnswer1.getId()).get();
+        assertThat(selectedAnswer.getContents()).isEqualTo(savedAnswer1.getContents());
     }
     
     @Test
     @DisplayName("삭제")
     void deleteTest() {
-        answerRepository.delete(answer1);
+        answerRepository.delete(savedAnswer1);
         assertAll(
             () -> assertThat(answerRepository.count()).isEqualTo(1),
-            () -> assertThat(answerRepository.existsById(answer1.getId())).isFalse()
+            () -> assertThat(answerRepository.existsById(savedAnswer1.getId())).isFalse()
         );
     }
     
     @Test
     @DisplayName("Question ID로 찾기")
     void findByQuestionIdAndDeletedFalse() {
-        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId())).contains(answer1);
+        assertThat(answerRepository.findByQuestionIdAndDeletedFalse(AnswerTest.A1.getQuestionId())).contains(savedAnswer1);
     }
     
 }

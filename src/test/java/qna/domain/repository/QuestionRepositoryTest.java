@@ -16,12 +16,12 @@ import qna.domain.QuestionTest;
 public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
-    private Question question1, question2;
+    private Question savedQuestion1, savedQuestion2;
     
     @BeforeEach
     void saveQuestion() {
-        question1 = questionRepository.save(QuestionTest.Q1);
-        question2 = questionRepository.save(QuestionTest.Q2);
+        savedQuestion1 = questionRepository.save(QuestionTest.Q1);
+        savedQuestion2 = questionRepository.save(QuestionTest.Q2);
     }
     
     @Test
@@ -29,33 +29,33 @@ public class QuestionRepositoryTest {
     void saveTest() {
         assertAll(
             () -> assertThat(questionRepository.count()).isEqualTo(2),
-            () -> assertThat(QuestionTest.Q1.getTitle()).isEqualTo(question1.getTitle()),
-            () -> assertThat(QuestionTest.Q2.getContents()).isEqualTo(question2.getContents())
+            () -> assertThat(QuestionTest.Q1.getTitle()).isEqualTo(savedQuestion1.getTitle()),
+            () -> assertThat(QuestionTest.Q2.getContents()).isEqualTo(savedQuestion2.getContents())
         );
     }
     
     @Test
     @DisplayName("수정")
     void updateTest() {
-        question1.setContents("updated_contents");
-        Question selectedQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
-        assertThat(selectedQuestion.getContents()).isEqualTo(question1.getContents());
+        savedQuestion1.setContents("updated_contents");
+        Question selectedQuestion = questionRepository.findByIdAndDeletedFalse(savedQuestion1.getId()).get();
+        assertThat(selectedQuestion.getContents()).isEqualTo(savedQuestion1.getContents());
     }
     
     @Test
     @DisplayName("삭제")
     void deleteTest() {
-        questionRepository.delete(question1);
+        questionRepository.delete(savedQuestion1);
         assertAll(
             () -> assertThat(questionRepository.count()).isEqualTo(1),
-            () -> assertThat(questionRepository.existsById(question1.getId())).isFalse()
+            () -> assertThat(questionRepository.existsById(savedQuestion1.getId())).isFalse()
         );
     }
     
     @Test
     @DisplayName("삭제되지 않은 Question 찾기")
     void findByQuestionIdAndDeletedFalse() {
-        assertThat(questionRepository.findByDeletedFalse()).contains(question1);
+        assertThat(questionRepository.findByDeletedFalse()).contains(savedQuestion1);
     }
     
 }
