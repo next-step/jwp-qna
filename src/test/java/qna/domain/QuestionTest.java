@@ -89,8 +89,8 @@ public class QuestionTest {
     @Test
     void 질문에서_참조를_통해_답변을_가져올때_삭제된_답변은_가져오지_않는다() {
         question.addAnswer(answer);
-        assertThat(question.getAnswers()).hasSize(1);
+        assertThat(question.getAnswersCount()).isEqualTo(1);
         question.deleteAnswer(answer);
-        assertThat(question.getAnswers()).hasSize(0);
+        assertThat(question.getAnswersCount()).isEqualTo(0);
     }
 }

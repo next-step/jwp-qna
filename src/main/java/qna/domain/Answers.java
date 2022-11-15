@@ -4,15 +4,11 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Embeddable
-public class Answers implements Iterable<Answer> {
+public class Answers {
 
     @OneToMany(mappedBy = "question")
     @Where(clause = "deleted = false")
@@ -35,22 +31,22 @@ public class Answers implements Iterable<Answer> {
             .collect(Collectors.toList());
     }
 
-    @Override
-    public Iterator<Answer> iterator() {
-        return this.answers.iterator();
-    }
-
-    @Override
-    public void forEach(Consumer<? super Answer> action) {
-        Iterable.super.forEach(action);
-    }
-
-    @Override
-    public Spliterator<Answer> spliterator() {
-        return Iterable.super.spliterator();
-    }
-
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
+    }
+
+    public boolean allOwner(User owner) {
+        return answers.stream()
+            .allMatch(answer -> answer.isOwner(owner));
+    }
+
+    public List<DeleteHistory> allDeleteAndGetHistory() {
+        return answers.stream()
+            .map(Answer::deleteAndGetHistory)
+            .collect(Collectors.toList());
+    }
+
+    public int size() {
+        return this.answers.size();
     }
 }

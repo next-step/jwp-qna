@@ -106,8 +106,8 @@ public class  Question extends TimeEntity {
                 '}';
     }
 
-    public Answers getAnswers() {
-        return this.answers;
+    public int getAnswersCount() {
+        return this.answers.size();
     }
 
     public void deleteAnswer(Answer deletedAnswer) {
