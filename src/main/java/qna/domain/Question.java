@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static qna.domain.ContentType.QUESTION;
@@ -68,31 +67,12 @@ public class  Question extends TimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        if (Objects.isNull(writer)) {
-            return null;
-        }
-        return writer.getId();
     }
 
     public boolean isDeleted() {
