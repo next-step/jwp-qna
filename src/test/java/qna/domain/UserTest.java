@@ -2,9 +2,12 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,11 +52,31 @@ public class UserTest {
                 .isThrownBy(() -> userRepository.save(newUser));
     }
 
+    @DisplayName("유저아이디는 null이 아니어야 한다.")
+    @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER)
+    @NullSource
+    void nullUserId(final String userId) {
+        final User newUser = new User(userId, "password", "남동민", "dmut7691@gmail.com");
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
+
     @DisplayName("유저비밀번호는 길이 제약을 넘을 수 없다.")
     @Test
     void maxPassword() {
         final String longPassword = "123456789012345678901";
         final User newUser = new User("dominiqn", longPassword, "남동민", "dmut7691@gmail.com");
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
+
+    @DisplayName("유저비밀번호는 null이 아니어야 한다.")
+    @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER)
+    @NullSource
+    void nullPassword(final String password) {
+        final User newUser = new User("dominiqn", password, "남동민", "dmut7691@gmail.com");
 
         assertThatExceptionOfType(DataIntegrityViolationException.class)
                 .isThrownBy(() -> userRepository.save(newUser));
@@ -69,6 +92,16 @@ public class UserTest {
                 .isThrownBy(() -> userRepository.save(newUser));
     }
 
+    @DisplayName("이름은 null이 아니어야 한다.")
+    @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER)
+    @NullSource
+    void nullName(final String name) {
+        final User newUser = new User("dominiqn", "password", name, "dmut7691@gmail.com");
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
+
     @DisplayName("이메일은 길이 제약을 넘을 수 없다.")
     @Test
     void maxEmail() {
@@ -77,5 +110,14 @@ public class UserTest {
 
         assertThatExceptionOfType(DataIntegrityViolationException.class)
                 .isThrownBy(() -> userRepository.save(newUser));
+    }
+
+    @DisplayName("이메일은 null일 수 있다.")
+    @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER)
+    @NullSource
+    void nullEmail(final String email) {
+        final User newUser = new User("dominiqn", "password", "남동민", email);
+
+        assertThatNoException().isThrownBy(() -> userRepository.save(newUser));
     }
 }
