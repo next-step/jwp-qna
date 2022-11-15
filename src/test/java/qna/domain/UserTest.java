@@ -38,4 +38,44 @@ public class UserTest {
                     userRepository.save(duplicatedUser);
                 });
     }
+
+    @DisplayName("유저아이디는 길이 제약을 넘을 수 없다.")
+    @Test
+    void maxUserId() {
+        final String longUserId = "123456789012345678901";
+        final User newUser = new User(longUserId, "password", "남동민", "dmut7691@gmail.com");
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
+
+    @DisplayName("유저비밀번호는 길이 제약을 넘을 수 없다.")
+    @Test
+    void maxPassword() {
+        final String longPassword = "123456789012345678901";
+        final User newUser = new User("dominiqn", longPassword, "남동민", "dmut7691@gmail.com");
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
+
+    @DisplayName("이름은 길이 제약을 넘을 수 없다.")
+    @Test
+    void maxName() {
+        final String longName = "일이삼사오육칠팔구십일이삼사오육칠팔구십일";
+        final User newUser = new User("dominiqn", "password", longName, "dmut7691@gmail.com");
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
+
+    @DisplayName("이메일은 길이 제약을 넘을 수 없다.")
+    @Test
+    void maxEmail() {
+        final String longEmail = "longemail@1234567890123456789012345678901234567890.com";
+        final User newUser = new User("dominiqn", "password", "남동민", longEmail);
+
+        assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(newUser));
+    }
 }
