@@ -130,8 +130,6 @@ public class AnswerRepositoryTest {
         final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(user1));
         final Answer answer1 = answers.save(new Answer(user1, question1, "TEST1"));
 
-        answer1.delete(UserTest.SANJIGI);
-
         assertThatThrownBy(
                 () -> answer1.delete(UserTest.SANJIGI)
         ).isInstanceOf(CannotDeleteException.class);
