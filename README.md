@@ -69,7 +69,7 @@ alter table user
 ~~~~yml
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     driver-class-name: org.h2.Driver
   h2:
@@ -97,3 +97,9 @@ logging.level:
 * domain / repository 패키지 부리
 * Test 
   * repository: 조회 저장 삭제 위주의 테스트코드 작성
+
+## Step2 연관 관계 매핑
+- 하나의 User는 Question을 여러번 올릴 수 있다.
+- 하나의 User는 Answer를 여러번 답변할 수 있다.
+- 하나의 User는 DeleteHistory를 여러개 가질 수 있다.
+- 하나의 Question엔 여러개의 Answer가 생길 수 있다.

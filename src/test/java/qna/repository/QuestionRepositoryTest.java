@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.Question;
+import qna.domain.User;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static qna.domain.QuestionTest.Q1;
-import static qna.domain.QuestionTest.Q2;
 
 @DataJpaTest
 class QuestionRepositoryTest {
@@ -27,19 +26,25 @@ class QuestionRepositoryTest {
 
     @Test
     void save() {
-        Question question = questionRepository.save(Q1);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
+        Question saveQuestion = questionRepository.save(question);
         assertAll(
-                () -> assertThat(question.getId()).isNotNull(),
-                () -> assertThat(question.getTitle()).isEqualTo(Q1.getTitle()),
-                () -> assertThat(question.isDeleted()).isFalse()
+                () -> assertThat(saveQuestion.getId()).isNotNull(),
+                () -> assertThat(saveQuestion.getTitle()).isEqualTo(question.getTitle()),
+                () -> assertThat(saveQuestion.isDeleted()).isFalse()
         );
     }
 
     @Test
     void save_retreive_test() {
         // given
-        Question saveQuestion1 = questionRepository.save(Q1);
-        Question saveQuestion2 = questionRepository.save(Q2);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
+        User writer2 = User.create("modric");
+        Question question2 = Question.create(writer2);
+        Question saveQuestion1 = questionRepository.save(question);
+        Question saveQuestion2 = questionRepository.save(question2);
         // when
         List<Question> findQuestion = questionRepository.findByDeletedFalse();
         // then
@@ -53,25 +58,29 @@ class QuestionRepositoryTest {
     @Test
     void save_setDelete_true_retreive_test() {
         // given
-        Question saveQuestion = questionRepository.save(Q1);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
+        Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
         // when
         saveQuestion.setDeleted(true);
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
         // then
-        assertThat(findQuestion.isPresent()).isFalse();
+        assertThat(findQuestion).isNotPresent();
     }
 
     @Test
     void save_delete_test() {
         // given
-        Question saveQuestion = questionRepository.save(Q2);
+        User writer = User.create("pepe");
+        Question question = Question.create(writer);
+        Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
         // when
-        findQuestion.ifPresent(question -> questionRepository.delete(question));
+        findQuestion.ifPresent(paramQuestion -> questionRepository.delete(paramQuestion));
         Optional<Question> deletedQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
         // then
-        assertThat(deletedQuestion.isPresent()).isFalse();
+        assertThat(deletedQuestion).isNotPresent();
     }
 }

@@ -1,20 +1,27 @@
 package qna.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "delete_history")
 public class DeleteHistory {
+
+    public static DeleteHistory create(ContentType answer, Long id, User writer) {
+        return new DeleteHistory(answer, id, writer, LocalDateTime.now());
+    }
+    public static DeleteHistory create(ContentType answer, Long id, User writer, LocalDateTime localDateTime) {
+        return new DeleteHistory(answer, id, writer, localDateTime);
+    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,19 +29,29 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private LocalDateTime createDate = LocalDateTime.now();
-    private Long deletedById;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "DELETED_BY_ID")
+    private User user;
 
     protected DeleteHistory() {}
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    private DeleteHistory(ContentType contentType, Long contentId, User user, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
         this.createDate = createDate;
+        this.user = user;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -45,12 +62,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, user);
     }
 
     @Override
@@ -59,7 +76,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + user.getUserId() +
                 ", createDate=" + createDate +
                 '}';
     }

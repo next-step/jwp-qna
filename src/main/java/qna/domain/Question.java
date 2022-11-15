@@ -1,24 +1,37 @@
 package qna.domain;
 
 import qna.ForbiddenException;
-import subway.domain.Station;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
 @Entity
-@Table(name = "question")
 public class Question extends BaseDateEntity{
     private static final int TITLE_LENGTH = 100;
-    private static final String SPACE = "";
+
+    // test용
+    public static Question create(User writer) {
+        return new Question("title", "contents", writer);
+    }
+    public static Question create(String title, String contents) {
+        return new Question(null, title, contents);
+    }
+    public static Question create(String title, String contents, User writer) {
+        return new Question(null, title, contents, writer);
+    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,16 +41,24 @@ public class Question extends BaseDateEntity{
     private boolean deleted = false;
     @Column(nullable = false, length = TITLE_LENGTH)
     private String title;
-    private Long writerId;
+    @OneToMany(mappedBy = "question")
+    List<Answer> answers = new ArrayList<Answer>();
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "WRITER_ID")
+    private User user;
 
     protected Question() {}
 
-    public Question(String title, String contents) {
+    private Question(String title, String contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
-        if (Objects.isNull(title) || SPACE.equals(title)) {
+    private Question(String title, String contents, User writer) {
+        this(null, title, contents, writer);
+    }
+
+    private Question(Long id, String title, String contents) {
+        if (Objects.isNull(title) || title.isEmpty()) {
             throw new ForbiddenException();
         }
 
@@ -46,17 +67,27 @@ public class Question extends BaseDateEntity{
         this.contents = contents;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
+    public Question(Long id, String title, String contents, User writer) {
+        if (Objects.isNull(title) || title.isEmpty()) {
+            throw new ForbiddenException();
+        }
+
+        this.id = id;
+        this.title = title;
+        this.contents = contents;
+        this.user = writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        return this.user.equals(writer);
     }
 
     public Long getId() {
@@ -83,12 +114,12 @@ public class Question extends BaseDateEntity{
         this.contents = contents;
     }
 
-    public Long getWriterId() {
-        return writerId;
+    public User getUser() {
+        return user;
     }
 
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isDeleted() {
@@ -105,7 +136,7 @@ public class Question extends BaseDateEntity{
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
+                ", writerId=" + user.getId() +
                 ", deleted=" + deleted +
                 '}';
     }

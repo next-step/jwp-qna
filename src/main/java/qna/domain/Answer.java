@@ -3,39 +3,49 @@ package qna.domain;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.time.LocalDateTime;
-import java.util.Date;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answer")
 public class Answer extends BaseDateEntity{
+    // test 용
+    public static Answer create(User writer, Question question) {
+        return new Answer(writer, question, "contents");
+    }
+    public static Answer create(User writer, Question question, String contents) {
+        return new Answer(writer, question, contents);
+    }
+
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     private String contents;
-    private Long questionId;
     @Column(nullable = false)
     private boolean deleted = false;
-    private Long writerId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "QUESTION_ID")
+    private Question question;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "WRITER_ID")
+    private User writer;
 
     protected Answer() {}
 
-    public Answer(User writer, Question question, String contents) {
+    private Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    private Answer(Long id, User writer, Question question, String contents) {
         this.id = id;
 
         if (Objects.isNull(writer)) {
@@ -46,18 +56,24 @@ public class Answer extends BaseDateEntity{
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
         this.contents = contents;
+        this.writer = writer;
+        addQuestion(question);
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+
+    public void addQuestion(Question question) {
+        if(this.question != null) {
+            this.question.getAnswers().remove(this);
+        }
+        this.question = question;
+        question.getAnswers().add(this);
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+    public boolean isOwner(User loginUser) {
+        return this.writer.equals(loginUser);
     }
+
 
     public Long getId() {
         return id;
@@ -65,22 +81,6 @@ public class Answer extends BaseDateEntity{
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
     }
 
     public String getContents() {
@@ -99,12 +99,24 @@ public class Answer extends BaseDateEntity{
         this.deleted = deleted;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User user) {
+        this.writer = user;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
+                ", writerId=" + writer.getId() +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
