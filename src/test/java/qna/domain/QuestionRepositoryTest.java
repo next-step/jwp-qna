@@ -98,24 +98,61 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("로그인 유저와 question 작성자 일치 확인 테스트")
+    @DisplayName("로그인 유저와 question 작성자 불일치 삭제 테스트")
     void check_question_writer_test() {
         final User user1 = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
         final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(user1));
 
         assertThatThrownBy(
-                () -> question1.checkWriter(UserTest.SANJIGI)
+                () -> question1.delete(UserTest.SANJIGI)
         ).isInstanceOf(CannotDeleteException.class);
+
     }
 
     @Test
     @DisplayName("답변이 없는 경우 질문 정상 삭제 테스트")
-    void delete_question_with_empty_answer_test() throws CannotDeleteException {
+    void delete_question_with_empty_answer_test() {
         final User user1 = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
         final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(user1));
 
         question1.delete(user1);
 
         assertThat(question1.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("question 작성자와 Answer 작성자 불일치 삭제 테스트")
+    void answer_writer_not_equal_to_question_writer_delete_test() {
+        final User loginUser = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
+        final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(loginUser));
+        final User answerWriter = users.save(new User(2L, "user2", "qwerty", "P2", "P2@test.com"));
+
+        question1.addAnswer(new Answer(loginUser, question1, "Answers Contents1"));
+        question1.addAnswer(new Answer(answerWriter, question1, "Answers Contents2"));
+
+        assertThatThrownBy(
+                () -> question1.delete(loginUser)
+        ).isInstanceOf(CannotDeleteException.class);
+    }
+
+    @Test
+    @DisplayName("question 작성자와 Answer 작성자 일치 삭제 테스트")
+    void answer_writer_equal_to_question_writer_delete_test() {
+        // given
+        final User loginUser = users.save(new User(1L, "user1", "qwerty", "P", "P@test.com"));
+        final Question question1 = questions.save(new Question(1L, "title1", "contents1").writeBy(loginUser));
+
+        question1.addAnswer(new Answer(loginUser, question1, "Answers Contents1"));
+        question1.addAnswer(new Answer(loginUser, question1, "Answers Contents2"));
+
+        // when
+        DeleteHistories deleteHistories = question1.delete(loginUser);
+
+        // then
+        assertAll(
+                () -> assertThat(deleteHistories.getDeletedHistories()).hasSize(3),
+                () -> assertThat(question1.isDeleted()).isTrue()
+        );
+
     }
 }

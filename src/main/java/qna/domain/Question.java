@@ -3,10 +3,7 @@ package qna.domain;
 import qna.CannotDeleteException;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -62,29 +59,28 @@ public class Question extends BaseTimeEntity {
         answers.add(answer);
     }
 
-    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser) {
         DeleteHistories deleteHistories = new DeleteHistories();
 
         checkWriter(loginUser);
+        checkAnswersWriter(loginUser);
 
-        if (answers.isEmpty()) {
-            this.deleted = true;
-            deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-            return deleteHistories;
-        }
-
-        if (answers.isIdenticalWriter(loginUser)) {
-            this.deleted = true;
-            deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-            deleteHistories = answers.delete(deleteHistories);
-        }
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete());
+        this.deleted = true;
 
         return deleteHistories;
     }
 
-    public void checkWriter(User loginUser) throws CannotDeleteException {
+    private void checkWriter(User loginUser) {
         if (!this.isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void checkAnswersWriter(User loginUser) {
+        if (!answers.isEmpty() && !answers.isIdenticalWriter(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
     }
 
