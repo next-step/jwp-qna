@@ -90,15 +90,6 @@ public class  Question extends TimeEntity {
                 '}';
     }
 
-    public int getAnswersCount() {
-        return this.answers.size();
-    }
-
-    public void deleteAnswer(Answer deletedAnswer) {
-        answers.deleteAnswer(deletedAnswer);
-        answers.refreshAnswerWithoutDelete();
-    }
-
     public User getWriter() {
         return this.writer;
     }

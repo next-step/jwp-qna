@@ -17,20 +17,6 @@ public class Answers {
     protected Answers() {
     }
 
-    public void deleteAnswer(Answer deletedAnswer) {
-        this.answers
-            .stream()
-            .filter(deletedAnswer::equals)
-            .forEach(Answer::delete);
-    }
-
-    public void refreshAnswerWithoutDelete() {
-        this.answers = this.answers
-            .stream()
-            .filter(answer -> !answer.isDeleted())
-            .collect(Collectors.toList());
-    }
-
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
     }
@@ -44,9 +30,5 @@ public class Answers {
         return answers.stream()
             .map(Answer::delete)
             .collect(Collectors.toList());
-    }
-
-    public int size() {
-        return this.answers.size();
     }
 }

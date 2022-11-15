@@ -85,12 +85,4 @@ public class QuestionTest {
         Assertions.assertThatThrownBy(() -> question.addAnswer(new Answer(writer, question, "추가 답변드립니다.")))
             .isInstanceOf(NotFoundException.class);
     }
-
-    @Test
-    void 질문에서_참조를_통해_답변을_가져올때_삭제된_답변은_가져오지_않는다() {
-        question.addAnswer(answer);
-        assertThat(question.getAnswersCount()).isEqualTo(1);
-        question.deleteAnswer(answer);
-        assertThat(question.getAnswersCount()).isEqualTo(0);
-    }
 }
