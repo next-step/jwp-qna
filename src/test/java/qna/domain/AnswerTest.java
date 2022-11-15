@@ -93,7 +93,7 @@ public class AnswerTest {
 
     @Test
     void 답변작성자인지_아닌지_확인한다() {
-        User other = new User("crawal", "password", "name", "esesmail");
+        User other = users.save(new User("crawal", "password", "name", "esesmail"));
         assertThat(answer.isOwner(writer)).isTrue();
         assertThat(answer.isOwner(other)).isFalse();
     }
