@@ -3,6 +3,11 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.CannotDeleteException;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -32,5 +37,19 @@ public class QuestionTest {
                 () -> assertThat(retrievedQuestion1.getId()).isEqualTo(question1.getId()),
                 () -> assertThat(retrievedQuestion2.getId()).isEqualTo(question2.getId())
         );
+    }
+
+    @Test
+    void 삭제처리() throws CannotDeleteException {
+        User user1 = userRepository.save(new User("userId", "password", "name", "email"));
+        Question question1 = questionRepository.save(new Question("title", "contents").writeBy(user1));
+        Answer answer1 = new Answer(user1, question1, "contents");
+        question1.addAnswer(answer1);
+
+        List<DeleteHistory> delete = question1.delete(user1);
+
+        assertThat(question1.isDeleted()).isTrue();
+        assertThat(delete).isEqualTo(Arrays.asList(new DeleteHistory(ContentType.QUESTION, question1.getId(), question1.getWriter(), LocalDateTime.now()),
+                new DeleteHistory(ContentType.ANSWER, answer1.getId(), answer1.getWriter(), LocalDateTime.now())));
     }
 }
