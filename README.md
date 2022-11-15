@@ -205,17 +205,17 @@ public class QnAService {
 - 테스트하기 쉬운 부분과 테스트하기 어려운 부분을 분리해 테스트 가능한 부분만 단위테스트한다.
 
 ### TODO
-- [ ] Apply Previous step feedback
-- [ ] QnA서비스 중 테스트하기 어려운 부분 Question 로직으로 분리
-- [ ] Question delete로직 구현
-- [ ] Answer delete로직 구현
-- [ ] Answers 1급 컬렉션 작성
-- [ ] QnA서비스 영향 없는지 확인
-- [ ] Question Test 작성
-- [ ] Answer Test 작성
-- [ ] Answers Test 작성
-- [ ] 무한루프 걸리는 곳 있는지 확인(toString(), 생성자, lombok)
-- [ ] Double check Answers JPA annotations
+- [x] Apply Previous step feedback
+- [x] QnA서비스 중 테스트하기 어려운 부분 Question 로직으로 분리
+- [x] Question delete로직 구현
+- [x] Answer delete로직 구현
+- [x] Answers 1급 컬렉션 작성
+- [x] QnA서비스 영향 없는지 확인
+- [x] Question Test 작성
+- [x] Answer Test 작성
+- [x] Answers Test 작성
+- [x] 무한루프 걸리는 곳 있는지 확인(toString(), 생성자, lombok)
+- [x] Double check Answers JPA annotations
 
 ---
 ### Note
@@ -229,6 +229,8 @@ public class QnAService {
 * JPA repo save()한 값을 써라.
 	* Use the returned instance for further operations as the save operation might have changed the entity instance completely.
 * @CreatedDate, You dont have to set value manually .
+* ErrorMessage는 Enum으로 관리도 가능
+* 양방향 관계설정시, 무한루프 걸리지 않나 더블 체크 필요(toString(), 생성자, 편의메서드)
 
 ### QnA
 
@@ -309,3 +311,5 @@ which is only supported for H2 1.4.200 and older.
 - Cause : Needed to add Identifier
 - ASIS : ```create table user```
 - TOBE : ```create table "USER"```
+
+
