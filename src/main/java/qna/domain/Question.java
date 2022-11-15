@@ -19,6 +19,9 @@ public class Question extends BaseTimeEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+    @Embedded
+    private Answers answers = new Answers();
+
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -61,6 +64,7 @@ public class Question extends BaseTimeEntity{
         this.deleted = deleted;
     }
 
+
     @Override
     public String toString() {
         return "Question{" +
@@ -77,4 +81,5 @@ public class Question extends BaseTimeEntity{
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
     }
+
 }
