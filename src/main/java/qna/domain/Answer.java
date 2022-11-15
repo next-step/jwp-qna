@@ -1,7 +1,9 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.view.Messages;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -59,9 +61,18 @@ public class Answer extends BaseTimeEntity {
         this.question = question;
     }
 
-    public DeleteHistory delete() {
+    public DeleteHistory delete(User loginUser) {
+        validateWriter(loginUser);
         deleted = true;
         return new DeleteHistory(ContentType.ANSWER, id, writer, LocalDateTime.now());
+    }
+    
+    private void validateWriter(User loginUser) {
+        if (!this.isOwner(loginUser)) {
+            String errorMsg = String.format(Messages.WRITER_DOES_NOT_MATCH.getMsg(),
+                    id, writer.getUserId(), loginUser.getUserId());
+            throw new CannotDeleteException(errorMsg);
+        }
     }
 
     public Long getId() {

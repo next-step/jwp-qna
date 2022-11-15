@@ -25,10 +25,10 @@ public class Answers {
         return count == 0;
     }
 
-    public DeleteHistories delete() {
+    public DeleteHistories delete(User loginUser) {
         DeleteHistories answerDeleteHistories = new DeleteHistories();
         for (Answer answer : answers) {
-            answerDeleteHistories.add(answer.delete());
+            answerDeleteHistories.add(answer.delete(loginUser));
         }
         return answerDeleteHistories;
     }
