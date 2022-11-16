@@ -1,20 +1,16 @@
 package qna.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.jdbc.Sql;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
 @DataJpaTest
 public class AnswerTest {
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Autowired
     private AnswerRepository answerRepository;
 
@@ -24,25 +20,33 @@ public class AnswerTest {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.save(UserTest.JAVAJIGI);
-        userRepository.save(UserTest.SANJIGI);
-        questionRepository.save(QuestionTest.Q1);
-        questionRepository.save(QuestionTest.Q2);
-    }
-
     @Test
     void 저장_및_조회() {
-        Answer answer1 = answerRepository.save(A1);
-        Answer answer2 = answerRepository.save(A2);
+        User user1 = userRepository.save(new User("userId", "password", "name", "email"));
+        User user2 = userRepository.save(new User("userId2", "password", "name", "email"));
+        Question question1 = questionRepository.save(new Question("title", "contents").writeBy(user1));
+        Question question2 = questionRepository.save(new Question("title", "contents").writeBy(user2));
+        Answer answer1 = answerRepository.save(new Answer(user1, question1, "contents"));
+        Answer answer2 = answerRepository.save(new Answer(user2, question2, "contents"));
 
         Answer retrievedAnswer1 = answerRepository.findById(answer1.getId()).get();
         Answer retrievedAnswer2 = answerRepository.findById(answer2.getId()).get();
 
         assertAll(
-                () -> assertThat(retrievedAnswer1.getId()).isEqualTo(A1.getId()),
-                () -> assertThat(retrievedAnswer2.getId()).isEqualTo(A2.getId())
+                () -> assertThat(retrievedAnswer1.getId()).isEqualTo(answer1.getId()),
+                () -> assertThat(retrievedAnswer2.getId()).isEqualTo(answer2.getId())
         );
+    }
+
+    @Test
+    void 삭제처리() {
+        User user1 = userRepository.save(new User("userId", "password", "name", "email"));
+        Question question1 = questionRepository.save(new Question("title", "contents").writeBy(user1));
+        Answer answer1 = answerRepository.save(new Answer(user1, question1, "contents"));
+
+        DeleteHistory delete = answer1.delete();
+
+        assertThat(answer1.isDeleted()).isTrue();
+        assertThat(delete).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer1.getId(), user1, LocalDateTime.now()));
     }
 }
