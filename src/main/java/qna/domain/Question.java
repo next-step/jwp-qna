@@ -1,6 +1,8 @@
 package qna.domain;
 
-import java.util.ArrayList;
+import qna.CannotDeleteException;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
 
@@ -22,8 +24,8 @@ public class Question extends DateEntity {
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private final Answers answers = new Answers();
 
     @Column(nullable = false)
     private boolean deleted = false;
@@ -44,20 +46,37 @@ public class Question extends DateEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Question writeBy(User writer) {
         this.writer = writer;
         return this;
     }
 
-    public boolean isOwner(User writer) {
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateDelete(loginUser);
+        this.deleted = true;
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, getWriter(), LocalDateTime.now()));
+        deleteHistories.add(answers.deleteAll(loginUser));
+        return deleteHistories;
+    }
+
+    private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 제거된 질문은 제거할 수 없습니다.");
+        }
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
+        if (answer.getQuestion() == null) {
+            answer.toQuestion(this);
+        }
         answers.add(answer);
     }
 
@@ -74,15 +93,11 @@ public class Question extends DateEntity {
     }
 
     public List<Answer> getAnswers() {
-        return answers;
+        return answers.get();
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
