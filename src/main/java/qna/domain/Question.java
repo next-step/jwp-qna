@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.singletonList;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -86,19 +86,20 @@ public class Question extends BaseTimeEntity {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
-        deleted();
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(DeleteHistory.ofQuestion(id, user));
-        addDeleteHistory(user, deleteHistories);
+        deleted();
+        List<DeleteHistory> deleteHistories = new ArrayList<>(singletonList(DeleteHistory.ofQuestion(id, user)));
+        deleteHistories.addAll(deleteAnswers(user));
 
         return deleteHistories;
     }
 
-    private void addDeleteHistory(User user, List<DeleteHistory> deleteHistories) throws CannotDeleteException {
+    private List<DeleteHistory> deleteAnswers(User user) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (Answer answer : answers) {
             deleteHistories.add(answer.delete(user));
         }
+        return deleteHistories;
     }
 
     @Override
