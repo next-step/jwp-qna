@@ -21,11 +21,11 @@ public class Answers {
         this.answers = answer;
     }
 
-    List<Answer> get() {
+    public List<Answer> get() {
         return answers;
     }
 
-    void add(Answer answer) {
+    public void add(Answer answer) {
         answers.add(answer);
     }
 
