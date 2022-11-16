@@ -12,12 +12,12 @@ public class DeleteHistory {
     private Long id;
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
-    @Column(name="content_id")
+    @Column(name = "content_id")
     private Long contentId;
-    @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delete_by_id", foreignKey = @ForeignKey(name = "fk_delete_history_to_user"))
     private User deletedBy;
-    @Column(name="create_date")
+    @Column(name = "create_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
     public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
