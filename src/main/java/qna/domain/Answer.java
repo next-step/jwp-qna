@@ -95,7 +95,7 @@ public class Answer extends DateEntity {
 
     private void validateDelete(User loginUser) throws CannotDeleteException {
         if (isDeleted()) {
-            throw new CannotDeleteException("이미 제거된 문서는 제거할 수 없습니다.");
+            throw new CannotDeleteException("이미 제거된 답변은 제거할 수 없습니다.");
         }
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
