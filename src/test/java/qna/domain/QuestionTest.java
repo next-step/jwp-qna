@@ -6,12 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.config.JpaAuditingConfiguration;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static qna.domain.ContentType.ANSWER;
+import static qna.domain.ContentType.QUESTION;
+import static qna.domain.Question.CANT_DELETE_OTHER_PERSON;
+import static qna.domain.Question.CANT_DELETE_QUESTION;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
 
@@ -39,14 +48,18 @@ public class QuestionTest {
 
     Question question;
     User writer;
-    Answer answer;
-
+    List<Answer> answerEntityList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         writer = users.save(new User("userId", "password", "name", "email"));
-        question = questions.save(new Question("제 질문은요", "80점입니다."));
-        answer = answers.save(new Answer(writer, question, "What?!"));
+        question = questions.save(new Question("제 질문은요", "80점입니다.").writeBy(writer));
+        answerEntityList.add(answers.save(new Answer(writer, question, "answer 1")));
+        answerEntityList.add(answers.save(new Answer(writer, question, "answer 2")));
+
+        for (Answer answer : answerEntityList) {
+            question.addAnswer(answer);
+        }
     }
 
     @Test
@@ -67,8 +80,8 @@ public class QuestionTest {
     void save_후_update_테스트() {
         Question modifiedQuestion = questions.findById(question.getId()).get();
         String contents = modifiedQuestion.getContents();
-        modifiedQuestion.setContents("90점입니다.");
-        Answer checkQuestion = answers.findById(modifiedQuestion.getId()).get();
+        modifiedQuestion.modify("90점입니다.");
+        Question checkQuestion = questions.findById(modifiedQuestion.getId()).get();
         assertThat(contents).isNotEqualTo(checkQuestion.getContents());
     }
 
@@ -81,16 +94,38 @@ public class QuestionTest {
 
     @Test
     void 삭제된_질문에_답변을_달수_없다() {
-        question.setDeleted(true);
-        Assertions.assertThatThrownBy(() -> question.addAnswer(new Answer(writer, question, "추가 답변드립니다.")))
+        question.delete();
+        Answer additionalAnswer = answers.save(new Answer(writer, question, "추가 답변드립니다."));
+        Assertions.assertThatThrownBy(() -> question.addAnswer(additionalAnswer))
             .isInstanceOf(NotFoundException.class);
     }
 
     @Test
-    void 질문에서_참조를_통해_답변을_가져올때_삭제된_답변은_가져오지_않는다() {
-        question.addAnswer(answer);
-        assertThat(question.getAnswers()).hasSize(1);
-        question.deleteAnswer(answer);
-        assertThat(question.getAnswers()).hasSize(0);
+    void 삭제전_질문과_답변_작성자가_일치하는지_검증한다() {
+        assertThatNoException()
+            .isThrownBy(() -> question.validateDelete(writer));
+
+        User other = users.save(new User("crawal", "password", "name", "esesmail"));
+        assertThatThrownBy(() -> question.validateDelete(other))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessage(CANT_DELETE_QUESTION);
+
+
+        Answer otherAnswer = answers.save(new Answer(other, question, "Other Answers"));
+        question.addAnswer(otherAnswer);
+        assertThatThrownBy(() -> question.validateDelete(writer))
+            .isInstanceOf(CannotDeleteException.class)
+            .hasMessage(CANT_DELETE_OTHER_PERSON);
+    }
+
+    @Test
+    void 질문과_답변을_모두_삭제한다() {
+        List<DeleteHistory> deleteHistories = question.delete();
+        assertThat(deleteHistories).hasSize(3);
+        assertThat(deleteHistories).isEqualTo(Arrays.asList(
+            new DeleteHistory(QUESTION, question.getId(), writer, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, answerEntityList.get(0).getId(), writer, LocalDateTime.now()),
+            new DeleteHistory(ANSWER, answerEntityList.get(1).getId(), writer, LocalDateTime.now())
+        ));
     }
 }

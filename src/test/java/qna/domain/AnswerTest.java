@@ -9,10 +9,12 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.config.JpaAuditingConfiguration;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static qna.domain.ContentType.ANSWER;
 import static qna.domain.QuestionTest.Q1;
 import static qna.domain.UserTest.JAVAJIGI;
 import static qna.domain.UserTest.SANJIGI;
@@ -64,7 +66,7 @@ public class AnswerTest {
     void save_후_update_테스트() {
         Answer modifiedAnswer = answers.findById(answer.getId()).get();
         String contents = modifiedAnswer.getContents();
-        modifiedAnswer.setContents("허억!!");
+        modifiedAnswer.modify("허억!!");
         Answer checkAnswer = answers.findById(answer.getId()).get();
         assertThat(contents).isNotEqualTo(checkAnswer.getContents());
     }
@@ -87,5 +89,19 @@ public class AnswerTest {
         assertThatThrownBy(() ->
             new Answer(new User("victor-jo", "password", "victor", "mail"), null, "Jun"))
             .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void 답변작성자인지_아닌지_확인한다() {
+        User other = users.save(new User("crawal", "password", "name", "esesmail"));
+        assertThat(answer.isOwner(writer)).isTrue();
+        assertThat(answer.isOwner(other)).isFalse();
+    }
+
+    @Test
+    void 답변을_삭제한다() {
+        DeleteHistory deleteHistory = answer.delete();
+        assertThat(answer.isDeleted()).isTrue();
+        assertThat(deleteHistory).isEqualTo(new DeleteHistory(ANSWER, answer.getId(), writer, LocalDateTime.now()));
     }
 }

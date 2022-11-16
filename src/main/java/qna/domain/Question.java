@@ -1,15 +1,22 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 
 import javax.persistence.*;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static qna.domain.ContentType.QUESTION;
 
 @Entity
 public class  Question extends TimeEntity {
+    public static final String CANT_DELETE_QUESTION = "질문을 삭제할 권한이 없습니다.";
+    public static final String CANT_DELETE_OTHER_PERSON = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -44,10 +51,6 @@ public class  Question extends TimeEntity {
         return this;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
-    }
-
     public void addAnswer(Answer answer) {
         if (deleted) {
             throw new NotFoundException();
@@ -60,39 +63,16 @@ public class  Question extends TimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void modify(String contents) {
         this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        if (Objects.isNull(writer)) {
-            return null;
-        }
-        return writer.getId();
     }
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -106,16 +86,40 @@ public class  Question extends TimeEntity {
                 '}';
     }
 
-    public Answers getAnswers() {
-        return this.answers;
-    }
-
-    public void deleteAnswer(Answer deletedAnswer) {
-        answers.deleteAnswer(deletedAnswer);
-        answers.refreshAnswerWithoutDelete();
-    }
-
     public User getWriter() {
         return this.writer;
+    }
+
+    public List<DeleteHistory> delete() {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleteHistories.add(deleteQuestion());
+        deleteHistories.addAll(deleteAnswers());
+        return deleteHistories;
+    }
+
+    private boolean isOwner(User writer) {
+        return this.writer.equals(writer);
+    }
+
+    private boolean isAllOwnerAnswers(User owner) {
+        return this.answers.allOwner(owner);
+    }
+
+    private DeleteHistory deleteQuestion() {
+        this.deleted = true;
+        return new DeleteHistory(QUESTION, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    private List<DeleteHistory> deleteAnswers() {
+        return this.answers.delete();
+    }
+
+    public void validateDelete(User owner) throws CannotDeleteException {
+        if (!isOwner(owner)) {
+            throw new CannotDeleteException(CANT_DELETE_QUESTION);
+        }
+        if (!isAllOwnerAnswers(owner)) {
+            throw new CannotDeleteException(CANT_DELETE_OTHER_PERSON);
+        }
     }
 }

@@ -4,9 +4,11 @@ import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static qna.domain.ContentType.ANSWER;
 
 @Entity
 public class Answer extends TimeEntity {
@@ -60,38 +62,12 @@ public class Answer extends TimeEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        if (Objects.isNull(writer)) {
-            return null;
-        }
-        return writer.getId();
-    }
-
-    public Long getQuestionId() {
-        if (Objects.isNull(question)) {
-            return null;
-        }
-        return question.getId();
-    }
-
     public String getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public void modify(String contents) {
         this.contents = contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -107,5 +83,14 @@ public class Answer extends TimeEntity {
 
     public User getWriter() {
         return this.writer;
+    }
+
+    public DeleteHistory delete() {
+        this.deleted = true;
+        return new DeleteHistory(ANSWER, getId(), getWriter(), LocalDateTime.now());
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }
