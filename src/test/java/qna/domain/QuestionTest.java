@@ -80,7 +80,7 @@ public class QuestionTest {
     void save_후_update_테스트() {
         Question modifiedQuestion = questions.findById(question.getId()).get();
         String contents = modifiedQuestion.getContents();
-        modifiedQuestion.setContents("90점입니다.");
+        modifiedQuestion.modify("90점입니다.");
         Question checkQuestion = questions.findById(modifiedQuestion.getId()).get();
         assertThat(contents).isNotEqualTo(checkQuestion.getContents());
     }
