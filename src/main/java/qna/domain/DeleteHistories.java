@@ -9,4 +9,12 @@ public class DeleteHistories {
     public DeleteHistories() {
         deleteHistories = new ArrayList<>();
     }
+
+    public void add(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
+    }
+
+    public List<DeleteHistory> getDeleteHistories() {
+        return deleteHistories;
+    }
 }
