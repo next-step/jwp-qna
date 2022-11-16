@@ -11,7 +11,7 @@ import java.util.List;
 @Embeddable
 public class Answers {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
-    private List<Answer> content;
+    private List<Answer> content = new ArrayList<>();
 
     protected Answers() {
     }
