@@ -82,12 +82,6 @@ public class Question extends BaseTimeEntity {
         deleted = true;
     }
 
-    public List<Answer> getNotDeletedAnswers() {
-        return answers.stream()
-                .filter(answer -> !answer.isDeleted())
-                .collect(toList());
-    }
-
     public List<DeleteHistory> delete(User user) throws CannotDeleteException {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
