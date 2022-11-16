@@ -61,6 +61,9 @@ public class Question extends DateEntity {
     }
 
     private void validateDelete(User loginUser) throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 제거된 질문은 제거할 수 없습니다.");
+        }
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
