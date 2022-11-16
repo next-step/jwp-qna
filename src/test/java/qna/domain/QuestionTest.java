@@ -30,6 +30,17 @@ public class QuestionTest {
         Question question = new Question(1L, "title1", "contents1", Answers.empty()).writeBy(UserTest.JAVAJIGI);
 
         assertThatThrownBy(() -> question.delete(UserTest.SANJIGI))
-                .isInstanceOf(CannotDeleteException.class);
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("질문을 삭제할 권한이 없습니다.");
+    }
+    @Test
+    @DisplayName("다른 사람이 쓴 답변이 있을 경우 예외가 발생한다")
+    void delete_thrownIllegalArgument2() {
+        Answers answers = new Answers(singletonList(new Answer(1L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1")));
+        Question question = new Question(1L, "title1", "contents1", answers).writeBy(UserTest.JAVAJIGI);
+
+        assertThatThrownBy(() -> question.delete(UserTest.JAVAJIGI))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
 }
