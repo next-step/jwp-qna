@@ -15,17 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     private Question question;
+    private User user;
 
     @BeforeEach
     public void setUp() {
-        question = new Question("titleTest", "contestTest");
+        user = userRepository.save(new User(1L, "javajigi", "password", "name", "javajigi@slipp.net"));
+        question = questionRepository.save(new Question("titleTest", "contestTest")).writeBy(user);
+
     }
 
     @Test
     void findByDeletedFalse() {
-        question = questionRepository.save(QuestionTest.Q1);
 
         List<Question> questions = questionRepository.findByDeletedFalse();
 
