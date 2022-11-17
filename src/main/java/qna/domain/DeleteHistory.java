@@ -9,6 +9,7 @@ public class DeleteHistory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
     private Long deletedById;
