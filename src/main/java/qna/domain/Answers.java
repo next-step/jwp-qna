@@ -22,7 +22,7 @@ public class Answers {
     }
 
     public Answers(Answer... answers) {
-        this.answerItems = Arrays.asList(answers);
+        this.answerItems = new ArrayList<>(Arrays.asList(answers));
     }
 
     public Answers(List<Answer> answers) {
