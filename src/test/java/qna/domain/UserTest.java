@@ -2,6 +2,7 @@ package qna.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.fixtures.UserTestFixture;
 import qna.message.UserMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,14 +10,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserTest {
 
-    public static User userSample(Long id) {
-        return new User(id, "shshon", "password", "손상훈", "shshon@naver.com");
-    }
-
     @Test
     @DisplayName("유저를 생성한다")
     void create_user_test() {
-        User user = userSample(1L);
+        User user = UserTestFixture.createUserWithId(1L);
         assertThat(user).isEqualTo(new User(1L, "shshon", "password", "손상훈", "shshon@naver.com"));
     }
 

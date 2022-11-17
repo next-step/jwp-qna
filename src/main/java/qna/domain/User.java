@@ -10,7 +10,7 @@ import java.util.Objects;
 @Table(name = "user", uniqueConstraints = {
         @UniqueConstraint(name = "uk_user_id", columnNames = "userId")
 })
-public class User extends BaseEntity {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
