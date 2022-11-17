@@ -4,8 +4,6 @@ import qna.exception.CannotDeleteException;
 import qna.message.QuestionMessage;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,24 +25,25 @@ public class Question {
     private User writer;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean deleted = false;
+    private boolean deleted = Boolean.FALSE;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
 
     }
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
+    public Question(User writer, String title, String contents) {
+        this(null, writer, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, User writer, String title, String contents) {
         validateTitle(title);
         validateContents(contents);
 
         this.id = id;
+        this.writer = writer;
         this.title = title;
         this.contents = contents;
     }
@@ -69,35 +68,39 @@ public class Question {
         return this.writer;
     }
 
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
-    }
-
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        if(this.answers.contains(answer)) {
-            return;
-        }
         this.answers.add(answer);
         answer.toQuestion(this);
     }
 
-    public List<Answer> getAnswers() {
-        return this.answers;
+    public int numberOfAnswers() {
+        return this.answers.size();
     }
 
-    public void delete(User owner) throws CannotDeleteException {
+    public DeleteHistories delete(User owner) throws CannotDeleteException {
+        validateIsDeletable();
         validateOwner(owner);
         this.deleted = true;
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(DeleteHistory.ofQuestion(this));
+        deleteHistories.addAll(this.answers.deleteAll(owner));
+        return deleteHistories;
+    }
+
+    private void validateIsDeletable() {
+        if(this.deleted) {
+            throw new IllegalArgumentException(QuestionMessage.ERROR_ALREADY_IS_DELETED.message());
+        }
     }
 
     private void validateOwner(User owner) throws CannotDeleteException {
         if (!this.isOwner(owner)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(QuestionMessage.ERROR_CAN_NOT_DELETE_IF_NOT_OWNER.message());
         }
     }
 

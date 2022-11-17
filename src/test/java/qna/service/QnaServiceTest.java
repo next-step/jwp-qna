@@ -8,11 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.domain.*;
 import qna.exception.CannotDeleteException;
-import qna.repository.AnswerRepository;
+import qna.fixtures.AnswerTestFixture;
+import qna.fixtures.QuestionTestFixture;
+import qna.fixtures.UserTestFixture;
 import qna.repository.QuestionRepository;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,9 +27,6 @@ class QnaServiceTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
     private DeleteHistoryService deleteHistoryService;
 
     @InjectMocks
@@ -37,13 +35,14 @@ class QnaServiceTest {
     private User writer;
     private Question question;
     private Answer answer;
+    private Answer answer2;
 
     @BeforeEach
     public void setUp() throws Exception {
-        writer = UserTest.userSample(1L);
-        question = QuestionTest.questionSample(1L, writer);
-        answer = AnswerTest.answerSample(1L, writer, question);
-        question.addAnswer(answer);
+        writer = UserTestFixture.createUserWithId(1L);
+        question = QuestionTestFixture.createQuestionWithIdAndWriter(1L, writer);
+        answer = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(1L, writer, question);
+        answer2 = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(2L, writer, question);
     }
 
     @Test
@@ -60,7 +59,7 @@ class QnaServiceTest {
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        User otherUser = UserTest.userSample(2L);
+        User otherUser = UserTestFixture.createUserWithId(2L);
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(otherUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
@@ -79,11 +78,8 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        User otherUser = UserTest.userSample(2L);
-        Question otherQuestion = new Question(2L, "title2", "contents");
-        Answer answer2 = new Answer(2L, otherUser, otherQuestion, "Answers Contents1");
-        this.question.addAnswer(answer2);
-
+        User otherUser = UserTestFixture.createUserWithId(2L);
+        Answer otherAnswer = new Answer(3L, otherUser, question, "Answers Contents1");
         when(questionRepository.findByIdAndDeletedFalse(this.question.getId())).thenReturn(Optional.of(this.question));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(writer, this.question.getId()))
@@ -91,10 +87,11 @@ class QnaServiceTest {
     }
 
     private void verifyDeleteHistories() {
-        List<DeleteHistory> deleteHistories = Arrays.asList(
+        DeleteHistories deleteHistories = new DeleteHistories(Arrays.asList(
                 DeleteHistory.ofQuestion(question),
-                DeleteHistory.ofAnswer(answer)
-        );
+                DeleteHistory.ofAnswer(answer),
+                DeleteHistory.ofAnswer(answer2)
+        ));
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
 }
