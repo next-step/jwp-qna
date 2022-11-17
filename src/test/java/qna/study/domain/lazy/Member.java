@@ -1,4 +1,4 @@
-package qna.study.domain;
+package qna.study.domain.lazy;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,6 +28,12 @@ public class Member {
 	public Member(String name, String email) {
 		this.name = name;
 		this.email = email;
+	}
+
+	public Member(String name, String email, Team team) {
+		this.name = name;
+		this.email = email;
+		this.team = team;
 	}
 
 	public void setTeam(Team team) {

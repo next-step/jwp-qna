@@ -1,4 +1,4 @@
-package qna.study.domain;
+package qna.study.domain.lazy;
 
 import java.util.ArrayList;
 import java.util.List;

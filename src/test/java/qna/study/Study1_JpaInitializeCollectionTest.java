@@ -13,19 +13,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.TestConstructor;
 
-import qna.study.domain.Member;
-import qna.study.domain.Team;
+import qna.study.domain.lazy.Member;
+import qna.study.domain.lazy.Team;
 import qna.study.repository.MemberRepository;
 import qna.study.repository.TeamRepository;
 
 @DataJpaTest
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @DisplayName("JPA 컬렉션 초기화 학습 테스트")
-class JpaInitializeCollectionTest {
+class Study1_JpaInitializeCollectionTest {
 
 	private final EntityManager entityManager;
 
-	public JpaInitializeCollectionTest(EntityManager entityManager, TeamRepository teamRepository,
+	public Study1_JpaInitializeCollectionTest(EntityManager entityManager, TeamRepository teamRepository,
 		MemberRepository memberRepository) {
 		this.entityManager = entityManager;
 	}
