@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
-public class Answer extends BaseEntity {
+public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,8 +72,15 @@ public class Answer extends BaseEntity {
     }
 
     public DeleteHistory delete() {
+        validateIsDeletable();
         this.deleted = true;
         return DeleteHistory.ofAnswer(this);
+    }
+
+    private void validateIsDeletable() {
+        if(this.deleted) {
+            throw new IllegalArgumentException("이미 삭제 된 답변입니다.");
+        }
     }
 
     public boolean isDeleted() {
