@@ -41,7 +41,6 @@ public class Answers {
         List<DeleteHistory> deleteHistories = this.answerItems.stream()
                 .map(Answer::delete)
                 .collect(Collectors.toList());
-        this.answerItems.clear();
         return new DeleteHistories(deleteHistories);
     }
 
