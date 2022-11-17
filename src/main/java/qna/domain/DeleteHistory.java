@@ -22,9 +22,7 @@ public class DeleteHistory extends BaseTimeEntity {
         this.createDate = createDate;
     }
 
-    protected DeleteHistory() {
-
-    }
+    protected DeleteHistory() {}
 
     @Override
     public boolean equals(Object o) {

@@ -38,9 +38,7 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    protected Answer() {
-
-    }
+    protected Answer() {}
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
