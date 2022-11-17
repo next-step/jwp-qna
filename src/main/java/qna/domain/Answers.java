@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,10 @@ public class Answers {
 
     public Answers() {
         this.answerItems = new ArrayList<>();
+    }
+
+    public Answers(Answer... answers) {
+        this.answerItems = Arrays.asList(answers);
     }
 
     public Answers(List<Answer> answers) {

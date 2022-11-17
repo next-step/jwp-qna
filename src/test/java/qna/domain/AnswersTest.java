@@ -8,11 +8,8 @@ import qna.fixtures.QuestionTestFixture;
 import qna.fixtures.UserTestFixture;
 import qna.message.AnswerMessage;
 
-import java.util.Arrays;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AnswersTest {
 
@@ -26,7 +23,7 @@ class AnswersTest {
         Answer answer3 = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(3L, writer, question);
         Answer answer4 = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(4L, writer, question);
 
-        Answers answers = new Answers(Arrays.asList(answer1, answer2, answer3, answer4));
+        Answers answers = new Answers(answer1, answer2, answer3, answer4);
         DeleteHistories deleteHistories = answers.deleteAll(writer);
 
         assertThat(deleteHistories.getAll()).contains(
@@ -38,7 +35,7 @@ class AnswersTest {
     }
 
     @Test
-    @DisplayName("Answers 삭제시 답변자가 다르면 삭제할수 없어 [CannotDeleteException] 예외처리 한다")
+    @DisplayName("Answers 삭제시 질문자와 답변자가 다르면 [CannotDeleteException] 예외처리 한다")
     void delete_all_answers_if_not_owner_throw_CannotDeleteException_test() {
         User writer = UserTestFixture.createUserWithId(1L);
         User otherWriter = UserTestFixture.createUserWithId(2L);
@@ -46,10 +43,9 @@ class AnswersTest {
         Answer answer1 = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(1L, writer, question);
         Answer answer2 = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(2L, otherWriter, question);
 
-        Answers answers = new Answers(Arrays.asList(answer1, answer2));
-        assertThatThrownBy(() -> {
-            answers.deleteAll(writer);
-        }).isInstanceOf(CannotDeleteException.class)
+        Answers answers = new Answers(answer1, answer2);
+        assertThatThrownBy(() -> answers.deleteAll(writer))
+                .isInstanceOf(CannotDeleteException.class)
                 .hasMessage(AnswerMessage.ERROR_CAN_NOT_DELETE_IF_OWNER_NOT_EQUALS.message());
     }
 }
