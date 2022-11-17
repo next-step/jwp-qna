@@ -1,9 +1,9 @@
 package qna.domain;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -16,9 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class AnswerRepositoryTest {
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     @Test
-    @DisplayName("답변_저장")
     void 답변_저장() {
         Answer answer = answerRepository.save(AnswerTest.A1);
         assertAll(
@@ -33,7 +34,6 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("답변_저장_후_조회")
     void 답변_저장_후_조회() {
         Answer answer = answerRepository.save(AnswerTest.A1);
         Answer actual = answerRepository.findById(answer.getId()).orElseThrow(EntityNotFoundException::new);
@@ -49,7 +49,6 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("답변_삭제")
     void 답변_삭제() {
         Answer answer = answerRepository.save(AnswerTest.A1);
         answerRepository.deleteById(answer.getId());
@@ -57,18 +56,29 @@ public class AnswerRepositoryTest {
     }
 
     @Test
-    @DisplayName("ID로_질문_조회")
-    void ID로_질문_조회() {
+    void ID로_답변_조회() {
         answerRepository.save(AnswerTest.A1);
         List<Answer> actual = answerRepository.findByQuestionIdAndDeletedFalse(QuestionTest.Q1.getId());
         assertThat(actual).hasSize(1);
     }
 
     @Test
-    @DisplayName("삭제되지_않은_답변_조회")
     void 삭제되지_않은_답변_조회() {
         Answer answer = answerRepository.save(AnswerTest.A1);
         Optional<Answer> actual = answerRepository.findByIdAndDeletedFalse(answer.getId());
         assertThat(actual).isPresent();
+    }
+
+    @Test
+    void 영속성_초기화후_같은객채_조회() {
+        Answer answer = answerRepository.save(AnswerTest.A1);
+        flushAndClear();
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertThat(actual).isEqualTo(answer);
+    }
+
+    private void flushAndClear() {
+        testEntityManager.flush();
+        testEntityManager.clear();
     }
 }

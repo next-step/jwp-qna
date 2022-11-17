@@ -1,9 +1,9 @@
 package qna.domain;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.Optional;
 
@@ -14,9 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     @Test
-    @DisplayName("유저_저장")
     void 유저_저장() {
         User user = userRepository.save(UserTest.JAVAJIGI);
         assertAll(
@@ -31,7 +32,6 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("유저_조회")
     void 유저_조회() {
         User user = userRepository.save(UserTest.JAVAJIGI);
         User actual = userRepository.findById(user.getId()).get();
@@ -47,7 +47,6 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("유저_삭제")
     void 유저_삭제() {
         User user = userRepository.save(UserTest.JAVAJIGI);
         userRepository.deleteById(user.getId());
@@ -56,10 +55,22 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("유저_아이디로_조회")
     void 유저_아이디로_조회() {
         User user = userRepository.save(UserTest.JAVAJIGI);
         User actual = userRepository.findByUserId(user.getUserId()).get();
         assertThat(user.getUserId()).isEqualTo(actual.getUserId());
+    }
+
+    @Test
+    void 유저_영속성_초기화후_같은객채_조회() {
+        User user = userRepository.save(UserTest.JAVAJIGI);
+        flushAndClear();
+        User actual = userRepository.findById(user.getId()).get();
+        assertThat(actual).isEqualTo(user);
+    }
+
+    private void flushAndClear() {
+        testEntityManager.flush();
+        testEntityManager.clear();
     }
 }

@@ -1,9 +1,9 @@
 package qna.domain;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class QuestionRepositoryTest {
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private TestEntityManager testEntityManager;
 
     @Test
-    @DisplayName("질문_저장")
     void 질문_저장() {
         Question question = questionRepository.save(QuestionTest.Q1);
         assertAll(
@@ -29,7 +30,6 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("질문_조회")
     void 질문_조회() {
         Question question = questionRepository.save(QuestionTest.Q1);
         Question actual = questionRepository.findById(question.getId()).get();
@@ -44,7 +44,6 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("질문_삭제")
     void 질문_삭제() {
         Question question = questionRepository.save(QuestionTest.Q1);
         questionRepository.deleteById(question.getId());
@@ -52,7 +51,6 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제되지_않은_질문_조회")
     void 삭제되지_않은_질문_조회() {
         Question question = questionRepository.save(QuestionTest.Q1);
         Optional<Question> actual = questionRepository.findByIdAndDeletedFalse(question.getId());
@@ -60,11 +58,23 @@ public class QuestionRepositoryTest {
     }
 
     @Test
-    @DisplayName("삭제되지_않은_질문_목록_조회")
     void 삭제되지_않은_질문_목록_조회() {
         questionRepository.save(QuestionTest.Q1);
         questionRepository.save(QuestionTest.Q2);
         List<Question> actual = questionRepository.findByDeletedFalse();
         assertThat(actual).hasSize(2);
+    }
+
+    @Test
+    void 질문_영속성_초기화후_같은객채_조회() {
+        Question question = questionRepository.save(QuestionTest.Q1);
+        flushAndClear();
+        Question actual = questionRepository.findById(question.getId()).get();
+        assertThat(actual).isEqualTo(question);
+    }
+
+    private void flushAndClear() {
+        testEntityManager.flush();
+        testEntityManager.clear();
     }
 }
