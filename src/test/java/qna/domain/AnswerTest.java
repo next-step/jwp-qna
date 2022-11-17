@@ -12,7 +12,7 @@ public class AnswerTest {
     public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
 
     @Test
-    void 삭제요청자가_답변작성자이면_답변이삭제된다() {
+    void 삭제요청자가_답변작성자이면_답변이삭제된다() throws CannotDeleteException {
         A1.delete(UserTest.JAVAJIGI);
         A2.delete(UserTest.SANJIGI);
 
