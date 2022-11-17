@@ -21,11 +21,9 @@ QnA 서비스를 만들어가면서 JPA로 실제 도메인 모델을 어떻게 
         - [x] DDL에 맞게 Entity 클래스 애노테이션 추가
         - [x] id 생성 테스트
         - [x] 생성 및 수정일시 추가
-    - [ ] 삭제이력(DeleteHistory)
-        - [ ] DDL에 맞게 Entity 클래스 애노테이션 추가
-        - [ ] id 생성 테스트
-        - [ ] 길이 제약조건 테스트
-        - [ ] 생성일시 추가
+    - [x] 삭제이력(DeleteHistory)
+        - [x] DDL에 맞게 Entity 클래스 애노테이션 추가
+        - [x] 저장 테스트
 - @DataJpaTest를 사용하여 학습 테스트를 해 본다.
 
 ## DDL
