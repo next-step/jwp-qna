@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import qna.domain.*;
+import qna.fixtures.AnswerTestFixture;
+import qna.fixtures.QuestionTestFixture;
+import qna.fixtures.UserTestFixture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,13 +30,13 @@ class DeleteHistoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        writer = UserTest.userSample(null);
+        writer = UserTestFixture.createUser();
         em.persist(writer);
 
-        question = QuestionTest.questionSample(null, writer);
+        question = QuestionTestFixture.createQuestionWithWriter(writer);
         em.persist(question);
 
-        answer = AnswerTest.answerSample(null, writer, question);
+        answer = AnswerTestFixture.createAnswerWithWriterAndQuestion(writer, question);
         em.persist(answer);
     }
 
