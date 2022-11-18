@@ -1,8 +1,6 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -16,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -142,5 +141,23 @@ public class Question extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, contents, deleted, title, writer);
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        validateLoginUserIsWriter(loginUser);
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer));
+
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
+    }
+
+    private void validateLoginUserIsWriter(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
     }
 }

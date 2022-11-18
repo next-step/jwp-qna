@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -19,7 +20,7 @@ public class Answer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name="writer_id")
+    @JoinColumn(name = "writer_id")
     private User writer;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
@@ -127,5 +128,17 @@ public class Answer extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, writer, question, contents, deleted);
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateAnswerIsEmpty(loginUser);
+        deleted = true;
+        return new DeleteHistory(ContentType.ANSWER, id, writer);
+    }
+
+    private void validateAnswerIsEmpty(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 }

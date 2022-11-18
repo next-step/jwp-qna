@@ -13,3 +13,6 @@
   - [x] QuestionRepository 구현
   - [x] DeleteHistoryRepository 구현
   - [x] AnswerRepository 구현
+- 질문 삭제하기 리팩토링
+  - [x] Question 도메인에 삭제 기능 구현
+  - [x] Answer 도미엔에 삭제 기능 구현
