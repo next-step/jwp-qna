@@ -13,17 +13,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 import qna.domain.common.BaseEntity;
+import qna.domain.deletehistory.DeleteHistory;
 import qna.domain.question.Question;
 import qna.domain.user.User;
 
 @Entity
 public class Answer extends BaseEntity {
 
-	protected Answer() {
-	}
+	private static final String ANSWER_DELETE_UNAUTHORIZED_EXCEPTION_MESSAGE = "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +43,9 @@ public class Answer extends BaseEntity {
 
 	@Column(nullable = false)
 	private boolean deleted = false;
+
+	protected Answer() {
+	}
 
 	public Answer(User writer, Question question, String contents) {
 		this(null, writer, question, contents);
@@ -95,6 +99,14 @@ public class Answer extends BaseEntity {
 		this.deleted = deleted;
 	}
 
+	public DeleteHistory delete(User loginUser) {
+		if (!isOwner(loginUser)) {
+			throw new CannotDeleteException(ANSWER_DELETE_UNAUTHORIZED_EXCEPTION_MESSAGE);
+		}
+		this.deleted = true;
+		return DeleteHistory.ofAnswer(this);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -111,7 +123,7 @@ public class Answer extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
+		return id.hashCode();
 	}
 
 	@Override
@@ -124,4 +136,5 @@ public class Answer extends BaseEntity {
 			", deleted=" + deleted +
 			'}';
 	}
+
 }

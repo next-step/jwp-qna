@@ -11,15 +11,19 @@ public class UserGenerator {
 		this.userRepository = userRepository;
 	}
 
+	public static User anotherUser() {
+		return user("login-user", "password", "인증된 사용자", "login-user@email.com");
+	}
+
 	public static User questionWriter() {
-		return new User("hahoho87", "password", "질문자", "hahoho87@email.com");
+		return user("hahoho87", "password", "질문자", "hahoho87@email.com");
 	}
 
 	public static User answerWriter() {
-		return new User("hahaha90", "password", "답변자", "hahaha90@email.com");
+		return user("hahaha90", "password", "답변자", "hahaha90@email.com");
 	}
 
-	private static User of(String userId, String password, String name, String email) {
+	private static User user(String userId, String password, String name, String email) {
 		return new User(userId, password, name, email);
 	}
 

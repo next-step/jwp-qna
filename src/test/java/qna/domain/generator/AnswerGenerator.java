@@ -14,10 +14,14 @@ public class AnswerGenerator {
 	}
 
 	public static Answer answer(User writer, Question question, String contents) {
-		return new Answer(writer, question, contents);
+		Answer answer = new Answer(writer, question, contents);
+		question.addAnswer(answer);
+		return answer;
 	}
 
 	public Answer savedAnswer(User writer, Question question, String contents) {
-		return answerRepository.saveAndFlush(answer(writer, question, contents));
+		Answer answer = answer(writer, question, contents);
+		answer.toQuestion(question);
+		return answerRepository.saveAndFlush(answer);
 	}
 }

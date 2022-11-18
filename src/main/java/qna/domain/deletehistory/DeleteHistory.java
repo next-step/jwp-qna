@@ -15,7 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import qna.domain.ContentType;
+import qna.domain.answer.Answer;
 import qna.domain.common.BaseEntity;
+import qna.domain.question.Question;
 import qna.domain.user.User;
 
 @Entity
@@ -46,6 +48,15 @@ public class DeleteHistory extends BaseEntity {
 		this.createDate = createDate;
 	}
 
+	public static DeleteHistory ofQuestion(Question question) {
+		return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+	}
+
+	public static DeleteHistory ofAnswer(Answer answer) {
+		return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+	}
+
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -62,7 +73,7 @@ public class DeleteHistory extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
+		return id.hashCode();
 	}
 
 	@Override
