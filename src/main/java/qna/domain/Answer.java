@@ -88,14 +88,19 @@ public class Answer extends BaseTimeEntity{
                 '}';
     }
 
-    /*public void delete(User loginUser) throws CannotDeleteException {
-        checkWriterLoginUser(loginUser);
-        deleted = true;
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
-    private void checkWriterLoginUser(User loginUser) throws CannotDeleteException {
-        if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
-    }*/
+        if (!(o instanceof Answer)) {
+            return false;
+        }
+        return ((Answer)o).getId() == id;
+    }
 }

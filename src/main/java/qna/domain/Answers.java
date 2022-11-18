@@ -1,8 +1,6 @@
 package qna.domain;
 
 import org.hibernate.annotations.Where;
-import org.hibernate.sql.Delete;
-import qna.CannotDeleteException;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -10,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Embeddable

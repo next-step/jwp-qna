@@ -4,6 +4,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.CannotDeleteException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class QuestionTest {
     public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
+    private static final List<DeleteHistory> deleteHistoryList = new ArrayList<>();
 
     @Test
     @DisplayName("Question 작성자 확인 테스트")
@@ -22,8 +26,15 @@ public class QuestionTest {
     }
 
     @Test
-    @DisplayName("Question 질문자와 loginUser 동일할 경우, Error 발생 테스트")
-    void Question_작성자_loginUser_Error_발생() {
+    @DisplayName("Question 질문자와 loginUser 동일할 경우, 질문 삭제 Error 발생 테스트")
+    void Question_작성자_loginUser_Question_Error_발생() {
+        assertThrows(CannotDeleteException.class, () -> Q1.delete(UserTest.SANJIGI));
+    }
+
+    @Test
+    @DisplayName("Question 질문자와 loginUser 동일할 경우, 답변 삭제 Error 발생 테스트")
+    void Question_작성자_loginUser_Answer_Error_발생() {
+        Q1.addAnswer(AnswerTest.A1);
         assertThrows(CannotDeleteException.class, () -> Q1.delete(UserTest.SANJIGI));
     }
 
