@@ -53,6 +53,8 @@ public class QnaService {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
+        questionRepository.save(question);
+        answerRepository.saveAll(answers);
         deleteHistoryService.saveAll(deleteHistories);
     }
 }
