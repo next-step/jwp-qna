@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DataJpaTest
-public class UserTest {
+class UserTest {
     @Autowired
     private UserRepository userRepository;
 

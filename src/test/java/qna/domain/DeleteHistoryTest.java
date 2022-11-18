@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DataJpaTest
-public class DeleteHistoryTest {
+class DeleteHistoryTest {
     @Autowired
     private DeleteHistoryRepository deleteHistoryRepository;
 

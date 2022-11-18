@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DataJpaTest
-public class AnswerTest {
+class AnswerTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
