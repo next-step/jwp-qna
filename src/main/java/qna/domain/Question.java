@@ -1,6 +1,7 @@
 package qna.domain;
 
 import qna.CannotDeleteException;
+import qna.consts.ErrorMessage;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -86,13 +87,13 @@ public class Question extends BaseTimeEntity{
 
     private void checkQuestionOwnerSameLoginUser(User loginUser) throws CannotDeleteException {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new CannotDeleteException(ErrorMessage.ERROR_MESSAGE_NOT_DELETE_QUESTION);
         }
     }
 
     private void checkAnswerOwnerAndLoginUser(User loginUser) throws CannotDeleteException {
         if (answers.checkWriterAndLoginUser(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new CannotDeleteException(ErrorMessage.ERROR_MESSAGE_NOT_DELETE_ANSWER);
         }
     }
 
