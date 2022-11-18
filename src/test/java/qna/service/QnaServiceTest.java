@@ -1,12 +1,14 @@
 package qna.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import qna.exceptions.CannotDeleteException;
 import qna.domain.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,85 +29,161 @@ class QnaServiceTest {
     @Autowired
     private QnaService qnaService;
 
-    private User user1;
-    private User user2;
-    private Question question1;
-    private Question question2;
-    private Answer answer1;
-    private Answer answer2;
+    @Nested
+    class delete_성공 {
+        private User user1;
+        private Question question1;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        final User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-        assertThat(userRepository).isNotNull();
-        this.user1 = userRepository.save(user1);
-        this.user2 = userRepository.save(user2);
+        @BeforeEach
+        void setup() {
+            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+            final User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+            final User user3 = new User("pobi", "password", "name", "pobi@slipp.net");
+            this.user1 = userRepository.save(user1);
+            final List<User> users = new ArrayList<>(2);
+            users.add(user2);
+            users.add(user3);
+            userRepository.saveAll(users);
 
-        final Question question1 = new Question("title1", "contents1").writeBy(this.user1);
-        final Question question2 = new Question("title2", "contents2").writeBy(this.user1);
-        this.question1 = questionRepository.save(question1);
-        this.question2 = questionRepository.save(question2);
+            final Question question1 = new Question("title1", "contents1").writeBy(this.user1);
+            final Question question2 = new Question("title2", "contents2").writeBy(this.user1);
+            this.question1 = questionRepository.save(question1);
+            questionRepository.save(question2);
 
-        answer1 = new Answer(this.user1, question1, "Answers Contents1");
-        answer2 = new Answer(this.user2, question2, "Answers Contents2");
-        question1.addAnswer(answer1);
-        question2.addAnswer(answer2);
-        this.answer1 = answerRepository.save(answer1);
-        this.answer2 = answerRepository.save(answer2);
-        this.question1 = questionRepository.save(question1);
-        this.question2 = questionRepository.save(question2);
+            final Answer answer1 = new Answer(this.user1, question1, "Answers Contents1");
+            final Answer answer2 = new Answer(this.user1, question2, "Answers Contents2");
+            final Answer answer3 = new Answer(this.user1, question1, "Answers Contents1-2");
+            question1.addAnswer(answer1);
+            question2.addAnswer(answer2);
+            question1.addAnswer(answer3);
+            final List<Answer> answers = new ArrayList<>(3);
+            answers.add(answer1);
+            answers.add(answer2);
+            answers.add(answer3);
+            final List<Question> questions = new ArrayList<>(3);
+            questions.add(question1);
+            questions.add(question2);
+            answerRepository.saveAll(answers);
+            questionRepository.saveAll(questions);
+        }
+
+        @Test
+        void success() throws CannotDeleteException {
+            // arrange
+            final Question foundQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
+            final List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
+
+            // assert
+            assertThat(foundQuestion.isDeleted()).isFalse();
+            assertAll(
+                    () -> foundAnswers.forEach(foundAnswer -> assertThat(foundAnswer.isDeleted()).isFalse())
+            );
+
+            // act
+            qnaService.deleteQuestion(user1, foundQuestion.getId());
+            final Question deletedQuestion = questionRepository.findById(foundQuestion.getId()).get();
+
+            // assert
+            assertThat(deletedQuestion.isDeleted()).isTrue();
+        }
     }
 
-    @Test
-    public void delete_성공() throws Exception {
-        // arrange
-        final Question foundQuestion = questionRepository.findByIdAndDeletedFalse(question1.getId()).get();
-        final List<Answer> foundAnswers = answerRepository.findByQuestionIdAndDeletedFalse(question1.getId());
+    @Nested
+    class delete_다른_사람이_쓴_글 {
+        private User user2;
+        private Question question1;
 
-        // assert
-        assertThat(foundQuestion.isDeleted()).isFalse();
-        assertAll(
-                () -> foundAnswers.forEach(foundAnswer -> assertThat(foundAnswer.isDeleted()).isFalse())
-        );
+        @BeforeEach
+        void setup() {
+            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+            final User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+            final User savedUser1 = userRepository.save(user1);
+            this.user2 = userRepository.save(user2);
 
-        // act
-        qnaService.deleteQuestion(user1, foundQuestion.getId());
-        final Question deletedQuestion = questionRepository.findById(foundQuestion.getId()).get();
+            final Question question1 = new Question("title1", "contents1").writeBy(savedUser1);
+            this.question1 = questionRepository.save(question1);
+        }
 
-        // assert
-        assertThat(deletedQuestion.isDeleted()).isTrue();
+        @Test
+        void fail() {
+            // arrange
+            final User otherWriter = userRepository.findById(user2.getId()).get();
+            final Question questionToCheck = qnaService.findQuestionById(question1.getId());
+
+            // assert
+            assertThat(otherWriter).isNotNull();
+            assertThat(questionToCheck.isDeleted()).isFalse();
+
+            // act - assert
+            assertThatThrownBy(() -> qnaService.deleteQuestion(otherWriter, questionToCheck.getId()))
+                    .isInstanceOf(CannotDeleteException.class);
+        }
     }
 
-    @Test
-    public void delete_다른_사람이_쓴_글() throws Exception {
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user2, question1.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+    @Nested
+    class delete_성공_질문자_답변자_같음 {
+        private User user1;
+        private Question question1;
+        private Answer answer1;
+
+        @BeforeEach
+        void setup() {
+            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+            this.user1 = userRepository.save(user1);
+
+            final Question question1 = new Question("title1", "contents1").writeBy(this.user1);
+            this.question1 = questionRepository.save(question1);
+
+            answer1 = new Answer(this.user1, question1, "Answers Contents1");
+            question1.addAnswer(answer1);
+            this.answer1 = answerRepository.save(answer1);
+            this.question1 = questionRepository.save(question1);
+        }
+
+        @Test
+        void success() throws CannotDeleteException {
+            // arrange - act
+            qnaService.deleteQuestion(user1, question1.getId());
+            final Question deletedQuestion = questionRepository.findById(question1.getId()).get();
+            final List<Answer> deletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(deletedQuestion.getId());
+
+            // assert
+            assertThat(deletedQuestion.isDeleted()).isTrue();
+            assertAll(
+                    () -> deletedAnswers.forEach(deletedAnswer -> assertThat(answer1.isDeleted()).isTrue())
+            );
+        }
     }
 
-    @Test
-    public void delete_성공_질문자_답변자_같음() throws Exception {
-        // arrange - act
-        qnaService.deleteQuestion(user1, question1.getId());
-        final Question deletedQuestion = questionRepository.findById(question1.getId()).get();
-        final List<Answer> deletedAnswers = answerRepository.findByQuestionIdAndDeletedFalse(deletedQuestion.getId());
+    @Nested
+    class delete_답변_중_다른_사람이_쓴_글 {
+        private User user1;
+        private User user2;
+        private Question question1;
 
-        // assert
-        assertThat(deletedQuestion.isDeleted()).isTrue();
-        assertAll(
-                () -> deletedAnswers.forEach(deletedAnswer -> assertThat(answer1.isDeleted()).isTrue())
-        );
-    }
+        @BeforeEach
+        void setup() {
+            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
+            final User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+            this.user1 = userRepository.save(user1);
+            this.user2 = userRepository.save(user2);
 
-    @Test
-    public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        final Question question = new Question("title 2", "question contents x").writeBy(user1);
-        final Answer answer = new Answer(user1, question, "answer contents x");
-        question.addAnswer(answer);
-        final Question savedQuestion = questionRepository.save(question2);
+            final Question question1 = new Question("title1", "contents1").writeBy(this.user1);
+            this.question1 = questionRepository.save(question1);
 
-        // assert
-        assertThatThrownBy(() -> qnaService.deleteQuestion(user1, savedQuestion.getId()))
-                .isInstanceOf(CannotDeleteException.class);
+            final Answer answer1 = new Answer(this.user1, question1, "Answers Contents By User 1");
+            final Answer answer2 = new Answer(this.user2, question1, "Answers Contents By User 2");
+            question1.addAnswer(answer1);
+            question1.addAnswer(answer2);
+            answerRepository.save(answer1);
+            answerRepository.save(answer2);
+            this.question1 = questionRepository.save(question1);
+        }
+
+        @Test
+        void fail() {
+            assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question1.getId()))
+                    .isInstanceOf(CannotDeleteException.class);
+        }
     }
 }
