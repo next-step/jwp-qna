@@ -37,6 +37,10 @@ class AnswersTest {
         assertThatExceptionOfType(CannotDeleteException.class)
             .isThrownBy(() -> answers.delete(userB))
             .withMessageContaining("답변을 삭제할 권한이 없습니다");
+
+        for (Answer answer : answers.getValues()) {
+            assertThat(answer.isDeleted()).isFalse();
+        }
     }
 
     @DisplayName("로그인 사용자와 모든 답변의 답변한 사람이 같은 경우, 모든 답변이 삭제 가능 해야 한다")
@@ -52,6 +56,10 @@ class AnswersTest {
             new DeleteHistory(ContentType.ANSWER, 99L, userA, LocalDateTime.now()),
             new DeleteHistory(ContentType.ANSWER, 100L, userA, LocalDateTime.now())
         );
+
+        for (Answer answer : answers.getValues()) {
+            assertThat(answer.isDeleted()).isTrue();
+        }
     }
 
 }

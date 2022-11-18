@@ -1,6 +1,5 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +29,7 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"), name = "writer_id")
     private User writer;
 
@@ -60,9 +60,16 @@ public class Question extends BaseTimeEntity {
     }
 
     private DeleteHistory deleteQuestion(User loginUser) throws CannotDeleteException {
+        validateNotDeleted();
         validateOwner(loginUser);
         deleted = true;
-        return new DeleteHistory(ContentType.QUESTION, getId(), getWriter(), LocalDateTime.now());
+        return DeleteHistory.fromQuestion(this);
+    }
+
+    private void validateNotDeleted() throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 질문입니다.");
+        }
     }
 
     private void validateOwner(User loginUser) throws CannotDeleteException {
@@ -109,8 +116,16 @@ public class Question extends BaseTimeEntity {
         return writer;
     }
 
+    public Answers getAnswers() {
+        return answers;
+    }
+
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

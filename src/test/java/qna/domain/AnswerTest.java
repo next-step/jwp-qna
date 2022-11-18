@@ -15,6 +15,7 @@ public class AnswerTest {
     private User userB;
 
     private Answer answerFromA;
+    private Answer deletedAnswerFromA;
 
     @BeforeEach
     void setUp() {
@@ -24,6 +25,17 @@ public class AnswerTest {
         Question questionFromB = new Question("title2", "contents2").writeBy(userB);
 
         answerFromA = new Answer(100L, userA, questionFromB, "JPA Answer");
+
+        deletedAnswerFromA = new Answer(110L, userA, questionFromB, "Deleted JPA Answer");
+        deletedAnswerFromA.setDeleted(true);
+    }
+
+    @DisplayName("이미 삭제된 답변의 경우, 삭제 불가능 해야 한다")
+    @Test
+    void delete_alreadyDeleted() {
+        assertThatExceptionOfType(CannotDeleteException.class)
+            .isThrownBy(() ->  deletedAnswerFromA.delete(userA))
+            .withMessageContaining("이미 삭제된 답변입니다");
     }
 
     @DisplayName("로그인 사용자와 답변한 사람이 다른 경우, 답변 삭제 불가능 해야 한다")
@@ -44,6 +56,4 @@ public class AnswerTest {
         assertThat(deleteHistory).isEqualTo(
             new DeleteHistory(ContentType.ANSWER, 100L, userA, LocalDateTime.now()));
     }
-
-
 }

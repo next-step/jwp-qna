@@ -1,9 +1,9 @@
 package qna.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
@@ -21,11 +22,12 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"), name = "writer_id")
     private User writer;
 
-    @ManyToOne
+    @Where(clause = "deleted = false")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_to_question"), name = "question_id")
     private Question question;
 
@@ -59,9 +61,16 @@ public class Answer extends BaseTimeEntity {
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateNotDeleted();
         validateOwner(loginUser);
         deleted = true;
-        return new DeleteHistory(ContentType.ANSWER, getId(), getWriter(), LocalDateTime.now());
+        return DeleteHistory.fromAnswer(this);
+    }
+
+    private void validateNotDeleted() throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 답변입니다.");
+        }
     }
 
     private void validateOwner(User loginUser) throws CannotDeleteException {
@@ -70,7 +79,7 @@ public class Answer extends BaseTimeEntity {
         }
     }
 
-    public boolean isOwner(User writer) {
+    private boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
 
@@ -96,6 +105,10 @@ public class Answer extends BaseTimeEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

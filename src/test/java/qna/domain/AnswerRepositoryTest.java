@@ -14,31 +14,27 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 class AnswerRepositoryTest {
 
     @Autowired
-    private AnswerRepository target;
+    private AnswerRepository answerRepository;
 
     @Autowired
-    private QuestionRepository questions;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private UserRepository users;
+    private UserRepository userRepository;
 
     @Autowired
     private TestEntityManager manager;
 
+    private User userA;
+    private User userB;
     private Answer answer;
 
     @BeforeEach
     public void setUp() {
-        final User senior = users.save(
-            new User(1L, "senior", "pwd", "name", "gosu@slipp.net"));
-        final User newbie = users.save(
-            new User(2L, "newbie", "pwd", "name", "new@slipp.net"));
-
-        final Question question = questions.save(
-            new Question("JPA", "Proxy")
-                .writeBy(senior));
-
-        answer = new Answer(newbie, question, "I'm not sure about that");
+        userA = userRepository.save(new User(1L, "senior", "pwd", "name", "gosu@slipp.net"));
+        userB = userRepository.save(new User(2L, "newbie", "pwd", "name", "new@slipp.net"));
+        final Question questionFromA = questionRepository.save(new Question("JPA", "Proxy").writeBy(userA));
+        answer = new Answer(userB, questionFromA, "I'm not sure about that");
     }
 
     @AfterEach
@@ -47,11 +43,11 @@ class AnswerRepositoryTest {
         manager.clear();
     }
 
-    @DisplayName("저장 후 조회시, 동등성과 동일성을 보장해야 한다")
+    @DisplayName("저장 후 조회시, 영속선 컨텍스트 캐시로 인해 동등성과 동일성을 보장해야 한다")
     @Test
     void find() {
-        final Answer saved = target.save(answer);
-        final Answer actual = target.findById(saved.getId()).get();
+        final Answer saved = answerRepository.save(answer);
+        final Answer actual = answerRepository.findById(saved.getId()).get();
         assertThat(actual).isEqualTo(saved);
         assertThat(actual).isSameAs(saved);
     }
@@ -59,13 +55,13 @@ class AnswerRepositoryTest {
     @DisplayName("저장 후 갱신시, 영속선 컨텍스트 캐시로 인해 동등성과 동일성을 보장해야 한다")
     @Test
     void update() {
-        final Question newQuestion = questions.save(new Question("JPA", "MayToOne"));
-        final Answer saved = target.save(answer);
+        final Question newQuestion = questionRepository.save(new Question("JPA", "MayToOne"));
+        final Answer saved = answerRepository.save(answer);
 
-        Answer updated = target.findById(saved.getId()).get();
+        Answer updated = answerRepository.findById(saved.getId()).get();
         updated.toQuestion(newQuestion);
 
-        final Answer actual = target.findById(saved.getId()).get();
+        final Answer actual = answerRepository.findById(saved.getId()).get();
         assertThat(actual.getQuestion()).isEqualTo(newQuestion);
         assertThat(actual).isSameAs(updated);
     }
@@ -73,31 +69,9 @@ class AnswerRepositoryTest {
     @DisplayName("저장 후 삭제 가능 해야 한다")
     @Test
     void delete() {
-        final Answer saved = target.save(answer);
+        final Answer saved = answerRepository.save(answer);
 
-        target.deleteById(saved.getId());
-        assertThat(target.findById(saved.getId()).orElse(null)).isNull();
+        answerRepository.deleteById(saved.getId());
+        assertThat(answerRepository.findById(saved.getId()).orElse(null)).isNull();
     }
-
-    @DisplayName("특정 질문에 달린 답변을 조회 요청시, 주어진 답변이 null이라면, empty list를 반환해야 한다")
-    @Test
-    void findByQuestionAndDeletedFalse_nullQuestion() {
-        assertThat(target.findByQuestionAndDeletedFalse(null)).isEmpty();
-    }
-
-    @DisplayName("특정 질문에 달린 답변을 조회 요청시, 답변이 존재한지 않다면, empty list를 반환해야 한다")
-    @Test
-    void findByQuestionAndDeletedFalse_notAnsweredYet() {
-        final Question newQuestion = questions.save(new Question("JPA", "Entity Mapping Proxy"));
-        assertThat(target.findByQuestionAndDeletedFalse(newQuestion)).isEmpty();
-    }
-
-    @DisplayName("특정 질문에 달린 답변을 조회 요청시, 답변이 존재한다면, 해당 답변 목록을 반환해야 한다")
-    @Test
-    void findByQuestionAndDeletedFalse() {
-        final Answer saved = target.save(answer);
-        assertThat(target.findByQuestionAndDeletedFalse(answer.getQuestion()))
-            .containsExactly(saved);
-    }
-
 }

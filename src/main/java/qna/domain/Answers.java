@@ -1,9 +1,11 @@
 package qna.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import org.hibernate.annotations.Where;
@@ -12,7 +14,7 @@ import qna.CannotDeleteException;
 @Embeddable
 public class Answers {
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = "deleted = false")
     @OrderBy("id ASC")
     private List<Answer> values = new ArrayList<>();
@@ -36,4 +38,7 @@ public class Answers {
         return result;
     }
 
+    public List<Answer> getValues() {
+        return Collections.unmodifiableList(values);
+    }
 }
