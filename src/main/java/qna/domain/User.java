@@ -2,18 +2,44 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
-    private String password;
-    private String name;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(length = 50)
     private String email;
 
-    private User() {
+    @Column(name = "`name`", nullable = false, length = 20)
+    private String name;
+
+    @Column(nullable = false, length = 20)
+    private String password;
+
+    @Column
+    private LocalDateTime updatedAt;
+
+    @Column(nullable = false, length = 20)
+    private String userId;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Answer> answers;
+
+    @OneToMany(mappedBy = "writer")
+    private List<Question> questions;
+
+    public User() {
     }
 
     public User(String userId, String password, String name, String email) {
@@ -100,6 +126,38 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 
     @Override
