@@ -1,6 +1,14 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.consts.ErrorMessage;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "question")
@@ -17,6 +25,9 @@ public class Question extends BaseTimeEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+    @Embedded
+    private Answers answers;
+
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -26,6 +37,7 @@ public class Question extends BaseTimeEntity{
         this.id = id;
         this.title = title;
         this.contents = contents;
+        this.answers = new Answers();
     }
 
     public Question() {}
@@ -40,6 +52,7 @@ public class Question extends BaseTimeEntity{
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -47,40 +60,12 @@ public class Question extends BaseTimeEntity{
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
     }
 
-    public void setWriterId(User writer) {
-        this.writer = writer;
-    }
-
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
@@ -91,6 +76,42 @@ public class Question extends BaseTimeEntity{
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
+                ", answers=" + answers +
                 '}';
+    }
+
+    private void checkQuestionOwnerSameLoginUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.ERROR_MESSAGE_NOT_DELETE_QUESTION);
+        }
+    }
+
+    private void checkAnswerOwnerAndLoginUser(User loginUser) throws CannotDeleteException {
+        if (answers.checkWriterAndLoginUser(loginUser)) {
+            throw new CannotDeleteException(ErrorMessage.ERROR_MESSAGE_NOT_DELETE_ANSWER);
+        }
+    }
+
+    public List<DeleteHistory> delete(User loginUser) throws CannotDeleteException {
+        checkQuestionOwnerSameLoginUser(loginUser);
+        checkAnswerOwnerAndLoginUser(loginUser);
+        return deleteQuestionAnswerHistory();
+    }
+
+    private List<DeleteHistory> deleteQuestionAnswerHistory() {
+        return Stream.of(deleteQuestion().getDeleteHistories(), deleteAnswers().getDeleteHistories())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    private DeleteHistories deleteQuestion() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        return deleteHistories;
+    }
+
+    private DeleteHistories deleteAnswers() {
+        return answers.deleteAnswers();
     }
 }
