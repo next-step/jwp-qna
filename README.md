@@ -152,6 +152,72 @@ alter table question
 - 굳이 양방향으로 만들 필요 있나 모든 설계 끝나고 재 확인
 	- 필요하다면 편의 메서드 만들기 for Testing
 	- 무한루프 가능성 체크하기(toString(), lombok, JSON생성)
+
+---
+## 🚀 3단계 - 질문 삭제하기 리팩터링
+### 기능 요구사항
+- 질문 삭제 OK 케이스 :
+	- 답변이 없는 경우
+	- 로그인 사용자와 질문한 사람이 같은 경우
+	- 질문자와 답변글의 모든답변자 같은경우
+- 질문 삭제 NG 케이스 :
+	- 로그인 사용자와 질문한 사람이 다른 경우.
+	- 질문자와 답변글의 모든 답변자 중, 한 사람이라도 다른 유저가 쓴 답변이 존재하는 경우
+- 질문 삭제시 Behavior :
+	- 질문 Soft-delete (데이터의 상태를 삭제 상태(deleted - boolean type)로 변경)
+	- 답변 또한 soft delete
+	- 질문과 답변 삭제 이력에 대한 정보를 DeleteHistory insert
+### 프로그래밍 요구사항
+- qna.service.QnaService의 deleteQuestion()는 앞의 질문 삭제 기능을 구현한 코드이다. 이 메소드는 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드가 섞여 있다.
+- 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리해 단위 테스트 가능한 코드 에 대해 단위 테스트를 구현한다.
+```java
+public class QnAService {
+    public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
+        Question question = findQuestionById(questionId);
+        if (!question.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        List<Answer> answers = question.getAnswers();
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        question.setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        deleteHistoryService.saveAll(deleteHistories);
+    }
+}
+```
+### 힌트
+- 객체의 상태 데이터를 꺼내지(get)말고 메시지를 보낸다.
+- 규칙 8: 일급 콜렉션을 쓴다.
+	- Question의 List를 일급 콜렉션으로 구현해 본다.
+- 규칙 7: 3개 이상의 인스턴스 변수를 가진 클래스를 쓰지 않는다.
+	- 인스턴스 변수의 수를 줄이기 위해 도전한다.
+- 테스트하기 쉬운 부분과 테스트하기 어려운 부분을 분리해 테스트 가능한 부분만 단위테스트한다.
+
+### TODO
+- [x] Apply Previous step feedback
+- [x] QnA서비스 중 테스트하기 어려운 부분 Question 로직으로 분리
+- [x] Question delete로직 구현
+- [x] Answer delete로직 구현
+- [x] Answers 1급 컬렉션 작성
+- [x] QnA서비스 영향 없는지 확인
+- [x] Question Test 작성
+- [x] Answer Test 작성
+- [x] Answers Test 작성
+- [x] 무한루프 걸리는 곳 있는지 확인(toString(), 생성자, lombok)
+- [x] Double check Answers JPA annotations
+
+---
 ### Note
 * JPA는, ID기반.
 * JPA는, Dynamic Proxy기반?으로 생성하기에, default constructor필요.
@@ -163,6 +229,8 @@ alter table question
 * JPA repo save()한 값을 써라.
 	* Use the returned instance for further operations as the save operation might have changed the entity instance completely.
 * @CreatedDate, You dont have to set value manually .
+* ErrorMessage는 Enum으로 관리도 가능
+* 양방향 관계설정시, 무한루프 걸리지 않나 더블 체크 필요(toString(), 생성자, 편의메서드)
 
 ### QnA
 
@@ -243,3 +311,5 @@ which is only supported for H2 1.4.200 and older.
 - Cause : Needed to add Identifier
 - ASIS : ```create table user```
 - TOBE : ```create table "USER"```
+
+
