@@ -1,26 +1,13 @@
 package qna.domain;
 
-import qna.ForbiddenException;
+import qna.CannotDeleteException;
+import qna.constant.ErrorCode;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.persistence.*;
 
 
 @Entity
 public class Question extends BaseDateEntity{
-    private static final int TITLE_LENGTH = 100;
 
     // test용
     public static Question create(User writer) {
@@ -35,17 +22,17 @@ public class Question extends BaseDateEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Column(nullable = false, length = TITLE_LENGTH)
-    private String title;
-    @OneToMany(mappedBy = "question")
-    List<Answer> answers = new ArrayList<Answer>();
+    @Embedded
+    private Contents contents;
+    @Embedded
+    private Title title;
+    @Embedded
+    Answers answers = new Answers();
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "WRITER_ID")
-    private User user;
+    private User writer;
 
     protected Question() {}
 
@@ -58,68 +45,40 @@ public class Question extends BaseDateEntity{
     }
 
     private Question(Long id, String title, String contents) {
-        if (Objects.isNull(title) || title.isEmpty()) {
-            throw new ForbiddenException();
-        }
-
         this.id = id;
-        this.title = title;
-        this.contents = contents;
+        this.title = Title.of(title);
+        this.contents = Contents.of(contents);
     }
 
     public Question(Long id, String title, String contents, User writer) {
-        if (Objects.isNull(title) || title.isEmpty()) {
-            throw new ForbiddenException();
-        }
-
         this.id = id;
-        this.title = title;
-        this.contents = contents;
-        this.user = writer;
+        this.title = Title.of(title);
+        this.contents = Contents.of(contents);
+        this.writer = writer;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
-
     public boolean isOwner(User writer) {
-        return this.user.equals(writer);
+        return this.writer.equals(writer);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
+    public Title getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
+    public Contents getContents() {
         return contents;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public User getWriter() {
+        return writer;
     }
 
     public boolean isDeleted() {
@@ -130,14 +89,43 @@ public class Question extends BaseDateEntity{
         this.deleted = deleted;
     }
 
+    public DeleteHistories delete(User loginUser){
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(ErrorCode.질문_삭제_권한.getErrorMessage());
+        }
+        if (hadOtherUsersAnswer(loginUser)) {
+            throw new CannotDeleteException(ErrorCode.질문_삭제_다른사람_답변_존재.getErrorMessage());
+        }
+        this.deleted = true;
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.create(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.addDeleteHistory(answers.makeDeleted());
+        return deleteHistories;
+    }
+
+    private boolean hadOtherUsersAnswer(User loginUser) {
+        return !(answers.toGetListAnswer().stream().allMatch(answer -> answer.isOwner(loginUser)));
+    }
+
+    public void removeAnswer(Answer answer) {
+        this.answers.removeAnswer(answer);
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.addAnswer(answer);
+    }
+
+    public int hadNumberOfAnswers() {
+        return this.answers.NumberOfAnswer();
+    }
     @Override
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + user.getId() +
+                ", title='" + title.toString() + '\'' +
+                ", contents='" + contents.toString() + '\'' +
+                ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
     }
+
 }

@@ -35,10 +35,10 @@ public class AnswerTest {
         // given
         User writer = User.create("gerrad");
         Question question = Question.create(writer);
-        int actual = question.getAnswers().size();
+        int actual = question.hadNumberOfAnswers();
         // when
         Answer.create(writer, question);
-        int expect = question.getAnswers().size();
+        int expect = question.hadNumberOfAnswers();
         // then
         assertThat(actual + 1).isEqualTo(expect);
     }

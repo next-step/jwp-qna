@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
@@ -28,8 +27,7 @@ public class Answer extends BaseDateEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    private String contents;
+    private Contents contents;
     @Column(nullable = false)
     private boolean deleted = false;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -56,7 +54,7 @@ public class Answer extends BaseDateEntity{
             throw new NotFoundException();
         }
 
-        this.contents = contents;
+        this.contents = Contents.of(contents);
         this.writer = writer;
         addQuestion(question);
     }
@@ -64,39 +62,30 @@ public class Answer extends BaseDateEntity{
 
     public void addQuestion(Question question) {
         if(this.question != null) {
-            this.question.getAnswers().remove(this);
+            this.question.removeAnswer(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User loginUser) {
         return this.writer.equals(loginUser);
     }
 
-
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getContents() {
+    public Contents getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void remove() {
+        this.deleted = true;
     }
 
     public Question getQuestion() {
@@ -107,17 +96,13 @@ public class Answer extends BaseDateEntity{
         return writer;
     }
 
-    public void setWriter(User user) {
-        this.writer = user;
-    }
-
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer.getId() +
                 ", questionId=" + question.getId() +
-                ", contents='" + contents + '\'' +
+                ", contents='" + contents.toString() + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }

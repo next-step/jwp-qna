@@ -16,11 +16,11 @@ import java.util.Objects;
 @Entity
 public class DeleteHistory {
 
-    public static DeleteHistory create(ContentType answer, Long id, User writer) {
-        return new DeleteHistory(answer, id, writer, LocalDateTime.now());
+    public static DeleteHistory create(ContentType contentType, Long id, User writer) {
+        return new DeleteHistory(contentType, id, writer, LocalDateTime.now());
     }
-    public static DeleteHistory create(ContentType answer, Long id, User writer, LocalDateTime localDateTime) {
-        return new DeleteHistory(answer, id, writer, localDateTime);
+    public static DeleteHistory create(ContentType contentType, Long id, User writer, LocalDateTime localDateTime) {
+        return new DeleteHistory(contentType, id, writer, localDateTime);
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
