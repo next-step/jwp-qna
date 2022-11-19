@@ -26,14 +26,14 @@ public class Question extends BaseTimeEntity {
     protected Question() {
     }
 
-    public Question(String title, String contents) {
+    public Question(Title title, Contents contents) {
         this(null, title, contents);
     }
 
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, Title title, Contents contents) {
         this.id = id;
-        this.title = new Title(title);
-        this.contents = new Contents(contents);
+        this.title = title;
+        this.contents = contents;
         this.answers = new Answers(new ArrayList<>());
     }
 

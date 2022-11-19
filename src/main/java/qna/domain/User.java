@@ -22,16 +22,16 @@ public class User extends BaseTimeEntity {
     protected User() {
     }
 
-    public User(String userId, String password, String name, String email) {
+    public User(UserId userId, Password password, Name name, Email email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, UserId userId, Password password, Name name, Email email) {
         this.id = id;
-        this.userId = new UserId(userId);
-        this.password = new Password(password);
-        this.name = new Name(name);
-        this.email = new Email(email);
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 
     public void update(User loginUser, User target) {

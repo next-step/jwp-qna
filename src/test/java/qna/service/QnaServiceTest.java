@@ -35,8 +35,13 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        question = new Question(1L,
+                new Title("title1"),
+                new Contents("contents1")).writeBy(UserTest.JAVAJIGI);
+        answer = new Answer(1L,
+                UserTest.JAVAJIGI,
+                question,
+                new Contents("Answers Contents1"));
     }
 
     @Test
@@ -71,7 +76,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() {
-        new Answer(2L, UserTest.SANJIGI, question, "Answers Contents1");
+        new Answer(2L, UserTest.SANJIGI, question, new Contents("Answers Contents1"));
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 

@@ -7,7 +7,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import qna.config.JpaAuditingConfiguration;
+import qna.domain.Email;
+import qna.domain.Name;
 import qna.domain.User;
+import qna.domain.UserId;
 
 import java.util.Optional;
 
@@ -25,7 +28,8 @@ class UserRepositoryTest {
     @Test
     @DisplayName("null 값 저장시 예외 테스트")
     public void save() {
-        assertThatThrownBy(() -> userRepository.save(new User(1L, "javajigi", null, "name", "test@test.test")))
+        assertThatThrownBy(() -> userRepository.save(
+                new User(1L, new UserId("javajigi"), null, new Name("name"), new Email("test@test.test"))))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 

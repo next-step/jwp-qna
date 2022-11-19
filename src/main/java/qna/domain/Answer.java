@@ -27,16 +27,16 @@ public class Answer extends BaseTimeEntity {
     protected Answer() {
     }
 
-    public Answer(User writer, Question question, String contents) {
+    public Answer(User writer, Question question, Contents contents) {
         this(null, writer, question, contents);
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, Contents contents) {
         this.id = id;
         validateAnswer(writer, question);
         this.writer = writer;
         toQuestion(question);
-        this.contents = new Contents(contents);
+        this.contents = contents;
     }
 
     private void validateAnswer(User writer, Question question) {

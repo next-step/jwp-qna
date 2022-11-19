@@ -11,8 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static qna.domain.DomainTestFactory.*;
 
 public class QuestionTest {
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     @Test
     @DisplayName("작성자가 일치하는지 테스트")
@@ -59,8 +57,8 @@ public class QuestionTest {
     public void deleteTest1() throws CannotDeleteException {
         User user = createUser("DEVELOPYO");
         Question question = createQuestion().writeBy(user);
-        Answer deletedAnswer = new Answer(user, question, "testcontents");
-        Answer deletedAnswer2 = new Answer(user, question, "testcontents");
+        Answer deletedAnswer = createAnswer(user, question);
+        Answer deletedAnswer2 = createAnswer(user, question);
         deletedAnswer.setDeleted(true);
         deletedAnswer2.setDeleted(true);
         DeleteHistories deleteHistories = question.delete(createUser("DEVELOPYO"));
