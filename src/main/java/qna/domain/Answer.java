@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
@@ -63,23 +62,18 @@ public class Answer extends BaseDateEntity{
 
     public void addQuestion(Question question) {
         if(this.question != null) {
-            this.question.getAnswers().remove(this);
+            this.question.removeAnswer(this);
         }
         this.question = question;
-        question.getAnswers().add(this);
+        question.addAnswer(this);
     }
 
     public boolean isOwner(User loginUser) {
         return this.writer.equals(loginUser);
     }
 
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Contents getContents() {
@@ -90,9 +84,8 @@ public class Answer extends BaseDateEntity{
         return deleted;
     }
 
-    public void makeDeleted() {
+    public void remove() {
         this.deleted = true;
-        DeleteHistory.create(ContentType.ANSWER, this.id, this.writer);
     }
 
     public Question getQuestion() {
@@ -101,10 +94,6 @@ public class Answer extends BaseDateEntity{
 
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User user) {
-        this.writer = user;
     }
 
     @Override
