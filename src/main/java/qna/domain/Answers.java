@@ -4,12 +4,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<Answer> answers;
+    private final List<Answer> answers;
 
     protected Answers() {
         this.answers = new ArrayList<>();
@@ -42,6 +43,15 @@ public class Answers {
     }
 
     public List<Answer> toGetListAnswer() {
-        return this.answers;
+        return Collections.unmodifiableList(this.answers);
+    }
+
+    public DeleteHistories makeDeleted() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        for (Answer answer : this.answers) {
+            answer.remove();
+            deleteHistories.addDeleteHistory(DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter()));
+        }
+        return deleteHistories;
     }
 }
