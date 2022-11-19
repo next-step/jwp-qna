@@ -72,15 +72,8 @@ public class Answer extends BaseTimeEntity {
     }
 
     public DeleteHistory delete() {
-        validateIsDeletable();
         this.deleted = true;
         return DeleteHistory.ofAnswer(this);
-    }
-
-    private void validateIsDeletable() {
-        if(this.deleted) {
-            throw new IllegalArgumentException("이미 삭제 된 답변입니다.");
-        }
     }
 
     public boolean isDeleted() {

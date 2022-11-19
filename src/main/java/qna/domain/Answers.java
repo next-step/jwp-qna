@@ -39,6 +39,7 @@ public class Answers {
     public DeleteHistories deleteAll(User owner) throws CannotDeleteException {
         validateOwners(owner);
         List<DeleteHistory> deleteHistories = this.answerItems.stream()
+                .filter(answer -> !answer.isDeleted())
                 .map(Answer::delete)
                 .collect(Collectors.toList());
         return new DeleteHistories(deleteHistories);
