@@ -20,7 +20,8 @@ public class User extends BaseTimeEntity {
     @Column(length = 50)
     private String email;
 
-    protected User() {}
+    protected User() {
+    }
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -131,13 +132,11 @@ public class User extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(userId, user.userId)
-                && Objects.equals(password, user.password) && Objects.equals(name, user.name)
-                && Objects.equals(email, user.email);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, password, name, email);
+        return Objects.hash(id);
     }
 }

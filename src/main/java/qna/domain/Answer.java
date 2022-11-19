@@ -38,7 +38,8 @@ public class Answer extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    protected Answer() {}
+    protected Answer() {
+    }
 
     public boolean isOwner(User writer) {
         return this.writerId.equals(writer.getId());
@@ -104,12 +105,11 @@ public class Answer extends BaseTimeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Answer answer = (Answer) o;
-        return deleted == answer.deleted && Objects.equals(id, answer.id) && Objects.equals(writerId, answer.writerId)
-                && Objects.equals(questionId, answer.questionId) && Objects.equals(contents, answer.contents);
+        return Objects.equals(id, answer.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, writerId, questionId, contents, deleted);
+        return Objects.hash(id);
     }
 }
