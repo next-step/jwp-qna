@@ -20,7 +20,7 @@ public class Question {
     @Lob
     private String contents;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
 
@@ -75,10 +75,6 @@ public class Question {
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
         answer.toQuestion(this);
-    }
-
-    public int numberOfAnswers() {
-        return this.answers.size();
     }
 
     public DeleteHistories delete(User owner) throws CannotDeleteException {
