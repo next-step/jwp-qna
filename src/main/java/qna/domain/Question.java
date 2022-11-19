@@ -1,16 +1,9 @@
 package qna.domain;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import qna.CannotDeleteException;
-import qna.ForbiddenException;
 import qna.constant.ErrorCode;
-import qna.repository.DeleteHistoryRepository;
-import qna.service.DeleteHistoryService;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 
 @Entity
@@ -64,8 +57,8 @@ public class Question extends BaseDateEntity{
         this.writer = writer;
     }
 
-    public List<Answer> getAnswers() {
-        return answers.toGetListAnswer();
+    public Answers getAnswers() {
+        return answers;
     }
 
     public boolean isOwner(User writer) {
@@ -96,7 +89,7 @@ public class Question extends BaseDateEntity{
         this.deleted = deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistories delete(User loginUser){
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorCode.질문_삭제_권한.getErrorMessage());
         }
@@ -104,15 +97,26 @@ public class Question extends BaseDateEntity{
             throw new CannotDeleteException(ErrorCode.질문_삭제_다른사람_답변_존재.getErrorMessage());
         }
         this.deleted = true;
-        DeleteHistory deleteHistory = DeleteHistory.create(ContentType.QUESTION, this.id, this.writer);
-//        DeleteHistoryService deleteHistoryService = new DeleteHistoryService(new DeleteHistory());
-        answers.toGetListAnswer().stream().forEach(answer -> answer.makeDeleted());
+        DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.create(ContentType.QUESTION, this.id, this.writer));
+        deleteHistories.addDeleteHistory(answers.makeDeleted());
+        return deleteHistories;
     }
 
     private boolean hadOtherUsersAnswer(User loginUser) {
         return !(answers.toGetListAnswer().stream().allMatch(answer -> answer.isOwner(loginUser)));
     }
 
+    public void removeAnswer(Answer answer) {
+        this.answers.removeAnswer(answer);
+    }
+
+    public void addAnswer(Answer answer) {
+        this.answers.addAnswer(answer);
+    }
+
+    public int hadNumberOfAnswers() {
+        return this.answers.NumberOfAnswer();
+    }
     @Override
     public String toString() {
         return "Question{" +
@@ -123,4 +127,5 @@ public class Question extends BaseDateEntity{
                 ", deleted=" + deleted +
                 '}';
     }
+
 }
