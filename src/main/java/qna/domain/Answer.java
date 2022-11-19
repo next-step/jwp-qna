@@ -95,8 +95,9 @@ public class Answer extends BaseDateEntity{
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void makeDeleted() {
+        this.deleted = true;
+        DeleteHistory.create(ContentType.ANSWER, this.id, this.writer);
     }
 
     public Question getQuestion() {
