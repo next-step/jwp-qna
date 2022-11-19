@@ -40,4 +40,8 @@ public class Answers {
     public boolean contains(Answer answer) {
         return this.answers.contains(answer);
     }
+
+    public List<Answer> toGetListAnswer() {
+        return this.answers;
+    }
 }
