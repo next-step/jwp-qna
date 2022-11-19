@@ -84,7 +84,7 @@ class QnaServiceTest {
         Answer answer2 = Answer.create(writer2, question);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
+//        when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(writer, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
@@ -92,7 +92,7 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                DeleteHistory.create(ContentType.QUESTION, question.getId(), question.getUser(), LocalDateTime.now()),
+                DeleteHistory.create(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
                 DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);

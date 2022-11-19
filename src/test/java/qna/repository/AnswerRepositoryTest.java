@@ -77,7 +77,7 @@ class AnswerRepositoryTest {
         Answer answer = Answer.create(writer, question);
         Long id = answer.getId();
         // when
-        answer.setDeleted(true);
+        answer.makeDeleted();
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // then
         assertThat(findAnswer).isNotPresent();

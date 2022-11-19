@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NameTest {
     @Test
-    void generate_email() {
+    void generate_name() {
         // given
         Name actual = Name.of("son");
         // when
@@ -18,7 +18,7 @@ class NameTest {
     }
 
     @Test
-    void email_empty_exception() {
+    void name_empty_exception() {
         // when // then
         assertThatThrownBy(() -> Name.of("")).isInstanceOf(IllegalArgumentException.class);
     }

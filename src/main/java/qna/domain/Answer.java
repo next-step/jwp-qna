@@ -28,8 +28,7 @@ public class Answer extends BaseDateEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    private String contents;
+    private Contents contents;
     @Column(nullable = false)
     private boolean deleted = false;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -56,7 +55,7 @@ public class Answer extends BaseDateEntity{
             throw new NotFoundException();
         }
 
-        this.contents = contents;
+        this.contents = Contents.of(contents);
         this.writer = writer;
         addQuestion(question);
     }
@@ -83,12 +82,8 @@ public class Answer extends BaseDateEntity{
         this.id = id;
     }
 
-    public String getContents() {
+    public Contents getContents() {
         return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
     }
 
     public boolean isDeleted() {
@@ -118,7 +113,7 @@ public class Answer extends BaseDateEntity{
                 "id=" + id +
                 ", writerId=" + writer.getId() +
                 ", questionId=" + question.getId() +
-                ", contents='" + contents + '\'' +
+                ", contents='" + contents.toString() + '\'' +
                 ", deleted=" + deleted +
                 '}';
     }
