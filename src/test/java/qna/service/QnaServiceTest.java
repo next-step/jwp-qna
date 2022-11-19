@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.domain.*;
 import qna.exception.CannotDeleteException;
-import qna.fixtures.AnswerTestFixture;
-import qna.fixtures.QuestionTestFixture;
 import qna.fixtures.UserTestFixture;
 import qna.repository.QuestionRepository;
 
@@ -39,10 +37,10 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        writer = UserTestFixture.createUserWithId(1L);
-        question = QuestionTestFixture.createQuestionWithIdAndWriter(1L, writer);
-        answer = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(1L, writer, question);
-        answer2 = AnswerTestFixture.createAnswerWithIdAndWriterAndQuestion(2L, writer, question);
+        writer = UserTestFixture.손상훈;
+        question = new Question(1L, writer, "title", "contents");
+        answer = new Answer(1L, writer, question, "content1");
+        answer2 = new Answer(2L, writer, question, "content2");
     }
 
     @Test
@@ -59,7 +57,7 @@ class QnaServiceTest {
     @Test
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
-        User otherUser = UserTestFixture.createUserWithId(2L);
+        User otherUser = UserTestFixture.익명;
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(otherUser, question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
@@ -78,7 +76,7 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        User otherUser = UserTestFixture.createUserWithId(2L);
+        User otherUser = UserTestFixture.익명;
         Answer otherAnswer = new Answer(3L, otherUser, question, "Answers Contents1");
         when(questionRepository.findByIdAndDeletedFalse(this.question.getId())).thenReturn(Optional.of(this.question));
 
