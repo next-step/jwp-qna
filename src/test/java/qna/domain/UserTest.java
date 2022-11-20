@@ -145,4 +145,16 @@ public class UserTest extends JpaSliceTest {
 
         assertThat(updatedUser.getUpdatedAt()).isNotEqualTo(firstUpdatedAt);
     }
+
+    @DisplayName("유저가 손님인지 아닌지 알 수 있다.")
+    @Test
+    void isGuest() {
+        final User normalUser = new User("dominiqn", "password", "남동민", null);
+        final User guest = User.GUEST_USER;
+
+        assertAll(
+                () -> assertThat(normalUser.isGuestUser()).isFalse(),
+                () -> assertThat(guest.isGuestUser()).isTrue()
+        );
+    }
 }
