@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -202,5 +203,21 @@ public class UserTest extends JpaSliceTest {
         final User updatedUser = userRepository.saveAndFlush(user);
 
         assertThat(updatedUser.getEmail()).isEqualTo("dmut7691@newmail.com");
+    }
+
+    @DisplayName("이름과 이메일이 같은지 알 수 있다.")
+    @ParameterizedTest(name = "목표유저 이름=[{0}], 이메일=[{1}], 일치여부 확인 결과={2}")
+    @CsvSource({
+            "남동민, dmut7691@gmail.com, true",
+            "다른이름, dmut7691@gmail.com, false",
+            "남동민, diff@mail.com, false",
+    })
+    void equalsNameAndEmail(String othersName, String othersEmail, boolean expectedEquals) {
+        final User user = new User("dominiqn", "password", "남동민", "dmut7691@gmail.com");
+        final User other = new User("other", "pw", othersName, othersEmail);
+
+        final boolean actualEquals = user.equalsNameAndEmail(other);
+
+        assertThat(actualEquals).isEqualTo(expectedEquals);
     }
 }
