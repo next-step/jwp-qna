@@ -89,4 +89,18 @@ public class QuestionTest extends JpaSliceTest {
         question.writeBy(user);
         assertThat(question.getWriterId()).isEqualTo(user.getId());
     }
+
+    @DisplayName("질문의 작성자를 알 수 있다.")
+    @Test
+    void isOwner() {
+        final User writer = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        final User other = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        final Question question = new Question("궁그매요!", "제목에 오타가!?");
+        question.writeBy(writer);
+
+        assertAll(
+                () -> assertThat(question.isOwner(writer)).isTrue(),
+                () -> assertThat(question.isOwner(other)).isFalse()
+        );
+    }
 }
