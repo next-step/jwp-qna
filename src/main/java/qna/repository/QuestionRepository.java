@@ -13,6 +13,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("select q " +
             "from Question q " +
             "left join fetch q.answers.answerItems a " +
-            "where q.id = :id")
+            "where q.id = :id " +
+            "and q.deleted = false "
+    )
     Optional<Question> findByIdAndDeletedFalse(Long id);
 }
