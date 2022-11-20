@@ -1,7 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,7 +34,7 @@ public class Question {
     private User writer;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
     public Question() {}
 
@@ -55,7 +58,38 @@ public class Question {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        validateUserNull(user);
+        validateSameWriter(user);
+        return generateDeleteHistories(user);
+    }
+
+    private void validateUserNull(User user) {
+        if (user == null) {
+            throw new RuntimeException("삭제요청자가 null 입니다.");
+        }
+    }
+
+    private void validateSameWriter(User user) throws CannotDeleteException {
+        if (!this.writer.equals(user)) {
+            throw new CannotDeleteException("질문 작성자가 아닙니다.");
+        }
+    }
+
+    private List<DeleteHistory> generateDeleteHistories(User user) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        setDeleted(true);
+        deleteHistories.addQuestion(this);
+
+        for (Answer answer : this.answers) {
+            deleteHistories.addAnswer(answer.delete(user));
+        }
+
+        return deleteHistories.toList();
     }
 
     public Long getId() {
