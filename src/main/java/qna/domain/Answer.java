@@ -6,7 +6,6 @@ import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
 public class Answer extends BaseTimeEntity {
@@ -54,22 +53,33 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void toQuestion(Question question) {
-        question.addAnswer(this);
+        if (!isDeleted()) {
+            question.addAnswer(this);
+        }
         this.question = question;
     }
 
-    public Optional<DeleteHistory> delete(User user) throws CannotDeleteException {
+    public DeleteHistory delete(User user) throws CannotDeleteException {
         validateOwner(user);
-        if (isDeleted()) {
-            return Optional.empty();
-        }
+        validateDeletable();
         setDeleted(true);
-        return Optional.of(DeleteHistory.ofAnswer(id, user));
+        return createDeleteHistory();
     }
+
+    private DeleteHistory createDeleteHistory() {
+        return DeleteHistory.of(ContentType.ANSWER, id, writer);
+    }
+
 
     public void validateOwner(User user) throws CannotDeleteException {
         if (!this.isOwner(user)) {
             throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void validateDeletable() throws CannotDeleteException {
+        if (isDeleted()) {
+            throw new CannotDeleteException("이미 삭제된 답변입니다.");
         }
     }
 
@@ -93,7 +103,10 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
+        if (deleted) {
+            question.removeAnswer(this);
+        }
         this.deleted = deleted;
     }
 

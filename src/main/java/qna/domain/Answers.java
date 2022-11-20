@@ -1,16 +1,20 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
 import qna.CannotDeleteException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Embeddable
 public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    @Where(clause = "deleted = false")
     private List<Answer> answers = new ArrayList<>();
 
     protected Answers() {
@@ -39,9 +43,18 @@ public class Answers {
     public DeleteHistories delete(User user) {
         validateOwner(user);
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        for (Answer answer : answers) {
-            answer.delete(user).ifPresent(deleteHistories::add);
+        List<Answer> targetList = new CopyOnWriteArrayList<>(answers);
+        for (Answer answer : targetList) {
+            deleteHistories.add(answer.delete(user));
         }
         return DeleteHistories.of(deleteHistories);
+    }
+
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(answers);
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
     }
 }

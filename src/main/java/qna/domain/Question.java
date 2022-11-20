@@ -50,16 +50,20 @@ public class Question extends BaseTimeEntity {
         answers.addAnswer(answer);
     }
 
+    public void removeAnswer(Answer answer) {
+        answers.removeAnswer(answer);
+    }
+
     public DeleteHistories delete(User user) {
         validateOwner(user);
         DeleteHistories deleteHistories = answers.delete(user);
-        deleteHistories.add(createDeleteHistory(user));
+        deleteHistories.add(createDeleteHistory());
         setDeleted(true);
         return deleteHistories;
     }
 
-    private DeleteHistory createDeleteHistory(User user) {
-        return DeleteHistory.ofQuestion(id, user);
+    private DeleteHistory createDeleteHistory() {
+        return DeleteHistory.of(ContentType.QUESTION, id, writer);
     }
 
     public void validateOwner(User user) throws CannotDeleteException {
