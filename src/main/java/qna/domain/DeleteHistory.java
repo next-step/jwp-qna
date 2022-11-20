@@ -25,6 +25,20 @@ public class DeleteHistory {
 
     public DeleteHistory() {}
 
+    public DeleteHistory(ContentType contentType, Question question) {
+        this.contentType = contentType;
+        this.contentId = question.getId();
+        this.writer = question.getWriter();
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public DeleteHistory(ContentType contentType, Answer answer) {
+        this.contentType = contentType;
+        this.contentId = answer.getId();
+        this.writer = answer.getWriter();
+        this.createdAt = LocalDateTime.now();
+    }
+
     public DeleteHistory(ContentType contentType, Long contentId, User writer, LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;

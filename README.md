@@ -7,4 +7,4 @@
 ## step3
 
 *[ ] Question 엔티티 삭제 로직 추가
-*[ ] Answer 엔티티 삭제 로직 추가
+*[x] Answer 엔티티 삭제 로직 추가

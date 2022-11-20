@@ -1,5 +1,6 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -129,5 +130,25 @@ public class Answer {
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    public Answer delete(User user) throws CannotDeleteException {
+        validateUserNull(user);
+        validateSameQuestionAnswerWriter(user);
+
+        setDeleted(true);
+        return this;
+    }
+
+    private void validateUserNull(User user) {
+        if (user == null) {
+            throw new RuntimeException("삭제요청자가 null 입니다.");
+        }
+    }
+
+    private void validateSameQuestionAnswerWriter(User user) throws CannotDeleteException {
+        if (!this.writer.equals(user)) {
+            throw new CannotDeleteException("질문작성자와 답변작성자는 서로 다릅니다.");
+        }
     }
 }
