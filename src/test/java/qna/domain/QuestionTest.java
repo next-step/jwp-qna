@@ -27,19 +27,6 @@ public class QuestionTest extends JpaSliceTest {
         return String.join("", Collections.nCopies(length, "A"));
     }
 
-    @DisplayName("저장하면 DB가 생성한 아이디가 있다.")
-    @Test
-    void save() {
-        final User writer = userRepository.save(new User(1L, "dominiqn", "password", "name", "email@domain.org"));
-        final Question newQuestion = new Question("궁금한 점", "이 있습니다.")
-                .writeBy(writer);
-        final Question savedQuestion = questionRepository.save(newQuestion);
-
-        assertThat(savedQuestion.getWriterId())
-                .isEqualTo(writer.getId())
-                .isEqualTo(1L);
-    }
-
     @DisplayName("작성자를 설정하면 작성자의 DB pk를 저장한다.")
     @Test
     void writer() {
@@ -90,5 +77,16 @@ public class QuestionTest extends JpaSliceTest {
         final Question updatedQuestion = questionRepository.saveAndFlush(newQuestion);
 
         assertThat(updatedQuestion.getUpdatedAt()).isNotEqualTo(firstUpdatedAt);
+    }
+
+    @DisplayName("작성자를 수정할 수 있다.")
+    @Test
+    void updateWriter() {
+        final User user = userRepository.save(UserTest.JAVAJIGI);
+        final Question question = new Question("궁그매요!", "제목에 오타가!?");
+        assertThat(question.getWriterId()).isNull();
+
+        question.writeBy(user);
+        assertThat(question.getWriterId()).isEqualTo(user.getId());
     }
 }
