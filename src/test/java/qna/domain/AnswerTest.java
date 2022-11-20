@@ -12,7 +12,7 @@ import static qna.domain.DomainTestFactory.*;
 
 public class AnswerTest {
     @Test
-    @DisplayName("isOwner 테스트 : 답변 작성자가 유저와 같은지 테스트")
+    @DisplayName("isOwner : 답변작성자와 유저가 같을 경우 true 리턴")
     public void isOwnerTest() {
         User answerUser = createUser("DEVELOPYO");
         Question question = createQuestion().writeBy(createUser("TESTER"));
@@ -22,21 +22,21 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("answer 생성자 테스트 : 작성자 없을 경우 예외 처리 테스트")
+    @DisplayName("answer 생성자 테스트 : 작성자 없을 경우 예외를 던진다")
     public void createAnswerTest() {
         assertThatThrownBy(() -> createAnswer(null, createQuestion()))
                 .isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
-    @DisplayName("answer 생성자 테스트 : 질문글 없을 경우 예외 처리 테스트")
+    @DisplayName("answer 생성자 테스트 : 질문글 없을 경우 예외를 던진다")
     public void createAnswerTest2() {
         assertThatThrownBy(() -> createAnswer(createUser("DEVELOPYO"), null))
                 .isInstanceOf(NotFoundException.class);
     }
 
     @Test
-    @DisplayName("작성자가 일치하지 않을 경우 삭제 테스트")
+    @DisplayName("답변 작성자가 일치하지 않을 경우 삭제시 예외를 던진다")
     public void deleteByOtherUserTest() {
         User user = createUser("DEVELOPYO");
         Question question = createQuestion();
@@ -45,23 +45,33 @@ public class AnswerTest {
     }
 
     @Test
-    @DisplayName("삭제되지않은 삭제글을 삭제한 경우 삭제히스토리 리턴 테스트")
+    @DisplayName("삭제되지않은 삭제글을 삭제한 경우 삭제히스토리를 리턴한다")
     public void deleteReturnTest() {
         User user = createUser("DEVELOPYO");
         Question question = createQuestion();
         Answer answer = createAnswer(user, question);
 
-        assertThat(answer.delete(user)).isPresent();
+        assertThat(answer.delete(user).getContentType()).isEqualTo(ContentType.ANSWER);
     }
 
     @Test
-    @DisplayName("이미 삭제된 삭제글을 삭제한 경우 삭제히스토리 리턴 테스트")
+    @DisplayName("이미 삭제된 삭제글을 삭제한 경우 예외를 던진다")
     public void deleteReturnTest2() {
         User user = createUser("DEVELOPYO");
         Question question = createQuestion();
         Answer answer = createAnswer(user, question);
-        answer.setDeleted(true);
+        answer.delete(user);
+        assertThatThrownBy(() -> answer.delete(user))
+                .isInstanceOf(CannotDeleteException.class);
+    }
 
-        assertThat(answer.delete(user)).isNotPresent();
+    @Test
+    @DisplayName("답변 삭제시 질문의 삭제리스트에서도 삭제된다")
+    public void deleteTest() {
+        User user = createUser("DEVELOPYO");
+        Question question = createQuestion();
+        Answer answer = createAnswer(user, question);
+        answer.delete(user);
+        assertThat(question.getAnswers().getAnswers()).isEmpty();
     }
 }

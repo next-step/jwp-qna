@@ -26,7 +26,7 @@ class UserRepositoryTest {
     UserRepository userRepository;
 
     @Test
-    @DisplayName("null 값 저장시 예외 테스트")
+    @DisplayName("패스워드 null 값으로 유저 저장시 예외를 던진다")
     public void save() {
         assertThatThrownBy(() -> userRepository.save(
                 new User(1L, new UserId("javajigi"), null, new Name("name"), new Email("test@test.test"))))
@@ -34,14 +34,14 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("unique 값 저장시 예외 테스트")
+    @DisplayName("유저 id 가 중복될 경우 예외를 던진다")
     public void uniqueTest() {
         userRepository.save(createUser("DEVELOPYO"));
         assertThatThrownBy(() -> userRepository.save(createUser("DEVELOPYO"))).isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test
-    @DisplayName("존재하지 않는 데이터 조회시 빈값 리턴 테스트")
+    @DisplayName("존재하지 않는 데이터 조회시 빈값을 리턴한다")
     public void findByUserIdTestNotExists() {
         User user = createUser("DEVELOPYO");
         Optional<User> byUserId = userRepository.findByUserId(user.getUserId());
@@ -49,7 +49,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("존재하는 데이터 조회 테스트")
+    @DisplayName("존재하는 유저 조회시 유저를 리턴한다")
     public void findByUserIdTestExists() {
         User user = createUser("DEVELOPYO");
         userRepository.save(user);
