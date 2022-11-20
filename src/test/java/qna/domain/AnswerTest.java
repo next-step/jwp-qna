@@ -16,6 +16,9 @@ public class AnswerTest extends JpaSliceTest {
     @Autowired
     private AnswerRepository answerRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @DisplayName("저장하면 DB가 생성한 아이디가 있다.")
     @Test
     void save() {
@@ -49,5 +52,18 @@ public class AnswerTest extends JpaSliceTest {
         final Answer updatedAnswer = answerRepository.saveAndFlush(newAnswer);
 
         assertThat(updatedAnswer.getUpdatedAt()).isNotEqualTo(firstUpdatedAt);
+    }
+
+    @DisplayName("답변의 작성자를 알 수 있다.")
+    @Test
+    void isOwner() {
+        final User writer = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
+        final User other = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        final Answer answer = new Answer(writer, QuestionTest.Q1, "내용");
+
+        assertAll(
+                () -> assertThat(answer.isOwner(writer)).isTrue(),
+                () -> assertThat(answer.isOwner(other)).isFalse()
+        );
     }
 }
