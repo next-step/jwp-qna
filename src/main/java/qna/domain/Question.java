@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import qna.exception.CannotDeleteException;
 
 @Entity
 @Table(name = "question")
@@ -98,8 +100,30 @@ public class Question extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
+    public List<DeleteHistory> deleteQuestion(final User loginUser) throws CannotDeleteException {
+        validateDeleteQuestion(loginUser);
+        validateDeleteAnswers(loginUser);
+        return deleteAllAndGetDeleteHistories();
+    }
+
+    private void validateDeleteQuestion(final User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 수 있는 권한이 없습니다.");
+        }
+    }
+
+    private void validateDeleteAnswers(final User loginUser) throws CannotDeleteException {
+        if (answers.isNotWrittenUserInAnswers(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 작성한 답변이 있어서 질문을 삭제할 수 없습니다.");
+        }
+    }
+
+    private List<DeleteHistory> deleteAllAndGetDeleteHistories() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        answers.deleteAll().getDeleteHistories().forEach(deleteHistories::add);
+        return deleteHistories.getDeleteHistories();
     }
 
     @Override

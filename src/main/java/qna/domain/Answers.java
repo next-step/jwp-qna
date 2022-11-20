@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Embeddable;
@@ -19,5 +20,19 @@ public class Answers {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+
+    public boolean isNotWrittenUserInAnswers(final User loginUser) {
+        return answers.stream().anyMatch(answer -> !answer.isOwner(loginUser));
+    }
+
+    public DeleteHistories deleteAll() {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        for (Answer answer : answers) {
+            answer.setDeleted(true);
+            deleteHistories.add(
+                    new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        return deleteHistories;
     }
 }
