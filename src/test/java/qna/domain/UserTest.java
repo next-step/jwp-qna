@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import qna.UnAuthorizedException;
 
 @DisplayName("유저 엔티티")
 public class UserTest extends JpaSliceTest {
@@ -156,5 +157,50 @@ public class UserTest extends JpaSliceTest {
                 () -> assertThat(normalUser.isGuestUser()).isFalse(),
                 () -> assertThat(guest.isGuestUser()).isTrue()
         );
+    }
+
+    @DisplayName("로그인한 유저와 수정하려는 유저가 같아야 한다.")
+    @Test
+    void wrongUserId() {
+        final User targetUser = userRepository.save(new User("dominiqn", "password", "남동민", null));
+        final User loginUser = userRepository.save(new User("otheruser", "pw", "다른사람", null));
+        final User updateRequest = new User("dominiqn", "password", "남민", null);
+
+        assertThatExceptionOfType(UnAuthorizedException.class)
+                .isThrownBy(() -> targetUser.update(loginUser, updateRequest));
+    }
+
+    @DisplayName("수정하려고 할 때 입력한 비밀번호가 같아야 수정할 수 있다.")
+    @Test
+    void wrongUserPassword() {
+        final User user = userRepository.save(new User("dominiqn", "password", "남동민", null));
+        final User updateRequest = new User("dominiqn", "wrongpassword", "남민", null);
+
+        assertThatExceptionOfType(UnAuthorizedException.class)
+                .isThrownBy(() -> user.update(user, updateRequest));
+    }
+
+    @DisplayName("이름을 수정할 수 있다.")
+    @Test
+    void updateName() {
+        final User user = userRepository.save(new User("dominiqn", "password", "남동민", null));
+        final User updateRequest = new User("dominiqn", "password", "남민", null);
+
+        user.update(user, updateRequest);
+        final User updatedUser = userRepository.saveAndFlush(user);
+
+        assertThat(updatedUser.getName()).isEqualTo("남민");
+    }
+
+    @DisplayName("이메일을 수정할 수 있다.")
+    @Test
+    void updateEmail() {
+        final User user = userRepository.save(new User("dominiqn", "password", "남동민", "dmut7691@gmail.com"));
+        final User updateRequest = new User("dominiqn", "password", "남민", "dmut7691@newmail.com");
+
+        user.update(user, updateRequest);
+        final User updatedUser = userRepository.saveAndFlush(user);
+
+        assertThat(updatedUser.getEmail()).isEqualTo("dmut7691@newmail.com");
     }
 }
