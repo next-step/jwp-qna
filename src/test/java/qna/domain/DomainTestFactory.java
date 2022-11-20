@@ -15,6 +15,6 @@ public class DomainTestFactory {
     }
 
     public static DeleteHistory createDeleteHistory(ContentType contentType, Long contentId, User user) {
-        return new DeleteHistory(contentType, contentId, user);
+        return DeleteHistory.of(contentType, contentId, user);
     }
 }

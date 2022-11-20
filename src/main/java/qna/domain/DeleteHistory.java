@@ -30,18 +30,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public static DeleteHistory ofQuestion(Long contentId, User deletedBy) {
-        return new DeleteHistory(ContentType.QUESTION, contentId, deletedBy);
-    }
-
-    public static DeleteHistory ofAnswer(Long contentId, User deletedBy) {
-        return new DeleteHistory(ContentType.ANSWER, contentId, deletedBy);
-    }
-
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
+    }
+
+    public static DeleteHistory of(ContentType contentType, Long contentId, User deletedBy) {
+        return new DeleteHistory(contentType, contentId, deletedBy);
     }
 
     public Long getId() {
