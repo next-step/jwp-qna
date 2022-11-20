@@ -1,5 +1,7 @@
 package qna.domain;
 
+import org.hibernate.annotations.Where;
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -7,6 +9,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Answer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,13 +83,21 @@ public class Answer extends BaseTimeEntity {
         return deleted;
     }
 
-    public void delete() {
-        deleted = true;
+    public DeleteHistory delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("댓글 작성자만 댓글을 삭제할 수 있습니다.");
+        }
+        deleted();
+        return DeleteHistory.ofAnswer(id, user);
     }
 
     @Override
     public String toString() {
         return "Answer{" + "id=" + id + ", writerId=" + writer.getId() + ", questionId=" + question.getId()
                 + ", contents='" + contents + '\'' + ", deleted=" + deleted + '}';
+    }
+
+    private void deleted() {
+        deleted = true;
     }
 }

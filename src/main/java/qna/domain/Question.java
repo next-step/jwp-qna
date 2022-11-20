@@ -1,9 +1,12 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.*;
+import static java.util.Collections.singletonList;
 
 @Entity
 public class Question extends BaseTimeEntity {
@@ -19,9 +22,8 @@ public class Question extends BaseTimeEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
-    private List<Answer> answers;
+    @Embedded
+    private Answers answers;
 
     protected Question() {
     }
@@ -30,11 +32,11 @@ public class Question extends BaseTimeEntity {
         this(title, contents, null);
     }
 
-    public Question(String title, String contents, List<Answer> answers) {
+    public Question(String title, String contents, Answers answers) {
         this(null, title, contents, answers);
     }
 
-    public Question(Long id, String title, String contents, List<Answer> answers) {
+    public Question(Long id, String title, String contents, Answers answers) {
         this.id = id;
         this.title = title;
         this.contents = contents;
@@ -53,6 +55,18 @@ public class Question extends BaseTimeEntity {
     public void addAnswer(Answer answer) {
         answer.addQuestion(this);
         this.answers.add(answer);
+    }
+
+    public List<DeleteHistory> delete(User user) throws CannotDeleteException {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+
+        deleted();
+        List<DeleteHistory> deleteHistories = new ArrayList<>(singletonList(DeleteHistory.ofQuestion(id, user)));
+        deleteHistories.addAll(deleteAnswers(user));
+
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -75,14 +89,12 @@ public class Question extends BaseTimeEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public List<Answer> getNotDeletedAnswers() {
-        return answers.stream()
-                .filter(answer -> !answer.isDeleted())
-                .collect(toList());
+    private List<DeleteHistory> deleteAnswers(User user) throws CannotDeleteException {
+        try {
+            return answers.delete(user);
+        } catch (CannotDeleteException e) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
     }
 
     @Override
@@ -94,5 +106,9 @@ public class Question extends BaseTimeEntity {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    private void deleted() {
+        deleted = true;
     }
 }

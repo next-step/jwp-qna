@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -63,15 +61,6 @@ class AnswerRepositoryTests {
                 () -> assertThat(answer.getWriter()).isEqualTo(expected.getWriter()),
                 () -> assertThat(answer.isDeleted()).isEqualTo(expected.isDeleted())
         );
-    }
-
-    @Test
-    @DisplayName("질문 식별자로 삭제되지 않은 답변을 조회한다.")
-    void findByQuestionIdAndDeletedFalse() {
-        Answer expected = answerRepository.save(new Answer(user, question, "Answers Contents1"));
-
-        List<Answer> answers = answerRepository.findByQuestionAndDeletedFalse(expected.getQuestion());
-        assertThat(answers).hasSize(1);
     }
 
     @Test
