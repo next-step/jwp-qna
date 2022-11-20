@@ -54,7 +54,6 @@ public class DeleteHistory {
         return this.id;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -62,12 +61,17 @@ public class DeleteHistory {
 
         DeleteHistory that = (DeleteHistory) o;
 
-        return Objects.equals(id, that.id);
+        if (!Objects.equals(id, that.id)) return false;
+        if (contentType != that.contentType) return false;
+        return Objects.equals(contentId, that.contentId);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
+        result = 31 * result + (contentId != null ? contentId.hashCode() : 0);
+        return result;
     }
 
     @Override
