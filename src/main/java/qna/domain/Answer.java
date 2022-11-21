@@ -106,7 +106,7 @@ public class Answer extends BaseDateEntity{
                 "id=" + id +
                 ", writerId=" + writer.getId() +
                 ", questionId=" + question.getId() +
-                ", contents='" + contents.toString() + '\'' +
+                ", " + contents +
                 ", deleted=" + deleted +
                 '}';
     }

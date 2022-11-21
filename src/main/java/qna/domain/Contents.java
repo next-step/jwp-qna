@@ -40,8 +40,6 @@ public class Contents {
 
     @Override
     public String toString() {
-        return "Contents{" +
-                "contents='" + contents + '\'' +
-                '}';
+        return "contents= '" + contents + '\'';
     }
 }

@@ -17,7 +17,7 @@ public class AnswerTest {
         Question question = Question.create(writer);
         // when // then
         assertThatThrownBy(() -> Answer.create(null, question))
-            .isInstanceOf(UnAuthorizedException.class);
+                .isInstanceOf(UnAuthorizedException.class);
     }
 
     @Test
@@ -25,7 +25,7 @@ public class AnswerTest {
         // given
         User writer = User.create("JAVAJIGI");
         // when then
-        assertThatThrownBy(() -> Answer.create(writer,null))
+        assertThatThrownBy(() -> Answer.create(writer, null))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -41,5 +41,19 @@ public class AnswerTest {
         int expect = question.hadNumberOfAnswers();
         // then
         assertThat(actual + 1).isEqualTo(expect);
+    }
+
+    @Test
+    @DisplayName("toString 테스트(contents")
+    void answer_toString_test() {
+        // given
+        User writer = User.create("gerrad");
+        Question question = Question.create(writer);
+        // when
+        Answer answer = Answer.create(writer, question);
+        System.out.println(answer.toString());
+        // then
+        assertThat(answer.toString()).contains("contents");
+
     }
 }
