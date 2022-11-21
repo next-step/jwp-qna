@@ -50,17 +50,18 @@ references user
 
 
 ## 3단계 요구사항 정리
-> - [ ] 1.Question
->   - [ ] 데이터 삭제 상태(deleted - boolean type) 변경.
->   - [ ] 로그인 사용자와 질문자가 다르면 삭제 불가능
->   - [ ] 답변이 있으면 삭제 불가능.
->   - [ ] 질문자와 답변 글의 모든 답변자가 같은 경우 삭제 가능.
->   - [ ] 질문이 삭제 되었을 경우 deleteHistory에 데이터를 남긴다.
->   - [ ] answer의 List를 일급컬렉션으로 정의
-> - [ ] 2.Answer
->   - [ ] 데이터 삭제 상태(deleted - boolean type) 변경.
->   - [ ] 로그인 사용자와 질문자가 다르면 삭제 불가능
->   - [ ] 질문자와 답변자가 다른 경우 답변 삭제 불가능
->   - [ ] 질문이 삭제 되었을 경우 deleteHistory에 데이터를 남긴다.
-> - [ ] 3.DeleteHistory
->   - [ ] 삭제 데이터 저장.
+> - [x] 1.Question
+>   - [x] 데이터 삭제 상태(deleted - boolean type) 변경.
+>   - [x] 로그인 사용자와 질문자가 다르면 삭제 불가능
+>   - [x] 답변이 있으면 삭제 불가능.
+>   - [x] 질문자와 답변 글의 모든 답변자가 같은 경우 삭제 가능.
+>   - [x] 질문이 삭제 되었을 경우 deleteHistory에 데이터를 남긴다.
+>   - [x] answer의 List를 일급컬렉션으로 정의
+> - [x] 2.Answer
+>   - [x] 데이터 삭제 상태(deleted - boolean type) 변경.
+>   - [x] 로그인 사용자와 답변자가 다르면 삭제 불가능
+>   - [x] 질문이 삭제 되었을 경우 deleteHistory에 데이터를 남긴다.
+>   - [x] 일급컬렉션 answers구현
+> - [x] 3.DeleteHistory
+>   - [x] 삭제 데이터 저장.
+>   - [x] DeleteHistory의 List를 일급컬렉션으로 정의
