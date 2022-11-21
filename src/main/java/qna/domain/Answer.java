@@ -19,7 +19,8 @@ public class Answer extends AuditingEntity {
     private Long id;
     @ManyToOne
     private User writer;
-    private Long questionId;
+    @ManyToOne
+    private Question question;
     @Lob
     private String contents;
     @Column(nullable = false)
@@ -44,7 +45,7 @@ public class Answer extends AuditingEntity {
         }
 
         this.writer = writer;
-        this.questionId = question.getId();
+        this.question = question;
         this.contents = contents;
     }
 
@@ -53,7 +54,7 @@ public class Answer extends AuditingEntity {
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public Long getId() {
@@ -72,20 +73,16 @@ public class Answer extends AuditingEntity {
         return writer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
     public String getContents() {
         return contents;
     }
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public boolean isDeleted() {
@@ -109,7 +106,7 @@ public class Answer extends AuditingEntity {
         return "Answer{" +
                 "id=" + id +
                 ", writerId=" + writer.getId() +
-                ", questionId=" + questionId +
+                ", questionId=" + question.getId() +
                 ", contents='" + contents + '\'' +
                 ", deleted=" + deleted +
                 '}';

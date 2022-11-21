@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,9 @@ public class AnswerTest extends JpaSliceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -83,5 +87,18 @@ public class AnswerTest extends JpaSliceTest {
                 () -> assertThat(answer.isOwner(writer)).isTrue(),
                 () -> assertThat(answer.isOwner(other)).isFalse()
         );
+    }
+
+    @DisplayName("답변이 답변한 질문을 알 수 있다.")
+    @Test
+    void questionOfAnswer() {
+        final long questionId = question.getId();
+        final long answerId = answerRepository.saveAndFlush(new Answer(writer, question, "답변입니다.")).getId();
+        entityManager.clear();
+
+        final Question savedQuestion = questionRepository.findByIdAndDeletedFalse(questionId).get();
+        final Answer savedAnswer = answerRepository.findByIdAndDeletedFalse(answerId).get();
+
+        assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion);
     }
 }
