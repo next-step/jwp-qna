@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
@@ -13,13 +15,21 @@ public class Answers {
     protected Answers() {
     }
 
-    public void add(Answer answer){
-        if( !this.answers.contains(answer)){
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        for (Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        return deleteHistories;
+    }
+
+    public void add(Answer answer) {
+        if (!this.answers.contains(answer)) {
             answers.add(answer);
         }
     }
 
-    public boolean validateWriterSameLoginUser(User loginUser){
+    public boolean validateWriterSameLoginUser(User loginUser) {
         return answers.stream()
                 .allMatch(answer -> answer.isOwner(loginUser));
     }
@@ -27,7 +37,7 @@ public class Answers {
 
     public boolean isEmpty() {
         return answers.isEmpty();
-        
+
     }
 
     @Override
