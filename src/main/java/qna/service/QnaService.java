@@ -9,7 +9,6 @@ import qna.NotFoundException;
 import qna.domain.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,13 +45,15 @@ public class QnaService {
             }
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+
+        DeleteHistories deleteHistories = new DeleteHistories();
         question.setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter(), LocalDateTime.now()));
         for (Answer answer : answers) {
             answer.setDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
-        deleteHistoryService.saveAll(deleteHistories);
+
+        deleteHistoryService.saveAll(deleteHistories.values());
     }
 }
