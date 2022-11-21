@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,15 +24,16 @@ public class DeleteHistory {
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
     private Long contentId;
-    private Long deletedById;
+    @ManyToOne
+    private User deletedBy;
 
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedBy = deletedBy;
     }
 
     public static DeleteHistory of(final Question deletedQuestion) {
@@ -39,7 +41,7 @@ public class DeleteHistory {
             throw new IllegalArgumentException("Question must not be null!");
         }
 
-        return new DeleteHistory(ContentType.QUESTION, deletedQuestion.getId(), deletedQuestion.getWriterId());
+        return new DeleteHistory(ContentType.QUESTION, deletedQuestion.getId(), deletedQuestion.getWriter());
     }
 
     public static DeleteHistory of(final Answer deletedAnswer) {
@@ -47,7 +49,7 @@ public class DeleteHistory {
             throw new IllegalArgumentException("Answer must not be null!");
         }
 
-        return new DeleteHistory(ContentType.ANSWER, deletedAnswer.getId(), deletedAnswer.getWriterId());
+        return new DeleteHistory(ContentType.ANSWER, deletedAnswer.getId(), deletedAnswer.getWriter());
     }
 
     @Override
@@ -62,12 +64,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class DeleteHistory {
                 "id=" + id +
                 ", contentType=" + contentType +
                 ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
+                ", deletedById=" + deletedBy.getId() +
                 ", createDate=" + createDate +
                 '}';
     }
