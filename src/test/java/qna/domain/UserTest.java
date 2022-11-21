@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +23,9 @@ public class UserTest extends JpaSliceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @DisplayName("저장하면 DB가 생성한 아이디가 있다.")
     @Test
@@ -219,5 +223,33 @@ public class UserTest extends JpaSliceTest {
         final boolean actualEquals = user.equalsNameAndEmail(other);
 
         assertThat(actualEquals).isEqualTo(expectedEquals);
+    }
+
+    @DisplayName("userId가 같으면 동일한 유저이다.")
+    @ParameterizedTest(name = "userId={0}, 동일성 여부={1}")
+    @CsvSource({
+            "username, true",
+            "diffname, false"
+    })
+    void equality(String userId, boolean expected) {
+        final User user = userRepository.save(new User(1L, "username", "password", "남동민", "dmut7691@gmail.com"));
+        final User other = new User(null, userId, "password", "othersName", "othersEmail");
+
+        final boolean actual = user.equals(other);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @DisplayName("userId가 같으면 동일한 유저이다.")
+    @Test
+    void equalityNewContext() {
+        final User user1st = userRepository.saveAndFlush(
+                new User(1L, "username", "password", "남동민", "dmut7691@gmail.com")
+        );
+        entityManager.clear();
+
+        final User user2nd = userRepository.findByUserId("username").get();
+
+        assertThat(user1st).isEqualTo(user2nd);
     }
 }
