@@ -87,7 +87,7 @@ public class Answer extends BaseDateEntity{
 
     public DeleteHistory remove(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new IllegalArgumentException(ErrorCode.질문_삭제_권한.getErrorMessage());
+            throw new IllegalArgumentException(ErrorCode.질문_삭제_다른사람_답변_존재.getErrorMessage());
         }
         this.deleted = true;
         return DeleteHistory.create(ContentType.ANSWER, this.id, this.writer);

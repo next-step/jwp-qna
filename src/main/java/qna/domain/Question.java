@@ -93,17 +93,10 @@ public class Question extends BaseDateEntity{
         if (!isOwner(loginUser)) {
             throw new CannotDeleteException(ErrorCode.질문_삭제_권한.getErrorMessage());
         }
-        if (hadOtherUsersAnswer(loginUser)) {
-            throw new CannotDeleteException(ErrorCode.질문_삭제_다른사람_답변_존재.getErrorMessage());
-        }
         this.deleted = true;
         DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.create(ContentType.QUESTION, this.id, this.writer));
         deleteHistories.addDeleteHistory(answers.makeDeleted(loginUser));
         return deleteHistories;
-    }
-
-    private boolean hadOtherUsersAnswer(User loginUser) {
-        return !(answers.toGetListAnswer().stream().allMatch(answer -> answer.isOwner(loginUser)));
     }
 
     public void removeAnswer(Answer answer) {
