@@ -47,7 +47,7 @@ public class AnswerTest {
     void deleteSuccessAndSaveDeleteHistory() throws CannotDeleteException {
         DeleteHistory deleteHistory = answer.delete(writer);
 
-        assertThat(answer.isDeleted());
+        assertThat(answer.isDeleted()).isTrue();
         assertThat(deleteHistory).isEqualTo(new DeleteHistory(ContentType.ANSWER, answer.getId(), writer, LocalDateTime.now()));
 
     }
