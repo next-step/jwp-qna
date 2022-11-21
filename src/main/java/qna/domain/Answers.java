@@ -49,8 +49,7 @@ public class Answers {
     public DeleteHistories makeDeleted(User loginUser) {
         DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : this.answers) {
-            answer.remove(loginUser);
-            deleteHistories.addDeleteHistory(DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter()));
+            deleteHistories.addDeleteHistory(answer.remove(loginUser));
         }
         return deleteHistories;
     }
