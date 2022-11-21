@@ -30,10 +30,14 @@ public class DeleteHistory {
     protected DeleteHistory() {
     }
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
+    private DeleteHistory(ContentType contentType, Long contentId, User deletedBy) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
+    }
+
+    public static DeleteHistory of(ContentType contentType, Long contentId, User deletedBy) {
+        return new DeleteHistory(contentType, contentId, deletedBy);
     }
 
     public Long getId() {
@@ -42,6 +46,10 @@ public class DeleteHistory {
 
     public LocalDateTime getCreateDate() {
         return createDate;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
     }
 
     @Override
