@@ -82,21 +82,21 @@ public class QuestionTest extends JpaSliceTest {
     @DisplayName("작성자를 수정할 수 있다.")
     @Test
     void updateWriter() {
-        final User user = userRepository.save(UserTest.JAVAJIGI);
-        final Question question = new Question("궁그매요!", "제목에 오타가!?");
-        assertThat(question.getWriterId()).isNull();
+        final User someone = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        final User other = userRepository.save(new User("sanjigi", "password", "name", "sanjigi@slipp.net"));
+        final Question question = questionRepository.save(new Question("궁그매요!", "제목에 오타가!?").writeBy(someone));
+        assertThat(question.getWriter()).isEqualTo(someone);
 
-        question.writeBy(user);
-        assertThat(question.getWriterId()).isEqualTo(user.getId());
+        final Question updatedQuestion = questionRepository.saveAndFlush(question.writeBy(other));
+        assertThat(updatedQuestion.getWriter()).isEqualTo(other);
     }
 
     @DisplayName("질문의 작성자를 알 수 있다.")
     @Test
     void isOwner() {
-        final User writer = new User(1L, "javajigi", "password", "name", "javajigi@slipp.net");
-        final User other = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
-        final Question question = new Question("궁그매요!", "제목에 오타가!?");
-        question.writeBy(writer);
+        final User writer = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        final User other = userRepository.save(new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net"));
+        final Question question = questionRepository.save(new Question("궁그매요!", "제목에 오타가!?").writeBy(writer));
 
         assertAll(
                 () -> assertThat(question.isOwner(writer)).isTrue(),
