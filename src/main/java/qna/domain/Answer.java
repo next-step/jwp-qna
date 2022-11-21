@@ -12,7 +12,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseTime {
-
     private static final boolean DELETED_FLAG = true;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

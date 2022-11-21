@@ -5,10 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class DeleteHistories {
-
     List<DeleteHistory> deleteHistories = new ArrayList<>();
 
-    public DeleteHistories(){
+    public DeleteHistories() {
 
     }
 
@@ -18,7 +17,7 @@ public class DeleteHistories {
         }
     }
 
-    public List<DeleteHistory> values(){
+    public List<DeleteHistory> values() {
         return Collections.unmodifiableList(deleteHistories);
     }
 
