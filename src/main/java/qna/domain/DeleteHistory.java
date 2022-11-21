@@ -34,6 +34,14 @@ public class DeleteHistory {
         this.deletedById = deletedById;
     }
 
+    public static DeleteHistory of(final Question deletedQuestion) {
+        if (Objects.isNull(deletedQuestion)) {
+            throw new IllegalArgumentException("Question must not be null!");
+        }
+
+        return new DeleteHistory(ContentType.QUESTION, deletedQuestion.getId(), deletedQuestion.getWriterId());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
