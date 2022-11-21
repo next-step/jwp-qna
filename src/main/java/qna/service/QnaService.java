@@ -10,7 +10,6 @@ import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.domain.Answer;
 import qna.domain.AnswerRepository;
-import qna.domain.ContentType;
 import qna.domain.DeleteHistory;
 import qna.domain.Question;
 import qna.domain.QuestionRepository;
@@ -53,12 +52,10 @@ public class QnaService {
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.setDeleted(true);
-        deleteHistories.add(
-                new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId()));
+        deleteHistories.add(DeleteHistory.of(question));
         for (Answer answer : answers) {
             answer.setDeleted(true);
-            deleteHistories.add(
-                    new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId()));
+            deleteHistories.add(DeleteHistory.of(answer));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }
