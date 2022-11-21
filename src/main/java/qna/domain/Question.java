@@ -77,8 +77,9 @@ public class Question {
 
         setDeleted(DELETED_FLAG);
 
-        DeleteHistories deleteHistories = answers.delete(loginUser);
+        DeleteHistories deleteHistories = new DeleteHistories();
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete(loginUser));
         return deleteHistories;
 
     }
