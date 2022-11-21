@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +23,11 @@ public class QuestionTest extends JpaSliceTest {
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     private static String makeStringWithLength(final int length) {
         return String.join("", Collections.nCopies(length, "A"));
@@ -102,5 +108,40 @@ public class QuestionTest extends JpaSliceTest {
                 () -> assertThat(question.isOwner(writer)).isTrue(),
                 () -> assertThat(question.isOwner(other)).isFalse()
         );
+    }
+
+    @DisplayName("질문에 달린 답변을 알 수 있다.")
+    @Test
+    void answers() {
+        final Question question = questionRepository.save(new Question("어떤 언어가 좋으세요?", ""));
+        final long questionId = question.getId();
+        final User answerUser = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        final long answer1Id = answerRepository.save(new Answer(answerUser, question, "자바요!")).getId();
+        final long answer2Id = answerRepository.save(new Answer(answerUser, question, "코틀린이요!")).getId();
+        entityManager.clear();
+        final Question savedQuestion = questionRepository.findByIdAndDeletedFalse(questionId).get();
+
+        final List<Answer> answersOfQuestion = savedQuestion.getAnswers();
+
+        assertThat(answersOfQuestion)
+                .extracting("id")
+                .containsExactlyInAnyOrder(answer1Id, answer2Id);
+    }
+
+    @DisplayName("삭제된 질문은 조회되지 않는다.")
+    @Test
+    void deletedAnswer() {
+        final Question question = questionRepository.save(new Question("어떤 언어가 좋으세요?", ""));
+        final long questionId = question.getId();
+        final User answerUser = userRepository.save(new User("javajigi", "password", "name", "javajigi@slipp.net"));
+        final Answer answer = new Answer(answerUser, question, "자바요!");
+        answer.setDeleted(true);
+        answerRepository.save(answer);
+        entityManager.clear();
+        final Question savedQuestion = questionRepository.findByIdAndDeletedFalse(questionId).get();
+
+        final List<Answer> answersOfQuestion = savedQuestion.getAnswers();
+
+        assertThat(answersOfQuestion).isEmpty();
     }
 }
