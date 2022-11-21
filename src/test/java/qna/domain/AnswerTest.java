@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -100,5 +101,20 @@ public class AnswerTest extends JpaSliceTest {
         final Answer savedAnswer = answerRepository.findByIdAndDeletedFalse(answerId).get();
 
         assertThat(savedAnswer.getQuestion()).isEqualTo(savedQuestion);
+    }
+
+    @DisplayName("질문에 답변을 달기만 해도 답변이 저장된다.")
+    @Test
+    void answerToQuestion() {
+        final long questionId = question.getId();
+        final Answer answer = new Answer(writer, question, "답변이 되었나요?");
+        question.addAnswer(answer);
+        entityManager.flush();
+        entityManager.clear();
+        final Question savedQuestion = questionRepository.findByIdAndDeletedFalse(questionId).get();
+
+        final List<Answer> answers = savedQuestion.getAnswers();
+
+        assertThat(answers).hasSize(1);
     }
 }
