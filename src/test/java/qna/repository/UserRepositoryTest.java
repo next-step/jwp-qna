@@ -26,7 +26,7 @@ class UserRepositoryTest {
 
     @Test
     void save() {
-        User writer = User.create("javajigi");
+        User writer = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
         User user = userRepository.save(writer);
         assertAll(
                 () -> assertThat(user.getUserId()).isEqualTo(writer.getUserId()),
@@ -37,7 +37,7 @@ class UserRepositoryTest {
     @Test
     void save_retreive_test() {
         // given
-        User writer = User.create("javajigi");
+        User writer = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
         User saveUser = userRepository.save(writer);
         // when
         Optional<User> findUser = userRepository.findByUserId(saveUser.getUserId());
@@ -51,9 +51,9 @@ class UserRepositoryTest {
 
     @Test
     void duplicate_userId_test() {
-        User writer = User.create("sagjigi");
+        User writer = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
         userRepository.save(writer);
-        User dulpicateUser = User.create("sagjigi");
+        User dulpicateUser = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
 
         assertThatExceptionOfType(DataIntegrityViolationException.class)
                 .isThrownBy(() -> userRepository.save(dulpicateUser)).withMessageContaining("constraint");
@@ -62,7 +62,7 @@ class UserRepositoryTest {
     @Test
     void user_auto_id_strategy_test() {
         // given
-        User user = User.create("deokmoon");
+        User user = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
         // when
         User saveUser = userRepository.save(user);
         // then
@@ -72,7 +72,7 @@ class UserRepositoryTest {
     @Test
     void user_delete_test() {
         // given
-        User writer = User.create("sagjigi");
+        User writer = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
         User saveUser = userRepository.save(writer);
         Long saveUserId = saveUser.getId();
         Optional<User> findUser = userRepository.findById(saveUserId);

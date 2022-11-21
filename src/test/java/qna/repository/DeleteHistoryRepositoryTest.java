@@ -20,17 +20,21 @@ class DeleteHistoryRepositoryTest {
     @Autowired
     DeleteHistoryRepository deleteHistoryRepository;
 
+    private User writer;
+    private Question question;
+    private Answer answer;
+
     @BeforeEach
     void setUp() {
         deleteHistoryRepository.deleteAllInBatch();
+        writer = User.create("gerrad", "password", "humba", "gerrad@liverpool.uk");
+        question = Question.create("title", "contents", writer);
+        answer = Answer.create(writer, question, "contents");
     }
 
     @Test
     void deleteHistory_save_test() {
         // given
-        User writer = User.create("javajigi");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
         DeleteHistory deleteHistory = DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         // when
         DeleteHistory saveDeleteHistory = deleteHistoryRepository.save(deleteHistory);
@@ -41,9 +45,6 @@ class DeleteHistoryRepositoryTest {
     @Test
     void retreive_deleteHistory_test() {
         // given
-        User writer = User.create("javajigi");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
         DeleteHistory deleteHistory1 = DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         DeleteHistory deleteHistory2 = DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter());
         // when

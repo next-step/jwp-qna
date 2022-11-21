@@ -13,14 +13,6 @@ import java.util.Objects;
 public class User extends BaseDateEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    // test용
-    public static User create(String userId) {
-        return new User(userId, "password", "name", userId + "@gmail.com");
-    }
-    // test용
-    public static User create(String userId, String password, String name) {
-        return new User(userId, password, name, userId + "gmail.com");
-    }
     public static User create(String userId, String password, String name, String email) {
         return new User(userId, password, name, email);
     }

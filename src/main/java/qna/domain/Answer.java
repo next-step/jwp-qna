@@ -17,14 +17,9 @@ import java.util.Objects;
 
 @Entity
 public class Answer extends BaseDateEntity{
-    // test 용
-    public static Answer create(User writer, Question question) {
-        return new Answer(writer, question, "contents");
-    }
     public static Answer create(User writer, Question question, String contents) {
         return new Answer(writer, question, contents);
     }
-
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

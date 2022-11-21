@@ -8,11 +8,6 @@ import javax.persistence.*;
 
 @Entity
 public class Question extends BaseDateEntity{
-
-    // test용
-    public static Question create(User writer) {
-        return new Question("title", "contents", writer);
-    }
     public static Question create(String title, String contents) {
         return new Question(null, title, contents);
     }

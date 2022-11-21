@@ -41,9 +41,9 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        writer = User.create("xavi");
-        question = Question.create(writer);
-        answer = Answer.create(writer, question);
+        writer = User.create("javajigi", "password", "pobi", "pobi@gmail.com");
+        question = Question.create("title", "contents", writer);
+        answer = Answer.create(writer, question, "contents");
     }
 
     @Test
@@ -61,7 +61,7 @@ class QnaServiceTest {
     public void delete_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(User.create("messi"), question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(User.create("messi", "password", "messi", "messi@gmail.com"), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
@@ -80,7 +80,7 @@ class QnaServiceTest {
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
-        assertThatThrownBy(() -> qnaService.deleteQuestion(User.create("messi"), question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(User.create("messi", "password", "messi", "messi@gmail.com"), question.getId()))
                 .isInstanceOf(CannotDeleteException.class);
     }
 
