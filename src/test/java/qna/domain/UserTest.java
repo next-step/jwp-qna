@@ -1,11 +1,5 @@
 package qna.domain;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class UserTest {
 
     public static final User JAVAJIGI = new User(1L, "javajigi", "password", "name",
