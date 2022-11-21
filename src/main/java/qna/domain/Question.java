@@ -98,7 +98,7 @@ public class Question extends BaseDateEntity{
         }
         this.deleted = true;
         DeleteHistories deleteHistories = new DeleteHistories(DeleteHistory.create(ContentType.QUESTION, this.id, this.writer));
-        deleteHistories.addDeleteHistory(answers.makeDeleted());
+        deleteHistories.addDeleteHistory(answers.makeDeleted(loginUser));
         return deleteHistories;
     }
 

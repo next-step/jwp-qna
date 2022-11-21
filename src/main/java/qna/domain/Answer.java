@@ -2,6 +2,7 @@ package qna.domain;
 
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -84,7 +85,10 @@ public class Answer extends BaseDateEntity{
         return deleted;
     }
 
-    public void remove() {
+    public void remove(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new IllegalArgumentException(ErrorCode.질문_삭제_권한.getErrorMessage());
+        }
         this.deleted = true;
     }
 

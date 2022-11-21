@@ -46,10 +46,10 @@ public class Answers {
         return Collections.unmodifiableList(this.answers);
     }
 
-    public DeleteHistories makeDeleted() {
+    public DeleteHistories makeDeleted(User loginUser) {
         DeleteHistories deleteHistories = new DeleteHistories();
         for (Answer answer : this.answers) {
-            answer.remove();
+            answer.remove(loginUser);
             deleteHistories.addDeleteHistory(DeleteHistory.create(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         return deleteHistories;
