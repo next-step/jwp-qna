@@ -1,14 +1,19 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
+import qna.constant.DeleteErrorMessage;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "answer")
 public class Answer extends BaseTime {
+
+    private static final boolean DELETED_FLAG = true;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,6 +55,20 @@ public class Answer extends BaseTime {
 
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
+    }
+
+    public DeleteHistory delete(User loginUser) throws CannotDeleteException {
+        validateWriterSameLoginUser(loginUser);
+
+        setDeleted(DELETED_FLAG);
+
+        return new DeleteHistory(ContentType.ANSWER, id, loginUser, LocalDateTime.now());
+    }
+
+    private void validateWriterSameLoginUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(DeleteErrorMessage.NOT_HAVE_PERMISSION_DELETE_ANSWER);
+        }
     }
 
     public void addQuestion(Question question) {
