@@ -50,4 +50,26 @@ public class DeleteHistoryTest extends JpaSliceTest {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> DeleteHistory.of(question));
     }
+
+    @DisplayName("답변 삭제이력을 저장할 수 있다.")
+    @Test
+    void saveAnswerHistory() {
+        final User questionUser = new User(1L, "dominiqn", "password", "Me", "dmut7691@gmail.com");
+        final User answerUser = new User(2L, "dominiqn", "password", "Me", "dmut7691@gmail.com");
+        final Question question = new Question(10L, "질문입니다", "별 내용 없습니다.").writeBy(questionUser);
+        final Answer answer = new Answer(20L, answerUser, question, "자문자답");
+        final DeleteHistory expected = new DeleteHistory(ContentType.ANSWER, 20L, 2L);
+
+        final DeleteHistory actual = DeleteHistory.of(answer);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @DisplayName("답변은 null이 아니어야 한다.")
+    @ParameterizedTest(name = ParameterizedTest.DISPLAY_NAME_PLACEHOLDER)
+    @NullSource
+    void nullAnswer(Answer answer) {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> DeleteHistory.of(answer));
+    }
 }
