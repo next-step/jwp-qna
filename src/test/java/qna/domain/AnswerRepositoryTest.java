@@ -53,7 +53,7 @@ class AnswerRepositoryTest {
     @DisplayName("answer 테이블 question id로 deleted = false인 row select 테스트")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> result = answers.findByQuestionIdAndDeletedFalse(question.getId());
+        final List<Answer> result = answers.findByQuestionAndDeletedFalse(question);
         assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
                 () -> assertThat(result.contains(answer)).isTrue()
