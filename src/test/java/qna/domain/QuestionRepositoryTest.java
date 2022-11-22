@@ -62,6 +62,18 @@ class QuestionRepositoryTest {
         );
     }
 
+    @DisplayName("question 조회 후 매핑된 user 정보확인")
+    @Test
+    void findByIdWithUser() {
+        manager.clear();
+        final Question actual = questions.findByIdAndDeletedFalse(question.getId()).get();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getWriter()).isNotNull(),
+                () -> assertThat(actual.getWriter().getUserId()).isEqualTo(user.getUserId())
+        );
+    }
+
     @DisplayName("question 테이블 title 수정 테스트")
     @Test
     void update_title() {
