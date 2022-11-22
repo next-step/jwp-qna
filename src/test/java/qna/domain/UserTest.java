@@ -7,18 +7,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserTest {
     @Test
-    void userId_is_not_null_test() {
-        assertThatThrownBy(() -> User.create(""))
-                .isInstanceOf(ForbiddenException.class);
-    }
-    @Test
     void password_is_not_null_test() {
-        assertThatThrownBy(() -> User.create("reina", "", "name"))
-                .isInstanceOf(ForbiddenException.class);
+        assertThatThrownBy(() -> User.create("reina", "", "name", "reina@gmail.com"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
     @Test
     void name_is_not_null_test() {
-        assertThatThrownBy(() -> User.create("reina", "password", ""))
-                .isInstanceOf(ForbiddenException.class);
+        assertThatThrownBy(() -> User.create("reina", "password", "","reina@gmail.com"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

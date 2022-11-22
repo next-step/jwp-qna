@@ -19,22 +19,25 @@ class AnswerRepositoryTest {
 
     @Autowired
     AnswerRepository answerRepository;
-
     @Autowired
     QuestionRepository questionRepository;
 
+    private User writer;
+    private Question question;
+    private Answer answer;
+
     @BeforeEach
-    public void cleanup() {
+    void setUp() {
+        questionRepository.deleteAllInBatch();
         answerRepository.deleteAllInBatch();
+        writer = User.create("gerrad", "password", "humba", "gerrad@liverpool.uk");
+        question = Question.create("title", "contents", writer);
+        answer = Answer.create(writer, question, "contents");
     }
 
     @Test
     @DisplayName("answer 저장 테스트")
     void save() {
-        // given
-        User writer = User.create("henderson");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
         // when
         Answer saverAnswer = answerRepository.save(answer);
         // then
@@ -47,14 +50,9 @@ class AnswerRepositoryTest {
     @Test
     @DisplayName("answer 저장 후 조회 테스트")
     void findByIdAndDeletedFalse_test() {
-        // given
-        User writer = User.create("henderson");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
-
-        User writer2 = User.create("tiago");
-        Question question2 = Question.create(writer2);
-        Answer answer2 = Answer.create(writer2, question2);
+        User writer2 = User.create("tiago", "password", "alkantra", "tiago@liverpool.uk");
+        Question question2 = Question.create("title", "contents", writer2);
+        Answer answer2 = Answer.create(writer2, question2, "contents");
         // when
         answerRepository.save(answer);
         answerRepository.save(answer2);
@@ -72,12 +70,9 @@ class AnswerRepositoryTest {
     @DisplayName("answer 삭제 set 후 조회 시 미조회 테스트")
     void set_delete_find_test() {
         // given
-        User writer = User.create("henderson");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
         Long id = answer.getId();
         // when
-        answer.setDeleted(true);
+        answer.remove(writer);
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // then
         assertThat(findAnswer).isNotPresent();
@@ -87,9 +82,6 @@ class AnswerRepositoryTest {
     @DisplayName("answer 삭제 후 조회 시 미조회 테스트")
     void delete_find_test() {
         // given
-        User writer = User.create("henderson");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
         Long id = answer.getId();
         Optional<Answer> findAnswer = answerRepository.findByIdAndDeletedFalse(id);
         // when
@@ -102,9 +94,6 @@ class AnswerRepositoryTest {
     @Test
     void cascade_remove_test() {
         // given
-        User writer = User.create("xavi");
-        Question question = Question.create(writer);
-        Answer answer = Answer.create(writer, question);
         Answer saveAnswer = answerRepository.save(answer);
         Question saveQuestion = questionRepository.save(question);
 

@@ -9,12 +9,12 @@ public class QuestionTest {
     @Test
     void title_is_not_null_test() {
         assertThatThrownBy(() -> Question.create(null, "contents"))
-                .isInstanceOf(ForbiddenException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void title_is_not_space_test() {
         assertThatThrownBy(() -> Question.create("", "contents"))
-                .isInstanceOf(ForbiddenException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

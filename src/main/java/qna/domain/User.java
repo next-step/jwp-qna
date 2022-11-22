@@ -2,13 +2,9 @@ package qna.domain;
 
 import qna.ForbiddenException;
 import qna.UnAuthorizedException;
+import qna.constant.ErrorCode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,40 +12,21 @@ import java.util.Objects;
 @Entity
 public class User extends BaseDateEntity{
     public static final GuestUser GUEST_USER = new GuestUser();
-    private static final int EMAIL_LENGTH = 50;
-    private static final int NAME_LENGTH = 20;
-    private static final int PASSWORD_LENGTH = 20;
-    private static final int USER_ID_LENGTH = 20;
 
-    // test용
-    public static User create(String userId) {
-        return new User(userId, "password", "name", userId + "@gmail.com");
-    }
-    // test용
-    public static User create(String userId, String password, String name) {
-        return new User(userId, password, name, userId + "gmail.com");
-    }
     public static User create(String userId, String password, String name, String email) {
         return new User(userId, password, name, email);
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = EMAIL_LENGTH)
-    private String email;
-    @Column(nullable = false, length = USER_ID_LENGTH)
-    private String name;
-    @Column(nullable = false, length = PASSWORD_LENGTH)
-    private String password;
-    @Column(nullable = false, length = USER_ID_LENGTH, unique = true)
-    private String userId;
-    @OneToMany(mappedBy = "writer")
-    private List<Answer> answers = new ArrayList<Answer>();
-    @OneToMany(mappedBy = "user")
-    private List<Question> questions = new ArrayList<Question>();
-    @OneToMany(mappedBy = "user")
-    private List<DeleteHistory> deleteHistories = new ArrayList<DeleteHistory>();
-
+    @Embedded
+    private Email email;
+    @Embedded
+    private Name name;
+    @Embedded
+    private Password password;
+    @Embedded
+    private UserId userId;
 
     protected User() {}
 
@@ -58,42 +35,24 @@ public class User extends BaseDateEntity{
     }
 
     private User(Long id, String userId, String password, String name, String email) {
-        if (Objects.isNull(name) || name.isEmpty()) {
-            throw new ForbiddenException();
-        }
-        if (Objects.isNull(password) || password.isEmpty()) {
-            throw new ForbiddenException();
-        }
-        if (Objects.isNull(userId) || userId.isEmpty()) {
-            throw new ForbiddenException();
-        }
-
         this.id = id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = UserId.of(userId);
+        this.password = Password.of(password);
+        this.name = Name.of(name);
+        this.email = Email.of(email);
     }
 
     public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+        if (!userId.matchUserId(loginUser.userId)) {
+            throw new UnAuthorizedException(ErrorCode.사용자_수정_권한_예외.getErrorMessage());
         }
 
-        if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+        if (!password.matchPassword(target.password)) {
+            throw new UnAuthorizedException(ErrorCode.사용자_수정_권한_예외.getErrorMessage());
         }
 
         this.name = target.name;
         this.email = target.email;
-    }
-
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
-    }
-
-    public boolean matchPassword(String targetPassword) {
-        return this.password.equals(targetPassword);
     }
 
     public boolean equalsNameAndEmail(User target) {
@@ -113,28 +72,20 @@ public class User extends BaseDateEntity{
         return id;
     }
 
-    public String getUserId() {
+    public UserId getUserId() {
         return userId;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
     }
 
     @Override
@@ -144,7 +95,7 @@ public class User extends BaseDateEntity{
                 ", userId='" + userId + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                ", email='" + email.toString() + '\'' +
                 '}';
     }
 

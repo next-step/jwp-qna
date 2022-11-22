@@ -19,15 +19,18 @@ class QuestionRepositoryTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    private User writer;
+    private Question question;
+
     @BeforeEach
     void setUp() {
         questionRepository.deleteAllInBatch();
+        writer = User.create("pepe", "password", "pepe", "pepe@madrid.com");
+        question = Question.create("title", "contents", writer);
     }
 
     @Test
     void save() {
-        User writer = User.create("pepe");
-        Question question = Question.create(writer);
         Question saveQuestion = questionRepository.save(question);
         assertAll(
                 () -> assertThat(saveQuestion.getId()).isNotNull(),
@@ -39,10 +42,8 @@ class QuestionRepositoryTest {
     @Test
     void save_retreive_test() {
         // given
-        User writer = User.create("pepe");
-        Question question = Question.create(writer);
-        User writer2 = User.create("modric");
-        Question question2 = Question.create(writer2);
+        User writer2 = User.create("modric", "password", "modric", "modric@madrid.com");
+        Question question2 = Question.create("title", "contents", writer2);
         Question saveQuestion1 = questionRepository.save(question);
         Question saveQuestion2 = questionRepository.save(question2);
         // when
@@ -58,8 +59,6 @@ class QuestionRepositoryTest {
     @Test
     void save_setDelete_true_retreive_test() {
         // given
-        User writer = User.create("pepe");
-        Question question = Question.create(writer);
         Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
         // when
@@ -72,8 +71,6 @@ class QuestionRepositoryTest {
     @Test
     void save_delete_test() {
         // given
-        User writer = User.create("pepe");
-        Question question = Question.create(writer);
         Question saveQuestion = questionRepository.save(question);
         Long saveQuestionId = saveQuestion.getId();
         Optional<Question> findQuestion = questionRepository.findByIdAndDeletedFalse(saveQuestionId);
