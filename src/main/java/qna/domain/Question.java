@@ -1,12 +1,16 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+import qna.constant.DeleteErrorMessage;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
 public class Question {
+    private static final boolean DELETED_FLAG = true;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,13 +19,13 @@ public class Question {
     @Lob
     private String contents;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="writer_id",foreignKey = @ForeignKey(name = "fk_question_writer"))
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -55,40 +59,41 @@ public class Question {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
     public User getWriter() {
         return writer;
-    }
-
-    public void setWriter(User write) {
-        this.writer = writer;
     }
 
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    private void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public DeleteHistories delete(User loginUser) throws CannotDeleteException {
+        validateWriterSameLoginUser(loginUser);
+        validateAnswerWriterSameQuestionWriter(loginUser);
+
+        setDeleted(DELETED_FLAG);
+
+        DeleteHistories deleteHistories = new DeleteHistories();
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, loginUser, LocalDateTime.now()));
+        deleteHistories.addAll(answers.delete(loginUser));
+        return deleteHistories;
+
+    }
+
+    private void validateWriterSameLoginUser(User loginUser) throws CannotDeleteException {
+        if (!isOwner(loginUser)) {
+            throw new CannotDeleteException(DeleteErrorMessage.NOT_HAVE_PERMISSION_DELETE_QUESTION);
+        }
+    }
+
+    private void validateAnswerWriterSameQuestionWriter(User loginUser) throws CannotDeleteException {
+        if (!answers.isEmpty() && !answers.validateWriterSameLoginUser(loginUser)) {
+            throw new CannotDeleteException(DeleteErrorMessage.NOT_EMPTY_ANSWER_DELETE_QUESTION);
+        }
     }
 
     @Override
@@ -100,5 +105,18 @@ public class Question {
                 ", writerId=" + writer.getId() +
                 ", deleted=" + deleted +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return deleted == question.deleted && Objects.equals(id, question.id) && Objects.equals(title, question.title) && Objects.equals(contents, question.contents) && Objects.equals(writer, question.writer) && Objects.equals(answers, question.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, contents, writer, deleted, answers);
     }
 }
