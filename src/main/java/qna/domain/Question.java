@@ -74,8 +74,15 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public void changeDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    public void delete(User writer) {
+        if (!isOwner(writer)) {
+            throw new IllegalArgumentException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
+        }
+        this.deleted();
+    }
+
+    public void deleted() {
+        this.deleted = true;
     }
 
     public List<Answer> getAnswers() {
