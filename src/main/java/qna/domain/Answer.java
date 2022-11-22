@@ -2,6 +2,7 @@
 
 package qna.domain;
 
+import qna.CannotDeleteException;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -44,7 +45,6 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        question.addAnswer(this);
         this.question = question;
         this.contents = contents;
     }
@@ -75,6 +75,26 @@ public class Answer extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public DeleteHistory delete(User questionWriter) throws CannotDeleteException {
+        validateOwner(questionWriter);
+        return deleteAnswer();
+    }
+
+    private DeleteHistory deleteAnswer() {
+        this.deleted();
+        return DeleteHistory.ofAnswer(id, writer);
+    }
+
+    private void deleted() {
+        deleted = true;
+    }
+
+    private void validateOwner(User questionWriter) throws CannotDeleteException {
+        if (!isOwner(questionWriter)) {
+            throw new CannotDeleteException("질문에 다른 답변 작성자가 있는 경우 삭제 할 수 없습니다.");
+        }
     }
 
     public void setDeleted(boolean deleted) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -20,8 +21,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -46,8 +47,12 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        answers.addAnswer(answer);
         answer.toQuestion(this);
+    }
+
+    public void clearAnswers() {
+        answers.clear();
     }
 
     public Long getId() {
@@ -74,19 +79,32 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public void delete(User writer) {
+    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteQuestion(writer, deleteHistoryList);
+        deleteAnswerList(writer, deleteHistoryList);
+
+        return deleteHistoryList;
+    }
+
+    private void deleteQuestion(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
+        validateOwner(writer);
+        deleted();
+        deleteHistoryList.add(DeleteHistory.ofQuestion(id, writer));
+    }
+
+    private void validateOwner(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
-            throw new IllegalArgumentException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
+            throw new CannotDeleteException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
         }
-        this.deleted();
+    }
+
+    private void deleteAnswerList(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
+        deleteHistoryList.addAll(answers.deleteAnswers(writer));
     }
 
     public void deleted() {
         this.deleted = true;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers;
     }
 
     @Override
