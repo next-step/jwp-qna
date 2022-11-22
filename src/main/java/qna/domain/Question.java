@@ -1,7 +1,6 @@
 package qna.domain;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
@@ -21,8 +20,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @Embedded
-    private final Answers answers = new Answers();
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private final List<Answer> answers = new ArrayList<>();
 
     protected Question() {
     }
@@ -75,14 +74,13 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public void delete(final boolean deleted) {
+    public void changeDeleted(final boolean deleted) {
         this.deleted = deleted;
     }
 
     public List<Answer> getAnswers() {
-        return Collections.unmodifiableList(this.answers.getAnswers());
+        return answers;
     }
-
 
     @Override
     public String toString() {
