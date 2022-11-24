@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -65,6 +66,13 @@ public class Question extends BaseEntity {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         return true;
+    }
+
+    public List<DeleteHistory> deleteQuestion() throws CannotDeleteException {
+        List<DeleteHistory> deleteHistories = deleteAnswersBeforeDeleteQuestion();
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        return deleteHistories;
     }
 
     public List<DeleteHistory> deleteAnswersBeforeDeleteQuestion() throws CannotDeleteException {
@@ -150,7 +158,7 @@ public class Question extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
-                ", answers=" + answers +
+                //", answers=" + answers.hashCode() +
                 '}';
     }
 }
