@@ -67,6 +67,11 @@ public class Question extends BaseEntity {
         return true;
     }
 
+    public List<DeleteHistory> deleteAnswersBeforeDeleteQuestion() throws CannotDeleteException {
+        //
+        return null;
+    }
+
     public Long getId() {
         return id;
     }
