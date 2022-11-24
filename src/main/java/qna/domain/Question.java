@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -56,6 +57,13 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public boolean checkQuestionDeleteAuth(User user) throws CannotDeleteException {
+        if (!writer.matchUserId(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        return true;
     }
 
     public Long getId() {
