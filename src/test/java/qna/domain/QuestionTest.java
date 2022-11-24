@@ -34,7 +34,8 @@ public class QuestionTest {
         assertAll(
                 question::deleteAnswersBeforeDeleteQuestion,
                 () -> question.addAnswer(answer2),
-                () -> assertThatThrownBy(question::deleteAnswersBeforeDeleteQuestion).isInstanceOf(CannotDeleteException.class)
+                () -> assertThatThrownBy(question::deleteAnswersBeforeDeleteQuestion).isInstanceOf(
+                        CannotDeleteException.class)
         );
     }
 }
