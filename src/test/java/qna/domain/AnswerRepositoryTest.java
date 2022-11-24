@@ -1,6 +1,7 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
@@ -53,7 +54,7 @@ class AnswerRepositoryTest {
     @DisplayName("answer 테이블 question id로 deleted = false인 row select 테스트")
     @Test
     void findByQuestionIdAndDeletedFalse() {
-        final List<Answer> result = answers.findByQuestionIdAndDeletedFalse(question.getId());
+        final List<Answer> result = answers.findByQuestionAndDeletedFalse(question);
         assertAll(
                 () -> assertThat(question.getId()).isNotNull(),
                 () -> assertThat(result.contains(answer)).isTrue()
@@ -68,6 +69,30 @@ class AnswerRepositoryTest {
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.isDeleted()).isFalse()
+        );
+    }
+
+    @DisplayName("answer 조회 후 매핑된 user 정보확인")
+    @Test
+    void findByIdWithUser() {
+        manager.clear();
+        final Answer actual = answers.findByIdAndDeletedFalse(answer.getId()).get();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getWriter()).isNotNull(),
+                () -> assertThat(actual.getWriter().getUserId()).isEqualTo(user.getUserId())
+        );
+    }
+
+    @DisplayName("answer 조회 후 매핑된 question 정보확인")
+    @Test
+    void findByIdWithQuestion() {
+        manager.clear();
+        final Answer actual = answers.findByIdAndDeletedFalse(answer.getId()).get();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getQuestion()).isNotNull(),
+                () -> assertThat(actual.getQuestion().getTitle()).isEqualTo(question.getTitle())
         );
     }
 
@@ -104,6 +129,16 @@ class AnswerRepositoryTest {
                 () -> assertThat(answer.getId()).isNotNull(),
                 () -> assertThat(answers.findByIdAndDeletedFalse(answer.getId())).isEmpty()
         );
+    }
+
+    @DisplayName("answer 연관관계 끊지않은 상태에서 question 삭제 불가 확인")
+    @Test
+    void deleteQuestion() {
+        questions.delete(question);
+        assertThatExceptionOfType(Exception.class).isThrownBy(() -> flushAndClear());
+        answer.setQuestion(null);
+        flushAndClear();
+        assertThat(questions.findByIdAndDeletedFalse(question.getId())).isEmpty();
     }
 
     private void flushAndClear() {

@@ -46,10 +46,10 @@ class DeleteHistoryRepositoryTest {
         questions.delete(question);
         manager.flush();
         deleteHistory1 = deleteHistories.save(
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), user.getId(),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), user,
                         LocalDateTime.now()));
         deleteHistory2 = deleteHistories.save(
-                new DeleteHistory(ContentType.QUESTION, answer.getId(), user.getId(),
+                new DeleteHistory(ContentType.QUESTION, answer.getId(), user,
                         LocalDateTime.now()));
     }
 
