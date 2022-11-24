@@ -1,6 +1,7 @@
 package qna.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,6 +48,22 @@ class QnaServiceTest {
     public void delete_성공() throws Exception {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         //when(answerRepository.findByQuestionAndDeletedFalse(question)).thenReturn(Arrays.asList(answer));
+
+        assertThat(question.isDeleted()).isFalse();
+        qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
+
+        assertThat(question.isDeleted()).isTrue();
+        verifyDeleteHistories();
+    }
+
+    @DisplayName("이미 삭제된 답변이 있는 경우 삭제이력 추가하지 않음 확인")
+    @Test
+    public void delete_성공_이미_삭제된_답변_존재() throws Exception {
+        Answer answer2 = new Answer(2L, UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
+        question.addAnswer(answer2);
+        answer2.setDeleted(true);
+
+        when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
         assertThat(question.isDeleted()).isFalse();
         qnaService.deleteQuestion(UserTest.JAVAJIGI, question.getId());
