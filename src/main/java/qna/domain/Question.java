@@ -110,7 +110,9 @@ public class Question extends BaseTimeEntity {
         DeleteHistories deleteHistories = new DeleteHistories();
         setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+
         answers.deleteAll().getDeleteHistories().forEach(deleteHistories::add);
+
         return deleteHistories.getDeleteHistories();
     }
 
