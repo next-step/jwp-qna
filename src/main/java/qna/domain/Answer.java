@@ -69,10 +69,10 @@ public class Answer extends BaseCreatedAndUpdatedAt {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
-                ", question=" + question +
-                ", writer=" + writer +
+                ", question=" + question.getId() +
+                ", writer=" + writer.getId() +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

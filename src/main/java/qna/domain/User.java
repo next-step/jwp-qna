@@ -85,10 +85,10 @@ public class User extends BaseCreatedAndUpdatedAt {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", userId='" + userId + '\'' +
+                ", email=" + email +
+                ", name=" + name +
+                ", password=" + password +
+                ", userId=" + userId +
                 ", answers=" + answers +
                 ", questions=" + questions +
                 ", deleteHistories=" + deleteHistories +

@@ -65,10 +65,10 @@ public class Question extends BaseCreatedAndUpdatedAt {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
-                ", title='" + title + '\'' +
-                ", writer=" + writer +
+                ", title=" + title +
+                ", writer=" + writer.getId() +
                 ", answers=" + answers +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
