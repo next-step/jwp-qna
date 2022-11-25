@@ -25,8 +25,6 @@ class QnaServiceTest {
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
-    private DeleteHistoryService deleteHistoryService;
-    @Autowired
     private QnaService qnaService;
 
     @Nested
