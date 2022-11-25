@@ -77,6 +77,18 @@ public class User extends BaseCreatedAndUpdatedAt {
                 email.equals(target.email);
     }
 
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+    }
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
+    }
+
     public boolean isGuestUser() {
         return false;
     }
