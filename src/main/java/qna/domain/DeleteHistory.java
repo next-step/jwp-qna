@@ -52,20 +52,12 @@ public class DeleteHistory {
         return id;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
     public Long getContentId() {
         return contentId;
     }
 
     public User getDeletedBy() {
         return deletedBy;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
     }
 
     @Override
