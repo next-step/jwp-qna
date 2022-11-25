@@ -3,8 +3,8 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
+import qna.exceptions.NotFoundException;
+import qna.exceptions.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -21,8 +21,12 @@ public class Answer extends BaseCreatedAndUpdatedAt {
     private String contents;
     @Column(nullable = false)
     private boolean deleted = false;
-    private Long questionId;
-    private Long writerId;
+    @ManyToOne(targetEntity = Question.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "fk_answer_to_question"))
+    private Question question;
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_answer_writer"))
+    private User writer;
 
     public Answer(User writer, Question question, String contents) {
         this(null, writer, question, contents);
@@ -39,17 +43,17 @@ public class Answer extends BaseCreatedAndUpdatedAt {
             throw new NotFoundException();
         }
 
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.getId().equals(writer.getId());
     }
 
     public void toQuestion(Question question) {
-        this.questionId = question.getId();
+        this.question = question;
     }
 
     public boolean isDeleted() {
@@ -65,10 +69,10 @@ public class Answer extends BaseCreatedAndUpdatedAt {
     public String toString() {
         return "Answer{" +
                 "id=" + id +
-                ", contents='" + contents + '\'' +
+                ", contents=" + contents +
                 ", deleted=" + deleted +
-                ", questionId=" + questionId +
-                ", writerId=" + writerId +
+                ", question=" + question.getId() +
+                ", writer=" + writer.getId() +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

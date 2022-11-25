@@ -3,9 +3,11 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.UnAuthorizedException;
+import qna.exceptions.UnAuthorizedException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +28,12 @@ public class User extends BaseCreatedAndUpdatedAt {
     private String password;
     @Column(length = 20, nullable = false)
     private String userId;
+    @OneToMany(targetEntity = Answer.class, mappedBy = "writer", fetch = FetchType.LAZY)
+    private final List<Answer> answers = new ArrayList<>();
+    @OneToMany(targetEntity = Question.class, mappedBy = "writer", fetch = FetchType.LAZY)
+    private final List<Question> questions = new ArrayList<>();
+    @OneToMany(targetEntity = DeleteHistory.class, mappedBy = "deletedBy", fetch = FetchType.LAZY)
+    private final List<DeleteHistory> deleteHistories = new ArrayList<>();
 
     public User(String userId, String password, String name, String email) {
         this(null, userId, password, name, email);
@@ -69,6 +77,18 @@ public class User extends BaseCreatedAndUpdatedAt {
                 email.equals(target.email);
     }
 
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+    }
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+    }
+
+    public void addDeleteHistory(DeleteHistory deleteHistory) {
+        deleteHistories.add(deleteHistory);
+    }
+
     public boolean isGuestUser() {
         return false;
     }
@@ -77,10 +97,13 @@ public class User extends BaseCreatedAndUpdatedAt {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", userId='" + userId + '\'' +
+                ", email=" + email +
+                ", name=" + name +
+                ", password=" + password +
+                ", userId=" + userId +
+                ", answers=" + answers +
+                ", questions=" + questions +
+                ", deleteHistories=" + deleteHistories +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

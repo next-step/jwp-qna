@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DataJpaTest
-public class AnswerTest {
+class AnswerTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -24,11 +24,14 @@ public class AnswerTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    public static final Answer A1 = new Answer(UserTest.JAVAJIGI, QuestionTest.Q1, "Answers Contents1");
-    public static final Answer A2 = new Answer(UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents2");
-
     @Test
     void save() {
+        final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
+        final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
+        final Answer A2 = new Answer(SANJIGI, Q2, "Answers Contents2");
         assertAll(
                 () -> assertDoesNotThrow(() -> answerRepository.save(A1)),
                 () -> assertDoesNotThrow(() -> answerRepository.save(A2))
@@ -64,7 +67,7 @@ public class AnswerTest {
             final List<Answer> foundAnswers =
                     answerRepository.findByQuestionIdAndDeletedFalse(savedQuestions.get(0).getId());
             assertAll(
-                    () -> assertThat(foundAnswers.size()).isEqualTo(1),
+                    () -> assertThat(foundAnswers).hasSize(1),
                     () -> assertThat(foundAnswers.stream().noneMatch(Answer::isDeleted)).isTrue()
             );
         }

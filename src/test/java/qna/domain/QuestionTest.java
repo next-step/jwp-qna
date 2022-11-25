@@ -16,17 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DataJpaTest
-public class QuestionTest {
+class QuestionTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private QuestionRepository questionRepository;
 
-    public static final Question Q1 = new Question("title1", "contents1").writeBy(UserTest.JAVAJIGI);
-    public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
-
     @Test
     void save() {
+        final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
+        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
         assertAll(
                 () -> assertDoesNotThrow(() -> questionRepository.save(Q1)),
                 () -> assertDoesNotThrow(() -> questionRepository.save(Q2))
@@ -54,8 +55,8 @@ public class QuestionTest {
         void findByDeletedFalse() {
             final List<Question> foundQuestions = questionRepository.findByDeletedFalse();
             assertAll(
-                    () -> assertThat(foundQuestions.size())
-                            .isEqualTo((int) savedQuestions.stream().filter(x -> !x.isDeleted()).count()),
+                    () -> assertThat(foundQuestions)
+                            .hasSize((int) savedQuestions.stream().filter(x -> !x.isDeleted()).count()),
                     () -> assertThat(foundQuestions.stream().noneMatch(Question::isDeleted)).isTrue()
             );
         }
