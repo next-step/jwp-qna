@@ -26,6 +26,26 @@ class QnaServiceTest {
     @Autowired
     private QnaService qnaService;
 
+    private User createUser(String userId, String password, String name, String email) {
+        final User user = new User(userId, password, name, email);
+        return userRepository.save(user);
+    }
+
+    private Question createQuestion(String title, String contents, User writer) {
+        final Question question = new Question(title, contents).writeBy(writer);
+        Question savedQuestion = questionRepository.save(question);
+        writer.addQuestion(savedQuestion);
+        return savedQuestion;
+    }
+
+    private Answer createAnswer(User writer, Question question, String contents) {
+        final Answer answer = new Answer(writer, question, "Answers Contents1");
+        Answer savedAnswer = answerRepository.save(answer);
+        writer.addAnswer(savedAnswer);
+        question.addAnswer(savedAnswer);
+        return savedAnswer;
+    }
+
     @Nested
     class delete_성공 {
         private User user1;
@@ -33,28 +53,14 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-            User savedUser1 = userRepository.save(user1);
+            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
 
-            final Question question1 = new Question("title1", "contents1").writeBy(savedUser1);
-            Question savedQuestion1 = questionRepository.save(question1);
-            savedUser1.addQuestion(savedQuestion1);
-            final Question question2 = new Question("title2", "contents2").writeBy(savedUser1);
-            Question savedQuestion2 = questionRepository.save(question2);
-            savedUser1.addQuestion(savedQuestion2);
+            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
+            Question savedQuestion2 = createQuestion("title2", "contents2", savedUser1);
 
-            final Answer answer1 = new Answer(savedUser1, savedQuestion1, "Answers Contents1");
-            Answer savedAnswer1 = answerRepository.save(answer1);
-            savedUser1.addAnswer(savedAnswer1);
-            savedQuestion1.addAnswer(savedAnswer1);
-            final Answer answer2 = new Answer(savedUser1, savedQuestion2, "Answers Contents2");
-            final Answer savedAnswer2 = answerRepository.save(answer2);
-            savedUser1.addAnswer(savedAnswer2);
-            savedQuestion2.addAnswer(savedAnswer2);
-            final Answer answer3 = new Answer(savedUser1, savedQuestion1, "Answers Contents1-2");
-            final Answer savedAnswer3 = answerRepository.save(answer3);
-            savedUser1.addAnswer(savedAnswer3);
-            savedQuestion1.addAnswer(savedAnswer3);
+            createAnswer(savedUser1, savedQuestion1, "Answers Contents1");
+            createAnswer(savedUser1, savedQuestion2, "Answers Contents2");
+            createAnswer(savedUser1, savedQuestion1, "Answers Contents1-2");
 
             this.user1 = userRepository.save(savedUser1);
             this.question1 = questionRepository.save(savedQuestion1);
@@ -89,16 +95,12 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-            User savedUser1 = userRepository.save(user1);
-            final User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-            User savedUser2 = userRepository.save(user2);
+            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
+            User savedUser2 = createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-            final Question question1 = new Question("title1", "contents1").writeBy(savedUser1);
-            Question savedQuestion1 = questionRepository.save(question1);
-            savedUser1.addQuestion(savedQuestion1);
+            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
 
-            savedUser1 = userRepository.save(savedUser1);
+            userRepository.save(savedUser1);
             this.user2 = savedUser2;
             this.question1 = savedQuestion1;
         }
@@ -127,17 +129,11 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-            User savedUser1 = userRepository.save(user1);
+            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
 
-            final Question question1 = new Question("title1", "contents1").writeBy(savedUser1);
-            Question savedQuestion1 = questionRepository.save(question1);
-            savedUser1.addQuestion(savedQuestion1);
+            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
 
-            final Answer answer1 = new Answer(savedUser1, savedQuestion1, "Answers Contents1");
-            Answer savedAnswer1 = answerRepository.save(answer1);
-            savedUser1.addAnswer(savedAnswer1);
-            savedQuestion1.addAnswer(savedAnswer1);
+            Answer savedAnswer1 = createAnswer(savedUser1, savedQuestion1, "Answers Contents1");
 
             this.user1 = userRepository.save(savedUser1);
             this.answer1 = answerRepository.save(savedAnswer1);
@@ -167,23 +163,13 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            final User user1 = new User("javajigi", "password", "name", "javajigi@slipp.net");
-            User savedUser1 = userRepository.save(user1);
-            final User user2 = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-            User savedUser2 = userRepository.save(user2);
+            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
+            User savedUser2 = createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-            final Question question1 = new Question("title1", "contents1").writeBy(savedUser1);
-            Question savedQuestion1 = questionRepository.save(question1);
-            savedUser1.addQuestion(savedQuestion1);
+            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
 
-            final Answer answer1 = new Answer(savedUser1, savedQuestion1, "Answers Contents By User 1");
-            Answer savedAnswer1 = answerRepository.save(answer1);
-            savedUser1.addAnswer(savedAnswer1);
-            savedQuestion1.addAnswer(savedAnswer1);
-            final Answer answer2 = new Answer(savedUser2, savedQuestion1, "Answers Contents By User 2");
-            Answer savedAnswer2 = answerRepository.save(answer2);
-            savedUser2.addAnswer(savedAnswer2);
-            savedQuestion1.addAnswer(savedAnswer2);
+            createAnswer(savedUser1, savedQuestion1, "Answers Contents By User 1");
+            createAnswer(savedUser2, savedQuestion1, "Answers Contents By User 2");
 
             this.user1 = userRepository.save(savedUser1);
             this.user2 = userRepository.save(savedUser2);
