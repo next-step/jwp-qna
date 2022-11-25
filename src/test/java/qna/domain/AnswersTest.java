@@ -1,10 +1,12 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qna.exception.CannotDeleteException;
 
 @DisplayName("Answer_List_일급객체_테스트")
 public class AnswersTest {
@@ -27,31 +29,20 @@ public class AnswersTest {
 
     @DisplayName("Answers_중에_User가_쓰지않은_것이_있으면_성공")
     @Test
-    void isNotWrittenUserInAnswersPass() {
+    void deleteAllPass() throws CannotDeleteException {
         Answers answers = new Answers();
         answers.add(answer1);
-        answers.add(answer2);
 
-        assertThat(answers.isNotWrittenUserInAnswers(UserTest.SANJIGI)).isTrue();
+        assertThat(answers.deleteAll(UserTest.JAVAJIGI).getDeleteHistories().size()).isEqualTo(1);
     }
 
-    @DisplayName("Answers_중에_User가_쓰지않은_것이_있으면_실패")
+    @DisplayName("Answers_중에_User가_쓰지않은_것이_있으면_에러발생")
     @Test
-    void isNotWrittenUserInAnswersFail() {
-        Answers answers = new Answers();
-        answers.add(answer1);
-
-        assertThat(answers.isNotWrittenUserInAnswers(UserTest.JAVAJIGI)).isFalse();
-    }
-
-    @DisplayName("전체_삭제_테스트")
-    void deleteAll() {
+    void deleteAllFail() {
         Answers answers = new Answers();
         answers.add(answer1);
         answers.add(answer2);
-
-        DeleteHistories deleteHistories = answers.deleteAll();
-
-        assertThat(deleteHistories.getDeleteHistories().size()).isEqualTo(2);
+        assertThatThrownBy(() -> answers.deleteAll(UserTest.SANJIGI))
+                .isInstanceOf(CannotDeleteException.class);
     }
 }

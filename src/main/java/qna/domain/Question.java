@@ -90,8 +90,7 @@ public class Question extends BaseTimeEntity {
 
     public List<DeleteHistory> deleteQuestion(final User loginUser) throws CannotDeleteException {
         validateDeleteQuestion(loginUser);
-        validateDeleteAnswers(loginUser);
-        return deleteAllAndGetDeleteHistories();
+        return deleteAllAndGetDeleteHistories(loginUser);
     }
 
     private void validateDeleteQuestion(final User loginUser) throws CannotDeleteException {
@@ -100,18 +99,11 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    private void validateDeleteAnswers(final User loginUser) throws CannotDeleteException {
-        if (answers.isNotWrittenUserInAnswers(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 작성한 답변이 있어서 질문을 삭제할 수 없습니다.");
-        }
-    }
-
-    private List<DeleteHistory> deleteAllAndGetDeleteHistories() {
+    private List<DeleteHistory> deleteAllAndGetDeleteHistories(final User loginUser) throws CannotDeleteException {
         DeleteHistories deleteHistories = new DeleteHistories();
+        answers.deleteAll(loginUser).getDeleteHistories().forEach(deleteHistories::add);
         setDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
-
-        answers.deleteAll().getDeleteHistories().forEach(deleteHistories::add);
 
         return deleteHistories.getDeleteHistories();
     }
