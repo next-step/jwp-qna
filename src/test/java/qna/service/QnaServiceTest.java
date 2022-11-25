@@ -158,7 +158,6 @@ class QnaServiceTest {
     @Nested
     class delete_답변_중_다른_사람이_쓴_글 {
         private User user1;
-        private User user2;
         private Question question1;
 
         @BeforeEach
@@ -172,7 +171,7 @@ class QnaServiceTest {
             createAnswer(savedUser2, savedQuestion1, "Answers Contents By User 2");
 
             this.user1 = userRepository.save(savedUser1);
-            this.user2 = userRepository.save(savedUser2);
+            userRepository.save(savedUser2);
             this.question1 = questionRepository.save(savedQuestion1);
         }
 
