@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.exceptions.CannotDeleteException;
 import qna.helper.QuestionHelper;
 import qna.helper.UserHelper;
 
@@ -14,8 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class QuestionTest {
@@ -75,6 +75,63 @@ class QuestionTest {
                     () -> assertThat(foundQuestion.getId()).isEqualTo(savedQuestions.get(0).getId()),
                     () -> assertThat(foundQuestion.isDeleted()).isFalse()
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("delete 메서드 테스트")
+    class DeleteMethod {
+        @Nested
+        @DisplayName("성공하는 경우")
+        class Success {
+            private User user1;
+            private Question question1;
+
+            @BeforeEach
+            void setup() {
+                final UserHelper userHelper = new UserHelper(userRepository);
+                User user1 = userHelper.createUser("hahaha", "pwd", "name 1", "user-1@email.com");
+
+                final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+                Question question1 = questionHelper.createQuestion("title 1", "contents of a question", user1);
+
+                this.user1 = userRepository.save(user1);
+                this.question1 = questionRepository.save(question1);
+            }
+
+            @Test
+            void success() throws CannotDeleteException {
+                assertDoesNotThrow(() -> {
+                    final Question.DeleteResultDto deleteResultDto = question1.delete(user1);
+                    questionRepository.save(deleteResultDto.getQuestion());
+                });
+            }
+        }
+
+        @Nested
+        @DisplayName("Question 만들지 않은 사람이 삭제 시도하면 실패")
+        class FailureDeleteByAnotherUser {
+            private User user2;
+            private Question question1;
+
+            @BeforeEach
+            void setup() {
+                final UserHelper userHelper = new UserHelper(userRepository);
+                User user1 = userHelper.createUser("hahaha", "pwd", "name 1", "user-1@email.com");
+                User user2 = userHelper.createUser("hihihi", "pwd", "name 2", "user-2@email.com");
+
+                final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+                Question question1 = questionHelper.createQuestion("title 1", "contents of a question", user1);
+
+                userRepository.save(user1);
+                this.user2 = userRepository.save(user2);
+                this.question1 = questionRepository.save(question1);
+            }
+
+            @Test
+            void failure() {
+                assertThrows(CannotDeleteException.class, () -> question1.delete(user2));
+            }
         }
     }
 }
