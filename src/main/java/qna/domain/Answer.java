@@ -3,6 +3,7 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import qna.exceptions.CannotDeleteException;
 import qna.exceptions.NotFoundException;
 import qna.exceptions.UnAuthorizedException;
 
@@ -63,6 +64,13 @@ public class Answer extends BaseCreatedAndUpdatedAt {
     public Answer setDeleted(boolean deleted) {
         this.deleted = deleted;
         return this;
+    }
+
+    public void delete(User loginUser) throws CannotDeleteException {
+        if (writer != loginUser) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        setDeleted(true);
     }
 
     @Override

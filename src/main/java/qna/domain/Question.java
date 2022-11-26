@@ -1,8 +1,10 @@
 package qna.domain;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import qna.exceptions.CannotDeleteException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -59,6 +61,31 @@ public class Question extends BaseCreatedAndUpdatedAt {
     public Question setDeleted(boolean deleted) {
         this.deleted = deleted;
         return this;
+    }
+
+    public DeleteResultDto delete(User loginUser) throws CannotDeleteException {
+        if (writer != loginUser) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        for (final Answer answer : answers) {
+            answer.delete(loginUser);
+        }
+        setDeleted(true);
+        return new DeleteResultDto(this, answers);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class DeleteResultDto {
+        private final Question question;
+        private final List<Answer> answers;
+    }
+
+    public List<DeleteHistory> getDeleteHistories(User loginUser) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>(1 + answers.size());
+        deleteHistories.add(new DeleteHistory(id, ContentType.QUESTION, loginUser));
+        answers.forEach(answer -> deleteHistories.add(new DeleteHistory(answer.getId(), ContentType.ANSWER, loginUser)));
+        return deleteHistories;
     }
 
     @Override
