@@ -9,6 +9,7 @@ import qna.exceptions.CannotDeleteException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -64,21 +65,15 @@ public class Question extends BaseCreatedAndUpdatedAt {
     }
 
     public DeleteResultDto delete(User loginUser) throws CannotDeleteException {
-        if (writer != loginUser) {
+        if (!Objects.equals(writer.getId(), loginUser.getId())) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
         for (final Answer answer : answers) {
             answer.delete(loginUser);
         }
         setDeleted(true);
-        return new DeleteResultDto(this, answers);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class DeleteResultDto {
-        private final Question question;
-        private final List<Answer> answers;
+        final List<DeleteHistory> deleteHistories = getDeleteHistories(loginUser);
+        return new DeleteResultDto(this, answers, deleteHistories);
     }
 
     public List<DeleteHistory> getDeleteHistories(User loginUser) {
@@ -86,6 +81,14 @@ public class Question extends BaseCreatedAndUpdatedAt {
         deleteHistories.add(new DeleteHistory(id, ContentType.QUESTION, loginUser));
         answers.forEach(answer -> deleteHistories.add(new DeleteHistory(answer.getId(), ContentType.ANSWER, loginUser)));
         return deleteHistories;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class DeleteResultDto {
+        private final Question question;
+        private final List<Answer> answers;
+        private final List<DeleteHistory> deleteHistories;
     }
 
     @Override
