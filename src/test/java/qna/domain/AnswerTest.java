@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.helper.AnswerHelper;
+import qna.helper.QuestionHelper;
+import qna.helper.UserHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,12 +29,18 @@ class AnswerTest {
 
     @Test
     void save() {
-        final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
-        final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-        final Answer A2 = new Answer(SANJIGI, Q2, "Answers Contents2");
+        final UserHelper userHelper = new UserHelper(userRepository);
+        final User JAVAJIGI = userHelper.createUser("javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = userHelper.createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+        final Question Q1 = questionHelper.createQuestion("title1", "contents1", JAVAJIGI);
+        final Question Q2 = questionHelper.createQuestion("title2", "contents2", SANJIGI);
+
+        final AnswerHelper answerHelper = new AnswerHelper(answerRepository);
+        final Answer A1 = answerHelper.createAnswer(JAVAJIGI, Q1, "Answers Contents1");
+        final Answer A2 = answerHelper.createAnswer(SANJIGI, Q2, "Answers Contents2");
+
         assertAll(
                 () -> assertDoesNotThrow(() -> answerRepository.save(A1)),
                 () -> assertDoesNotThrow(() -> answerRepository.save(A2))
@@ -46,18 +55,17 @@ class AnswerTest {
 
         @BeforeEach
         void setup() {
-            final User user = new User("ndka134yg", "1234", "사용자 1", "user-1@email.com");
-            final User savedUser = userRepository.save(user);
+            final User savedUser = new UserHelper(userRepository)
+                    .createUser("ndka134yg", "1234", "사용자 1", "user-1@email.com");
             final List<Question> questions = new ArrayList<>(Arrays.asList(
                     new Question("question title 1", "question content 1").writeBy(savedUser),
-                    new Question("question title 2", "question content 2").writeBy(savedUser),
-                    new Question("question title 3", "question content 3").writeBy(savedUser).setDeleted(true)
+                    new Question("question title 2", "question content 2").writeBy(savedUser)
             ));
             savedQuestions = questionRepository.saveAll(questions);
             final List<Answer> answers = new ArrayList<>(Arrays.asList(
-                    new Answer(user, questions.get(0), "answer content 1"),
-                    new Answer(user, questions.get(1), "answer content 2"),
-                    new Answer(user, questions.get(0), "answer content 3").setDeleted(true)
+                    new Answer(savedUser, questions.get(0), "answer content 1"),
+                    new Answer(savedUser, questions.get(1), "answer content 2"),
+                    new Answer(savedUser, questions.get(0), "answer content 3").setDeleted(true)
             ));
             savedAnswers = answerRepository.saveAll(answers);
         }

@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import qna.exceptions.CannotDeleteException;
 import qna.domain.*;
+import qna.helper.AnswerHelper;
+import qna.helper.QuestionHelper;
+import qna.helper.UserHelper;
 
 import java.util.List;
 
@@ -26,26 +29,6 @@ class QnaServiceTest {
     @Autowired
     private QnaService qnaService;
 
-    private User createUser(String userId, String password, String name, String email) {
-        final User user = new User(userId, password, name, email);
-        return userRepository.save(user);
-    }
-
-    private Question createQuestion(String title, String contents, User writer) {
-        final Question question = new Question(title, contents).writeBy(writer);
-        Question savedQuestion = questionRepository.save(question);
-        writer.addQuestion(savedQuestion);
-        return savedQuestion;
-    }
-
-    private Answer createAnswer(User writer, Question question, String contents) {
-        final Answer answer = new Answer(writer, question, "Answers Contents1");
-        Answer savedAnswer = answerRepository.save(answer);
-        writer.addAnswer(savedAnswer);
-        question.addAnswer(savedAnswer);
-        return savedAnswer;
-    }
-
     @Nested
     class delete_성공 {
         private User user1;
@@ -53,14 +36,17 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
+            User savedUser1 = new UserHelper(userRepository)
+                    .createUser("javajigi", "password", "name", "javajigi@slipp.net");
 
-            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
-            Question savedQuestion2 = createQuestion("title2", "contents2", savedUser1);
+            final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+            Question savedQuestion1 = questionHelper.createQuestion("title1", "contents1", savedUser1);
+            Question savedQuestion2 = questionHelper.createQuestion("title2", "contents2", savedUser1);
 
-            createAnswer(savedUser1, savedQuestion1, "Answers Contents1");
-            createAnswer(savedUser1, savedQuestion2, "Answers Contents2");
-            createAnswer(savedUser1, savedQuestion1, "Answers Contents1-2");
+            final AnswerHelper answerHelper = new AnswerHelper(answerRepository);
+            answerHelper.createAnswer(savedUser1, savedQuestion1, "Answers Contents1");
+            answerHelper.createAnswer(savedUser1, savedQuestion2, "Answers Contents2");
+            answerHelper.createAnswer(savedUser1, savedQuestion1, "Answers Contents1-2");
 
             this.user1 = userRepository.save(savedUser1);
             this.question1 = questionRepository.save(savedQuestion1);
@@ -95,10 +81,12 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
-            User savedUser2 = createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
+            final UserHelper userHelper = new UserHelper(userRepository);
+            User savedUser1 = userHelper.createUser("javajigi", "password", "name", "javajigi@slipp.net");
+            User savedUser2 = userHelper.createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
+            Question savedQuestion1 = new QuestionHelper(questionRepository)
+                    .createQuestion("title1", "contents1", savedUser1);
 
             userRepository.save(savedUser1);
             this.user2 = savedUser2;
@@ -129,11 +117,14 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
+            User savedUser1 = new UserHelper(userRepository)
+                    .createUser("javajigi", "password", "name", "javajigi@slipp.net");
 
-            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
+            Question savedQuestion1 = new QuestionHelper(questionRepository)
+                    .createQuestion("title1", "contents1", savedUser1);
 
-            Answer savedAnswer1 = createAnswer(savedUser1, savedQuestion1, "Answers Contents1");
+            Answer savedAnswer1 = new AnswerHelper(answerRepository)
+                    .createAnswer(savedUser1, savedQuestion1, "Answers Contents1");
 
             this.user1 = userRepository.save(savedUser1);
             this.answer1 = answerRepository.save(savedAnswer1);
@@ -162,13 +153,16 @@ class QnaServiceTest {
 
         @BeforeEach
         void setup() {
-            User savedUser1 = createUser("javajigi", "password", "name", "javajigi@slipp.net");
-            User savedUser2 = createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
+            final UserHelper userHelper = new UserHelper(userRepository);
+            User savedUser1 = userHelper.createUser("javajigi", "password", "name", "javajigi@slipp.net");
+            User savedUser2 = userHelper.createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
 
-            Question savedQuestion1 = createQuestion("title1", "contents1", savedUser1);
+            Question savedQuestion1 = new QuestionHelper(questionRepository)
+                    .createQuestion("title1", "contents1", savedUser1);
 
-            createAnswer(savedUser1, savedQuestion1, "Answers Contents By User 1");
-            createAnswer(savedUser2, savedQuestion1, "Answers Contents By User 2");
+            final AnswerHelper answerHelper = new AnswerHelper(answerRepository);
+            answerHelper.createAnswer(savedUser1, savedQuestion1, "Answers Contents By User 1");
+            answerHelper.createAnswer(savedUser2, savedQuestion1, "Answers Contents By User 2");
 
             this.user1 = userRepository.save(savedUser1);
             userRepository.save(savedUser2);
