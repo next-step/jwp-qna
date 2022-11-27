@@ -91,6 +91,15 @@ public class AnswerRepositoryTest {
         assertThat(actual).isEqualTo(answer);
     }
 
+    @Test
+    void 답변삭제시_상태변경() {
+        Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+        answer.delete(user);
+        flushAndClear();
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
+    }
+
     private void flushAndClear() {
         testEntityManager.flush();
         testEntityManager.clear();
