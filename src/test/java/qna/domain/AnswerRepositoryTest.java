@@ -107,7 +107,8 @@ public class AnswerRepositoryTest {
         User sanjigi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
         Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
         assertThatThrownBy(() -> answer.delete(sanjigi))
-                .isInstanceOf(CannotDeleteException.class);
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("답변을 삭제할 권한이 없습니다.");
     }
 
     private void flushAndClear() {
