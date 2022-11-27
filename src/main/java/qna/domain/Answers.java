@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.stream.Collectors;
 import qna.CannotDeleteException;
 
 import javax.persistence.CascadeType;
@@ -17,14 +18,10 @@ public class Answers {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
-
-    public List<Answer> getAnswers() {
-        return answers;
-    }
-
     public void addAnswer(Answer answer) {
         answers.add(answer);
     }
+
 
     public List<DeleteHistory> deleteAnswers(User writer) throws CannotDeleteException {
         List<DeleteHistory> deleteHistoryList = new ArrayList<>();
@@ -32,9 +29,7 @@ public class Answers {
         for (Answer answer : answers) {
             deleteHistoryList.add(answer.delete(writer));
         }
-        for(int i=0;i<deleteHistoryList.size();i++){
-            System.out.println("zzzz"+deleteHistoryList.get(i));
-        }
+
         return deleteHistoryList;
     }
 

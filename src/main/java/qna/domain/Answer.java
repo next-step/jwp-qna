@@ -82,23 +82,19 @@ public class Answer extends BaseEntity {
         return deleteAnswer();
     }
 
-    private DeleteHistory deleteAnswer() {
-        this.deleted();
+    public DeleteHistory deleteAnswer() {
+        deleted = true;
         return DeleteHistory.ofAnswer(id, writer);
     }
 
-    private void deleted() {
-        deleted = true;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     private void validateOwner(User questionWriter) throws CannotDeleteException {
         if (!isOwner(questionWriter)) {
             throw new CannotDeleteException("질문에 다른 답변 작성자가 있는 경우 삭제 할 수 없습니다.");
         }
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

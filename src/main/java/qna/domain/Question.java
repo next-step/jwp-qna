@@ -48,7 +48,7 @@ public class Question extends BaseEntity {
 
     public void addAnswer(Answer answer) {
         answers.addAnswer(answer);
-        answer.toQuestion(this);
+        //answer.toQuestion(this);
     }
 
     public void clearAnswers() {
@@ -104,7 +104,7 @@ public class Question extends BaseEntity {
     }
 
     public void deleted() {
-        this.deleted = true;
+        deleted = true;
     }
 
     @Override
