@@ -4,6 +4,7 @@ import qna.CannotDeleteException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,7 +21,8 @@ public class Question extends BaseTimeEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-
+    @Embedded
+    private final Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -45,6 +47,7 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
     }
 
@@ -54,6 +57,12 @@ public class Question extends BaseTimeEntity {
         }
         this.deleted = true;
         return new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now());
+    }
+
+    public List<DeleteHistory> deleteWithAnswers(User loginUser) {
+        List<DeleteHistory> deleteHistories = answers.deleteAll(loginUser);
+        deleteHistories.add(this.delete(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -120,8 +129,5 @@ public class Question extends BaseTimeEntity {
         return Objects.hash(id);
     }
 
-//    public List<DeleteHistory> deleteWithAnswers(User loginUser) {
-//        List<DeleteHistory> deleteHistories = answers.deleteAll(user);
-//        deleteHistories.add(this.delete(user));
-//    }
+
 }
