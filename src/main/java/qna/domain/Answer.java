@@ -65,6 +65,14 @@ public class Answer extends BaseCreatedAndUpdatedAt {
         return this;
     }
 
+    public DeleteHistory delete(User loginUser) {
+        if (!Objects.equals(writer.getId(), loginUser.getId())) {
+            throw new IllegalArgumentException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        setDeleted(true);
+        return new DeleteHistory(id, ContentType.ANSWER, loginUser);
+    }
+
     @Override
     public String toString() {
         return "Answer{" +

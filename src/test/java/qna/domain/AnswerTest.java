@@ -6,14 +6,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.helper.AnswerHelper;
+import qna.helper.QuestionHelper;
+import qna.helper.UserHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class AnswerTest {
@@ -26,12 +28,18 @@ class AnswerTest {
 
     @Test
     void save() {
-        final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
-        final Question Q1 = new Question("title1", "contents1").writeBy(JAVAJIGI);
-        final Question Q2 = new Question("title2", "contents2").writeBy(SANJIGI);
-        final Answer A1 = new Answer(JAVAJIGI, Q1, "Answers Contents1");
-        final Answer A2 = new Answer(SANJIGI, Q2, "Answers Contents2");
+        final UserHelper userHelper = new UserHelper(userRepository);
+        final User JAVAJIGI = userHelper.createUser("javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = userHelper.createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
+
+        final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+        final Question Q1 = questionHelper.createQuestion("title1", "contents1", JAVAJIGI);
+        final Question Q2 = questionHelper.createQuestion("title2", "contents2", SANJIGI);
+
+        final AnswerHelper answerHelper = new AnswerHelper(answerRepository);
+        final Answer A1 = answerHelper.createAnswer(JAVAJIGI, Q1, "Answers Contents1");
+        final Answer A2 = answerHelper.createAnswer(SANJIGI, Q2, "Answers Contents2");
+
         assertAll(
                 () -> assertDoesNotThrow(() -> answerRepository.save(A1)),
                 () -> assertDoesNotThrow(() -> answerRepository.save(A2))
@@ -46,18 +54,17 @@ class AnswerTest {
 
         @BeforeEach
         void setup() {
-            final User user = new User("ndka134yg", "1234", "사용자 1", "user-1@email.com");
-            final User savedUser = userRepository.save(user);
+            final User savedUser = new UserHelper(userRepository)
+                    .createUser("ndka134yg", "1234", "사용자 1", "user-1@email.com");
             final List<Question> questions = new ArrayList<>(Arrays.asList(
                     new Question("question title 1", "question content 1").writeBy(savedUser),
-                    new Question("question title 2", "question content 2").writeBy(savedUser),
-                    new Question("question title 3", "question content 3").writeBy(savedUser).setDeleted(true)
+                    new Question("question title 2", "question content 2").writeBy(savedUser)
             ));
             savedQuestions = questionRepository.saveAll(questions);
             final List<Answer> answers = new ArrayList<>(Arrays.asList(
-                    new Answer(user, questions.get(0), "answer content 1"),
-                    new Answer(user, questions.get(1), "answer content 2"),
-                    new Answer(user, questions.get(0), "answer content 3").setDeleted(true)
+                    new Answer(savedUser, questions.get(0), "answer content 1"),
+                    new Answer(savedUser, questions.get(1), "answer content 2"),
+                    new Answer(savedUser, questions.get(0), "answer content 3").setDeleted(true)
             ));
             savedAnswers = answerRepository.saveAll(answers);
         }
@@ -79,6 +86,68 @@ class AnswerTest {
                     () -> assertThat(foundAnswer.getId()).isEqualTo(savedAnswers.get(0).getId()),
                     () -> assertThat(foundAnswer.isDeleted()).isFalse()
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("delete 메서드 테스트")
+    class DeleteMethod {
+        @Nested
+        @DisplayName("성공하는 경우")
+        class Success {
+            private User user1;
+            private Answer answer;
+
+            @BeforeEach
+            void setup() {
+                final UserHelper userHelper = new UserHelper(userRepository);
+                User user1 = userHelper.createUser("hahaha", "pwd", "name 1", "user-1@email.com");
+
+                final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+                Question question1 = questionHelper.createQuestion("title 1", "contents of a question", user1);
+
+                final AnswerHelper answerHelper = new AnswerHelper(answerRepository);
+                Answer answer1 = answerHelper.createAnswer(user1, question1, "answer 1");
+
+                this.user1 = userRepository.save(user1);
+                questionRepository.save(question1);
+                this.answer = answerRepository.save(answer1);
+            }
+
+            @Test
+            void success() {
+                assertDoesNotThrow(() -> answer.delete(user1));
+            }
+        }
+
+        @Nested
+        @DisplayName("Answer 만들지 않은 사람이 삭제 시도하면 실패")
+        class FailureDeleteByAnotherUser {
+            private User user2;
+            private Answer answer;
+
+            @BeforeEach
+            void setup() {
+                final UserHelper userHelper = new UserHelper(userRepository);
+                User user1 = userHelper.createUser("hahaha", "pwd", "name 1", "user-1@email.com");
+                User user2 = userHelper.createUser("hihihi", "pwd", "name 2", "user-2@email.com");
+
+                final QuestionHelper questionHelper = new QuestionHelper(questionRepository);
+                Question question1 = questionHelper.createQuestion("title 1", "contents of a question", user1);
+
+                final AnswerHelper answerHelper = new AnswerHelper(answerRepository);
+                Answer answer1 = answerHelper.createAnswer(user1, question1, "answer 1");
+
+                userRepository.save(user1);
+                this.user2 = userRepository.save(user2);
+                questionRepository.save(question1);
+                this.answer = answerRepository.save(answer1);
+            }
+
+            @Test
+            void failure() {
+                assertThrows(IllegalArgumentException.class, () -> answer.delete(user2));
+            }
         }
     }
 }

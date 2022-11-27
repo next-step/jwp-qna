@@ -3,6 +3,7 @@ package qna.domain;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import qna.helper.UserHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,8 +16,9 @@ class UserTest {
 
     @Test
     void save() {
-        final User JAVAJIGI = new User("javajigi", "password", "name", "javajigi@slipp.net");
-        final User SANJIGI = new User("sanjigi", "password", "name", "sanjigi@slipp.net");
+        final UserHelper userHelper = new UserHelper(userRepository);
+        final User JAVAJIGI = userHelper.createUser("javajigi", "password", "name", "javajigi@slipp.net");
+        final User SANJIGI = userHelper.createUser("sanjigi", "password", "name", "sanjigi@slipp.net");
         assertAll(
                 () -> assertDoesNotThrow(() -> userRepository.save(JAVAJIGI)),
                 () -> assertDoesNotThrow(() -> userRepository.save(SANJIGI))
@@ -25,8 +27,8 @@ class UserTest {
 
     @Test
     void findByUserId() {
-        final User user = new User("ndka134yg", "1234", "사용자 1", "user-1@email.com");
-        final User savedUser = userRepository.save(user);
+        final User savedUser = new UserHelper(userRepository)
+                .createUser("ndka134yg", "1234", "사용자 1", "user-1@email.com");
 
         final User foundUser = userRepository.findByUserId(savedUser.getUserId()).get();
         assertAll(

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "question")
@@ -59,6 +60,19 @@ public class Question extends BaseCreatedAndUpdatedAt {
     public Question setDeleted(boolean deleted) {
         this.deleted = deleted;
         return this;
+    }
+
+    public List<DeleteHistory> delete(User loginUser) {
+        if (!Objects.equals(writer.getId(), loginUser.getId())) {
+            throw new IllegalArgumentException("질문을 삭제할 권한이 없습니다.");
+        }
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
+        for (final Answer answer : answers) {
+            deleteHistories.add(answer.delete(loginUser));
+        }
+        setDeleted(true);
+        deleteHistories.add(new DeleteHistory(id, ContentType.QUESTION, loginUser));
+        return deleteHistories;
     }
 
     @Override
