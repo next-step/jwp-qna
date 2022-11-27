@@ -43,12 +43,11 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
         answers.addAnswer(answer);
-        //answer.toQuestion(this);
     }
 
     public void clearAnswers() {
@@ -75,37 +74,35 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-        deleteQuestion(writer, deleteHistoryList);
-        deleteAnswerList(writer, deleteHistoryList);
+        validateQuestionOwner(writer);
+        validateAnswersOwner(writer);
 
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteQuestion(deleteHistoryList);
+        deleteAnswers(deleteHistoryList);
         return deleteHistoryList;
     }
 
-    private void deleteQuestion(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
-        validateOwner(writer);
-        deleted();
-        deleteHistoryList.add(DeleteHistory.ofQuestion(id, writer));
-    }
-
-    private void validateOwner(User writer) throws CannotDeleteException {
+    private void validateQuestionOwner(User writer) throws CannotDeleteException {
         if (!isOwner(writer)) {
             throw new CannotDeleteException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
         }
     }
 
-    private void deleteAnswerList(User writer, List<DeleteHistory> deleteHistoryList) throws CannotDeleteException {
-        deleteHistoryList.addAll(answers.deleteAnswers(writer));
+    private void validateAnswersOwner(User writer) throws CannotDeleteException {
+        answers.validateAnswersWriter(writer);
     }
 
-    public void deleted() {
+    private void deleteQuestion(List<DeleteHistory> deleteHistoryList) {
         deleted = true;
+        deleteHistoryList.add(DeleteHistory.ofQuestion(this));
     }
+
+    private void deleteAnswers(List<DeleteHistory> deleteHistoryList) {
+        deleteHistoryList.addAll(answers.delete());
+    }
+
 
     @Override
     public String toString() {

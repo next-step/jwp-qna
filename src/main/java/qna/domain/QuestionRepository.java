@@ -8,5 +8,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByDeletedFalse();
 
+    List<Question> findByDeletedTrue();
+
     Optional<Question> findByIdAndDeletedFalse(Long id);
 }

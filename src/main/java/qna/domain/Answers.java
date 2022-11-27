@@ -22,15 +22,16 @@ public class Answers {
         answers.add(answer);
     }
 
-
-    public List<DeleteHistory> deleteAnswers(User writer) throws CannotDeleteException {
-        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
-
-        for (Answer answer : answers) {
-            deleteHistoryList.add(answer.delete(writer));
+    public void validateAnswersWriter(User writer) throws CannotDeleteException {
+        if (answers.stream().anyMatch(answer -> !answer.isOwner(writer))) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있는 경우 삭제할 수 없습니다");
         }
+    }
 
-        return deleteHistoryList;
+    public List<DeleteHistory> delete() {
+        return answers.stream()
+            .map(answer -> answer.deleteAnswer())
+            .collect(Collectors.toList());
     }
 
     public void clear() {

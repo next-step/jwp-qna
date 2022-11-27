@@ -15,11 +15,14 @@ public class QuestionTest {
     public static final Question Q2 = new Question("title2", "contents2").writeBy(UserTest.SANJIGI);
 
     private Question question;
+    private User user;
+    private Answer answer;
 
     @BeforeEach
     void setup() {
-        question = Q1.writeBy(UserTest.JAVAJIGI);
-        question.clearAnswers();
+        user = new User(null, "userId", "passwrod", "name", "email");
+        question = new Question("title", "content").writeBy(user);
+        answer = new Answer(null, user, question, "contents");
     }
 
     @Test
@@ -32,10 +35,9 @@ public class QuestionTest {
     @Test
     @DisplayName("질문자가 같은 경우 삭제 가능")
     public void question_delete() throws CannotDeleteException {
-        Question question1 = Q1.writeBy(UserTest.JAVAJIGI);
-        question1.delete(UserTest.JAVAJIGI);
+        question.delete(user);
 
-        assertThat(question1.isDeleted()).isTrue();
+        assertThat(question.isDeleted()).isTrue();
     }
 
     @Test
@@ -49,8 +51,8 @@ public class QuestionTest {
     @Test
     @DisplayName("질문에 답변이 있을 때 질문자와 답변자가 같은 경우 모두 삭제")
     public void delete() throws CannotDeleteException {
-        question.addAnswer(AnswerTest.A1);
-        List<DeleteHistory> deleteHistoryList = question.delete(UserTest.JAVAJIGI);
+        question.addAnswer(answer);
+        List<DeleteHistory> deleteHistoryList = question.delete(user);
         assertThat(deleteHistoryList.size()).isEqualTo(2);
     }
 }
