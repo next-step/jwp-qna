@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -98,6 +100,14 @@ public class AnswerRepositoryTest {
         flushAndClear();
         Answer actual = answerRepository.findById(answer.getId()).get();
         assertThat(actual.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 다른유저_답변삭제시_에러() {
+        User sanjigi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+        assertThatThrownBy(() -> answer.delete(sanjigi))
+                .isInstanceOf(CannotDeleteException.class);
     }
 
     private void flushAndClear() {
