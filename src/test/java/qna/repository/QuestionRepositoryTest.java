@@ -39,9 +39,8 @@ public class QuestionRepositoryTest {
         user1 = userRepository.save(new User("iamsojung1", "password1", "sojung1", "email1@gmail.com"));
         question = questionRepository.save(new Question("title", "contents").writeBy(user));
         question1 = questionRepository.save(new Question("title1", "contents1").writeBy(user1));
-
     }
-
+    
     @Test
     @DisplayName("save 검증 테스트")
     void saveTest() {

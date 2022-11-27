@@ -11,6 +11,7 @@
 * [x] DeleteHistory 클래스 작성, DeleteHistoryRepository 테스트 작성
 * [x] Question 클래스 작성, QuestionRepository 테스트 작성
 * [x] User 클래스 작성, UserRepository 테스트 작성
+
 ## 2단계 - 연관 관계 매핑
 #### 기능 요구사항
 * [x] Answer - Question 연관 관계 매핑

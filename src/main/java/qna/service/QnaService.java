@@ -17,9 +17,9 @@ import java.util.List;
 public class QnaService {
     private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
     private AnswerRepository answerRepository;
-    private DeleteHistoryService deleteHistoryService;
+    private final DeleteHistoryService deleteHistoryService;
 
     public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
         this.questionRepository = questionRepository;

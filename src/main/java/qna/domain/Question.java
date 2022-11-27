@@ -57,7 +57,6 @@ public class Question extends BaseEntity {
     public Long getId() {
         return id;
     }
-
     public String getTitle() {
         return title;
     }
@@ -102,7 +101,6 @@ public class Question extends BaseEntity {
     private void deleteAnswers(List<DeleteHistory> deleteHistoryList) {
         deleteHistoryList.addAll(answers.delete());
     }
-
 
     @Override
     public String toString() {
