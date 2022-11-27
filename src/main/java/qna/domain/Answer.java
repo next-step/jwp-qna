@@ -3,7 +3,6 @@ package qna.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.exceptions.CannotDeleteException;
 import qna.exceptions.NotFoundException;
 import qna.exceptions.UnAuthorizedException;
 
@@ -66,11 +65,12 @@ public class Answer extends BaseCreatedAndUpdatedAt {
         return this;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public DeleteHistory delete(User loginUser) {
         if (!Objects.equals(writer.getId(), loginUser.getId())) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            throw new IllegalArgumentException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
         setDeleted(true);
+        return new DeleteHistory(id, ContentType.ANSWER, loginUser);
     }
 
     @Override

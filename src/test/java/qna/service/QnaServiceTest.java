@@ -105,7 +105,7 @@ class QnaServiceTest {
 
             // act - assert
             assertThatThrownBy(() -> qnaService.deleteQuestion(otherWriter, questionToCheck.getId()))
-                    .isInstanceOf(CannotDeleteException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -172,7 +172,7 @@ class QnaServiceTest {
         @Test
         void fail() {
             assertThatThrownBy(() -> qnaService.deleteQuestion(user1, question1.getId()))
-                    .isInstanceOf(CannotDeleteException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

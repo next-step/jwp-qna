@@ -1,10 +1,8 @@
 package qna.domain;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.exceptions.CannotDeleteException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -64,31 +62,17 @@ public class Question extends BaseCreatedAndUpdatedAt {
         return this;
     }
 
-    public DeleteResultDto delete(User loginUser) throws CannotDeleteException {
+    public List<DeleteHistory> delete(User loginUser) {
         if (!Objects.equals(writer.getId(), loginUser.getId())) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+            throw new IllegalArgumentException("질문을 삭제할 권한이 없습니다.");
         }
+        final List<DeleteHistory> deleteHistories = new ArrayList<>();
         for (final Answer answer : answers) {
-            answer.delete(loginUser);
+            deleteHistories.add(answer.delete(loginUser));
         }
         setDeleted(true);
-        final List<DeleteHistory> deleteHistories = getDeleteHistories(loginUser);
-        return new DeleteResultDto(this, answers, deleteHistories);
-    }
-
-    public List<DeleteHistory> getDeleteHistories(User loginUser) {
-        List<DeleteHistory> deleteHistories = new ArrayList<>(1 + answers.size());
         deleteHistories.add(new DeleteHistory(id, ContentType.QUESTION, loginUser));
-        answers.forEach(answer -> deleteHistories.add(new DeleteHistory(answer.getId(), ContentType.ANSWER, loginUser)));
         return deleteHistories;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class DeleteResultDto {
-        private final Question question;
-        private final List<Answer> answers;
-        private final List<DeleteHistory> deleteHistories;
     }
 
     @Override

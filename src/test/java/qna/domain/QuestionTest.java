@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import qna.exceptions.CannotDeleteException;
 import qna.helper.QuestionHelper;
 import qna.helper.UserHelper;
 
@@ -23,6 +22,8 @@ class QuestionTest {
     private UserRepository userRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @Test
     void save() {
@@ -100,10 +101,10 @@ class QuestionTest {
             }
 
             @Test
-            void success() throws CannotDeleteException {
+            void success() {
                 assertDoesNotThrow(() -> {
-                    final Question.DeleteResultDto deleteResultDto = question1.delete(user1);
-                    questionRepository.save(deleteResultDto.getQuestion());
+                    final List<DeleteHistory> deleteHistories = question1.delete(user1);
+                    deleteHistoryRepository.saveAll(deleteHistories);
                 });
             }
         }
@@ -130,7 +131,7 @@ class QuestionTest {
 
             @Test
             void failure() {
-                assertThrows(CannotDeleteException.class, () -> question1.delete(user2));
+                assertThrows(IllegalArgumentException.class, () -> question1.delete(user2));
             }
         }
     }
