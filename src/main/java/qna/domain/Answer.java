@@ -68,15 +68,9 @@ public class Answer extends BaseEntity {
         }
     }
 
-    private DeleteHistory deleteAnswer() {
+    public DeleteHistory deleteAnswer() {
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, this.id, this.writer, LocalDateTime.now());
-    }
-
-    public void deleteAnswerIfDeletedFalse(List<DeleteHistory> deleteHistories) {
-        if (!deleted) {
-            deleteHistories.add(deleteAnswer());
-        }
     }
 
     public Long getId() {

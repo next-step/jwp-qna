@@ -3,6 +3,7 @@ package qna.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -78,9 +79,11 @@ public class Question extends BaseEntity {
     protected List<DeleteHistory> deleteAnswersBeforeDeleteQuestion() throws CannotDeleteException {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         checkAnswersDeletable();
-        for (Answer answer : answers) {
-            answer.deleteAnswerIfDeletedFalse(deleteHistories);
-        }
+
+        Stream<Answer> answerStream = answers.stream();
+        answerStream.filter(answer -> !answer.isDeleted())
+                .forEach(answer -> deleteHistories.add(answer.deleteAnswer()));
+
         return deleteHistories;
     }
 
