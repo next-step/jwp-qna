@@ -69,15 +69,15 @@ public class Question extends BaseEntity {
         return true;
     }
 
-    public List<DeleteHistory> deleteQuestion() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = deleteAnswersBeforeDeleteQuestion();
+    public DeleteHistories deleteQuestion() throws CannotDeleteException {
+        DeleteHistories deleteHistories = deleteAnswersBeforeDeleteQuestion();
         this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
         return deleteHistories;
     }
 
-    protected List<DeleteHistory> deleteAnswersBeforeDeleteQuestion() throws CannotDeleteException {
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
+    protected DeleteHistories deleteAnswersBeforeDeleteQuestion() throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
         checkAnswersDeletable();
 
         Stream<Answer> answerStream = answers.stream();
