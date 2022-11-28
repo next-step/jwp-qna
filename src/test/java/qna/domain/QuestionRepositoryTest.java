@@ -92,7 +92,7 @@ public class QuestionRepositoryTest {
     @Test
     void 질문삭제시_상태변경() {
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
-        question.delete(user);
+        question.deleteWithAnswers(user);
         flushAndClear();
         Question actual = questionRepository.findById(question.getId()).get();
         assertThat(actual.isDeleted()).isTrue();
@@ -102,7 +102,7 @@ public class QuestionRepositoryTest {
     void 다른유저_질문삭제시_에러() {
         User sanjigi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
         Question question = questionRepository.save(new Question("title", "contents").writeBy(user));
-        assertThatThrownBy(() -> question.delete(sanjigi))
+        assertThatThrownBy(() -> question.deleteWithAnswers(sanjigi))
                 .isInstanceOf(CannotDeleteException.class)
                 .hasMessage("질문을 삭제할 권한이 없습니다.");
     }

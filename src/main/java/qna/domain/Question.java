@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity {
         answer.toQuestion(this);
     }
 
-    public DeleteHistory delete(User user) {
+    private DeleteHistory delete(User user) {
         if (!isOwner(user)) {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
