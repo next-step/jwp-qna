@@ -50,10 +50,6 @@ public class Question extends BaseEntity {
         answers.addAnswer(answer);
     }
 
-    public void clearAnswers() {
-        answers.clear();
-    }
-
     public Long getId() {
         return id;
     }

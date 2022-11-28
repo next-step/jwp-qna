@@ -81,10 +81,6 @@ public class Answer extends BaseEntity {
         return DeleteHistory.ofAnswer(this);
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

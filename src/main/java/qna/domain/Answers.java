@@ -1,5 +1,6 @@
 package qna.domain;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 import qna.CannotDeleteException;
 
@@ -12,14 +13,16 @@ import java.util.List;
 @Embeddable
 public class Answers {
 
-    protected Answers() {
-    }
-
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
+    protected Answers() {
+    }
+
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
     }
 
     public void validateAnswersWriter(User writer) throws CannotDeleteException {
@@ -34,7 +37,7 @@ public class Answers {
             .collect(Collectors.toList());
     }
 
-    public void clear() {
-        answers.clear();
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(this.answers);
     }
 }
