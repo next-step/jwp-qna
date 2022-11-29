@@ -1,6 +1,10 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -12,11 +16,13 @@ public class Question extends BaseTimeEntity {
     private String title;
     @Lob
     private String contents;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "fk_question_writer"))
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
+    @Embedded
+    private final Answers answers = new Answers();
 
     public Question(String title, String contents) {
         this(null, title, contents);
@@ -41,7 +47,22 @@ public class Question extends BaseTimeEntity {
     }
 
     public void addAnswer(Answer answer) {
+        answers.add(answer);
         answer.toQuestion(this);
+    }
+
+    private DeleteHistory delete(User user) {
+        if (!isOwner(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        this.deleted = true;
+        return new DeleteHistory(ContentType.QUESTION, id, user, LocalDateTime.now());
+    }
+
+    public List<DeleteHistory> deleteWithAnswers(User loginUser) {
+        List<DeleteHistory> deleteHistories = answers.deleteAll(loginUser);
+        deleteHistories.add(this.delete(loginUser));
+        return deleteHistories;
     }
 
     public Long getId() {
@@ -107,4 +128,6 @@ public class Question extends BaseTimeEntity {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+
 }

@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import qna.CannotDeleteException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
@@ -89,6 +91,24 @@ public class AnswerRepositoryTest {
         flushAndClear();
         Answer actual = answerRepository.findById(answer.getId()).get();
         assertThat(actual).isEqualTo(answer);
+    }
+
+    @Test
+    void 답변삭제시_상태변경() {
+        Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+        answer.delete(user);
+        flushAndClear();
+        Answer actual = answerRepository.findById(answer.getId()).get();
+        assertThat(actual.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 다른유저_답변삭제시_에러() {
+        User sanjigi = new User(2L, "sanjigi", "password", "name", "sanjigi@slipp.net");
+        Answer answer = answerRepository.save(new Answer(user, question, "Answers Contents1"));
+        assertThatThrownBy(() -> answer.delete(sanjigi))
+                .isInstanceOf(CannotDeleteException.class)
+                .hasMessage("답변을 삭제할 권한이 없습니다.");
     }
 
     private void flushAndClear() {
