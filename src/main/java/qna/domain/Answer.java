@@ -1,3 +1,5 @@
+
+
 package qna.domain;
 
 import qna.NotFoundException;
@@ -42,7 +44,6 @@ public class Answer extends BaseEntity {
         }
 
         this.writer = writer;
-        question.addAnswer(this);
         this.question = question;
         this.contents = contents;
     }
@@ -60,7 +61,7 @@ public class Answer extends BaseEntity {
     }
 
     public User getWriter() {
-        return writer;
+        return this.writer;
     }
 
     public Question getQuestion() {
@@ -75,8 +76,9 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void delete(boolean deleted) {
-        this.deleted = deleted;
+    public DeleteHistory deleteAnswer() {
+        deleted = true;
+        return DeleteHistory.ofAnswer(this);
     }
 
     @Override

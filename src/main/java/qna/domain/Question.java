@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -20,8 +21,8 @@ public class Question extends BaseEntity {
     private User writer;
     @Column(nullable = false)
     private boolean deleted = false;
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private final List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -42,18 +43,16 @@ public class Question extends BaseEntity {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
-        answer.toQuestion(this);
+        answers.addAnswer(answer);
     }
 
     public Long getId() {
         return id;
     }
-
     public String getTitle() {
         return title;
     }
@@ -70,16 +69,33 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public List<DeleteHistory> delete(User writer) throws CannotDeleteException {
+        validateQuestionOwner(writer);
+        validateAnswersOwner(writer);
+
+        List<DeleteHistory> deleteHistoryList = new ArrayList<>();
+        deleteQuestion(deleteHistoryList);
+        deleteAnswers(deleteHistoryList);
+        return deleteHistoryList;
     }
 
-    public void changeDeleted(final boolean deleted) {
-        this.deleted = deleted;
+    private void validateQuestionOwner(User writer) throws CannotDeleteException {
+        if (!isOwner(writer)) {
+            throw new CannotDeleteException("작성자가 아닌 경우 질문을 삭제할 수 없습니다.");
+        }
     }
 
-    public List<Answer> getAnswers() {
-        return answers;
+    private void validateAnswersOwner(User writer) throws CannotDeleteException {
+        answers.validateAnswersWriter(writer);
+    }
+
+    private void deleteQuestion(List<DeleteHistory> deleteHistoryList) {
+        deleted = true;
+        deleteHistoryList.add(DeleteHistory.ofQuestion(this));
+    }
+
+    private void deleteAnswers(List<DeleteHistory> deleteHistoryList) {
+        deleteHistoryList.addAll(answers.delete());
     }
 
     @Override

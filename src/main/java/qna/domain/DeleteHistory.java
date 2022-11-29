@@ -1,3 +1,5 @@
+
+
 package qna.domain;
 
 import java.time.LocalDateTime;
@@ -29,7 +31,8 @@ public class DeleteHistory {
     private User deletedBy;
     private LocalDateTime createDate = LocalDateTime.now();
 
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedBy,
+        LocalDateTime createDate) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedBy = deletedBy;
@@ -60,6 +63,14 @@ public class DeleteHistory {
         return createDate;
     }
 
+    public static DeleteHistory ofQuestion(Question question) {
+        return new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now());
+    }
+
+    public static DeleteHistory ofAnswer(Answer answer) {
+        return new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -72,12 +83,12 @@ public class DeleteHistory {
         return Objects.equals(id, that.id) &&
             contentType == that.contentType &&
             Objects.equals(contentId, that.contentId) &&
-            Objects.equals(deletedBy.getId(), that.deletedBy.getId());
+            Objects.equals(deletedBy, that.deletedBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedBy.getId());
+        return Objects.hash(id, contentType, contentId, deletedBy);
     }
 
     @Override
@@ -86,7 +97,7 @@ public class DeleteHistory {
             "id=" + id +
             ", contentType=" + contentType +
             ", contentId=" + contentId +
-            ", deletedById=" + deletedBy +
+            ", deletedBy=" + deletedBy +
             ", createDate=" + createDate +
             '}';
     }
