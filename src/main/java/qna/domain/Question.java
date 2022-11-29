@@ -1,8 +1,8 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import qna.CannotDeleteException;
 
 @Entity
 public class Question extends BaseEntity {
@@ -29,8 +29,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Answers answers = new Answers();
 
     protected Question() {
     }
@@ -55,8 +55,43 @@ public class Question extends BaseEntity {
     }
 
     public void addAnswer(Answer answer) {
+        this.answers.add(answer);
         answer.toQuestion(this);
     }
+
+    public boolean checkQuestionDeleteAuth(User user) throws CannotDeleteException {
+        if (!writer.matchUserId(user)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+        return true;
+    }
+
+    public DeleteHistories deleteQuestion() throws CannotDeleteException {
+        DeleteHistories deleteHistories = deleteAnswersBeforeDeleteQuestion();
+        this.deleted = true;
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, this.id, this.writer, LocalDateTime.now()));
+        return deleteHistories;
+    }
+
+    protected DeleteHistories deleteAnswersBeforeDeleteQuestion() throws CannotDeleteException {
+        DeleteHistories deleteHistories = new DeleteHistories();
+        if (!checkAnswersDeletable()) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+        answers.deleteAnswers(deleteHistories);
+
+        return deleteHistories;
+    }
+
+    private boolean checkAnswersDeletable() {
+        return answers.checkAnswersWriterMatch(writer);
+    }
+
+    /*private void checkAnswerWriterMatch(Answer answer) throws CannotDeleteException {
+        if (!answer.isOwner(writer)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+        }
+    }*/
 
     public Long getId() {
         return id;
@@ -98,11 +133,11 @@ public class Question extends BaseEntity {
         this.deleted = deleted;
     }
 
-    public List<Answer> getAnswers() {
+    public Answers getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<Answer> answers) {
+    public void setAnswers(Answers answers) {
         this.answers = answers;
     }
 
@@ -114,7 +149,7 @@ public class Question extends BaseEntity {
                 ", contents='" + contents + '\'' +
                 ", writer=" + writer +
                 ", deleted=" + deleted +
-                ", answers=" + answers +
+                //", answers=" + answers.hashCode() +
                 '}';
     }
 }
